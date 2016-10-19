@@ -10,4 +10,5 @@ public interface GlobalVariablesInterface { //all values contained here are "pub
     String DEFAULT_TEST_SET_NAME = "Default Perceptron Test Set.csv";
     String DEFAULT_TRAINING_SET_NAME = "Default Perceptron Training Set.csv";
     float DEFAULT_PERFORMANCE_REQUIERD_MINIMUM = 0.9999f;
+    String DEFAULT_SEPARATOR = ",";
 }

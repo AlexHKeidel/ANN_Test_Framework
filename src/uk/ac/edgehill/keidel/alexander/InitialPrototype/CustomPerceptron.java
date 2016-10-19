@@ -58,7 +58,7 @@ public class CustomPerceptron implements GlobalVariablesInterface {
         ArrayList<Integer> hiddenLayers = new ArrayList<>();
         TransferFunctionType tft;
         LearningRule lrnRule;
-        TrainingSet currentTrainingSet = TrainingSet.createFromFile(DEFAULT_FILE_PATH + DEFAULT_TRAINING_SET_NAME, inputNeuronCount, outputNeuronCount, ","); //setting training set location
+        TrainingSet currentTrainingSet = TrainingSet.createFromFile(DEFAULT_FILE_PATH + DEFAULT_TRAINING_SET_NAME, inputNeuronCount, outputNeuronCount, DEFAULT_SEPARATOR); //setting training set location
         TrainingSet<SupervisedTrainingElement> currentTestSet = TrainingSet.createFromFile(DEFAULT_FILE_PATH + DEFAULT_TEST_SET_NAME, inputNeuronCount, outputNeuronCount, ","); //setting testing set with file location
         do{
             try{
@@ -114,7 +114,7 @@ public class CustomPerceptron implements GlobalVariablesInterface {
         for (int i : settings.getHiddenLayers()) {
             tmp += "(" + i + ")";
         }
-        s += "Hidden Layers: " + tmp + "\nOutput Neurons: " + settings.getOutputNeurons() + "\nTransfer Function: " + settings.getTransferFunctionType().getClass().getName() + "\nLearning Rule: " + settings.getLearningRule().getClass().getName() + "\n";
+        s += "Hidden Layers: " + tmp + "\nOutput Neurons: " + settings.getOutputNeurons() + "\nTransfer Function: " + settings.getTransferFunctionType().getClass().getTypeName() + "\nLearning Rule: " + settings.getLearningRule().getClass().getName() + "\n";
         return s;
     }
 
