@@ -8,6 +8,6 @@ import org.neuroph.nnet.MultiLayerPerceptron;
 public class InitialPrototype implements GlobalVariablesInterface{
     public static void main(String[] args){
         CustomPerceptron cp = new CustomPerceptron();
-        cp.createAndTestNeuralNetworkStructures(5,1, "trainingset name", "testset name", DEFAULT_PERFORMANCE_REQUIERD_MINIMUM);
+        cp.createAndTestNeuralNetworkStructures(5,1, "trainingset name", "testset name", EXPECTED_STANDARD_DEVIATION_LIMIT);
     }
 }

@@ -15,7 +15,7 @@ public class NeuralNetworkSettings {
     private ArrayList<Integer> hiddenLayers;
     private TransferFunctionType transferFunctionType;
     private LearningRule learningRule;
-    private double performanceScore = 0.0f;
+    private double performanceScore = 1.0f;
 
     public NeuralNetworkSettings(){}
 

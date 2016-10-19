@@ -97,24 +97,26 @@ public class CustomPerceptron implements GlobalVariablesInterface {
                 customPerceptron.calculate(); //calculate result
                 tmpvalues.add(customPerceptron.getOutput()[0]); //add the result to the list of doubles
             }
-            currentNetworkSettings.setPerformanceScore(calculateAverage(tmpvalues));
-            if(currentNetworkSettings.getPerformanceScore() > bestNetworkSettings.getPerformanceScore())bestNetworkSettings = currentNetworkSettings; //replace the best network settings
+            currentNetworkSettings.setPerformanceScore(calculateStandardDeviation(tmpvalues));
+            System.out.println("Required Standard Deviation = " + performanceLimit + "\n" + convertNeuralNetworkSettingsToReadableString(currentNetworkSettings));
+            if(currentNetworkSettings.getPerformanceScore() < bestNetworkSettings.getPerformanceScore())bestNetworkSettings = currentNetworkSettings; //replace the best network settings
             networkCounter++; //incrementing the network counter
         }
-        while(bestNetworkSettings.getPerformanceScore() <= performanceLimit); //while the best performance is under the specified limit (default at 97%) keep testing network structures
+        while(bestNetworkSettings.getPerformanceScore() > performanceLimit); //while the best performance is under the specified limit (default at 97%) keep testing network structures
         //System.out.print("\nFinished training and testing network.\n\nFinal result:\nBest found neural network settings provide a correctness level of " + bestNetworkSettings.getPerformanceScore() +"%.");
+        System.out.println("\nFinished training and testing networks. Best result is the following architecture:\n");
         System.out.print(convertNeuralNetworkSettingsToReadableString(bestNetworkSettings));
         return bestNetworkSettings; //return the best found network settings.
     }
 
     private String convertNeuralNetworkSettingsToReadableString(NeuralNetworkSettings settings){
         String s = "";
-        s += "Full Neural Network settings\n" + "Name: " + settings.getName() + "\nPerformance Score: " + settings.getPerformanceScore() + "\nInput Neurons: " + settings.getInputNeurons() + "\n";
+        s += "Neural Network Settings\n" + "Name: " + settings.getName() + "\nPerformance Score (Standard Deviation): " + settings.getPerformanceScore() + "\nInput Neurons: " + settings.getInputNeurons() + "\n";
         String tmp = "";
         for (int i : settings.getHiddenLayers()) {
             tmp += "(" + i + ")";
         }
-        s += "Hidden Layers: " + tmp + "\nOutput Neurons: " + settings.getOutputNeurons() + "\nTransfer Function: " + settings.getTransferFunctionType().getClass().getTypeName() + "\nLearning Rule: " + settings.getLearningRule().getClass().getName() + "\n";
+        s += "Hidden Layers: " + tmp + "\nOutput Neurons: " + settings.getOutputNeurons() + "\nTransfer Function: " + settings.getTransferFunctionType().getTypeLabel() + "\nLearning Rule: " + settings.getLearningRule().getClass().getSimpleName() + "\n";
         return s;
     }
 
@@ -143,5 +145,35 @@ public class CustomPerceptron implements GlobalVariablesInterface {
             a += v[i];
         }
         return a / v.length;
+    }
+
+    /**
+     * Calculate the standard deviation of the array list of doubles
+     * @param v
+     * @return
+     */
+    private double calculateStandardDeviation(ArrayList<Double> v) {
+        double[] s = new double[v.size()];
+        for(int i = 0; i < v.size(); i++){ //converting ArrayList of doubles to an array of doubles
+            s[i] = v.get(i);
+        }
+        return calculateStandardDeviation(s);
+    }
+
+    /**
+     * Calculate the standard deviation of the  array of doubles
+     * see http://libweb.surrey.ac.uk/library/skills/Number%20Skills%20Leicester/page_19.htm
+     * and
+     * @param v
+     * @return
+     */
+    private double calculateStandardDeviation(double [] v) {
+        double mean = calculateAverage(v);
+        double sum = 0.0f;
+        for(double d : v) { //adding the sum of all values minues the mean squared, as in (x - m)^2 where x = the value and m = the mean / average
+            sum += Math.pow(d - mean, 2);
+        }
+        sum /= (v.length - 1); //divide the sum by the number of values minus one
+        return  Math.sqrt(sum); //retreive the square root of the sum which is known as standard deviation and return it
     }
 }
