@@ -1,8 +1,7 @@
-package uk.ac.edgehill.keidel.alexander.InitialPrototype;
+package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting;
 
 import org.neuroph.contrib.matrixmlp.MatrixMomentumBackpropagation;
 import org.neuroph.core.learning.LearningRule;
-import org.neuroph.core.transfer.*;
 import org.neuroph.nnet.learning.*;
 import org.neuroph.util.TransferFunctionType;
 

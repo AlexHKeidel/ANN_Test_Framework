@@ -1,17 +1,12 @@
-package uk.ac.edgehill.keidel.alexander.InitialPrototype;
+package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting;
 
 import org.neuroph.core.NeuralNetwork;
-import org.neuroph.core.Neuron;
 import org.neuroph.core.learning.LearningRule;
 import org.neuroph.core.learning.SupervisedTrainingElement;
 import org.neuroph.core.learning.TrainingSet;
-import org.neuroph.core.transfer.TransferFunction;
 import org.neuroph.nnet.MultiLayerPerceptron;
-import org.neuroph.nnet.learning.BackPropagation;
-import org.neuroph.util.TrainingSetImport;
 import org.neuroph.util.TransferFunctionType;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package uk.ac.edgehill.keidel.alexander.InitialPrototype;
+package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting;
 
 import org.neuroph.core.learning.LearningRule;
 import org.neuroph.util.TransferFunctionType;
