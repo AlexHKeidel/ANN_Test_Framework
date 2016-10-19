@@ -7,6 +7,9 @@ import java.util.ArrayList;
 
 /**
  * Created by Alexander Keidel, 22397868 on 15/06/2016.
+ * Representing the architecture of a neural network based on multi-layered Perceptrons.
+ * This includes the number of input, output and hidden layer neurons, transfer function, learning rule as well as
+ * a performance score measured in standard deviation.
  */
 public class NeuralNetworkSettings {
     private String name;
@@ -15,7 +18,7 @@ public class NeuralNetworkSettings {
     private ArrayList<Integer> hiddenLayers;
     private TransferFunctionType transferFunctionType;
     private LearningRule learningRule;
-    private double performanceScore = 1.0f;
+    private double performanceScore = 1.0f; //standard deviation
 
     public NeuralNetworkSettings(){}
 

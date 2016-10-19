@@ -10,6 +10,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Alex on 23/09/2016.
+ * Creates a list of all the possible configurations of learning rules and transfer function combinations.
  */
 public class NeuralNetworkSettingsListGenerator extends NeuralNetworkSettings{
     private static ArrayList<LearningRule> learningRules = new ArrayList<>(); //list of all applicable learning rules

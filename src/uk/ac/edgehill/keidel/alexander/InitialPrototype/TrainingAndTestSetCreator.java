@@ -7,6 +7,7 @@ import java.util.Random;
 
 /**
  * Created by Alexander Keidel, 22397868 on 16/06/2016.
+ * Creates custom training and test sets based on pseudo random number generation
  */
 public class TrainingAndTestSetCreator implements GlobalVariablesInterface {
     //private final String PATH = "C:/Users/Borgelman/SkyDrive/Edge Hill/Final Year Project/NeurophPrototypes/";
@@ -24,7 +25,7 @@ public class TrainingAndTestSetCreator implements GlobalVariablesInterface {
     /**
      * Create the default training and testing files for the initial prototype custom perceptron tester.
      * 5 Input values, 1 output value (always 1.0)
-     * Every tenth generated entry for the training set is added to the test set, which is used in {@link uk.ac.edgehill.keidel.alexander.InitialPrototype.CustomPerceptron#createAndTestNeuralNetworkStructures(int, int, String, float)}
+     * Every tenth generated entry for the training set is added to the test set, which is used in {@link uk.ac.edgehill.keidel.alexander.InitialPrototype.CustomPerceptron#createAndTestNeuralNetworkStructures(int, int, String, String, float)}
      * @return
      * @throws IOException
      */
