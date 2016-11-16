@@ -6,7 +6,11 @@ import org.neuroph.core.learning.SupervisedTrainingElement;
 import org.neuroph.core.learning.TrainingSet;
 import org.neuroph.nnet.MultiLayerPerceptron;
 import org.neuroph.util.TransferFunctionType;
+import org.neuroph.util.io.FileOutputAdapter;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -170,5 +174,28 @@ public class CustomPerceptron implements GlobalVariablesInterface {
         }
         sum /= (v.length - 1); //divide the sum by the number of values minus one
         return  Math.sqrt(sum); //retreive the square root of the sum which is known as standard deviation and return it
+    }
+
+    /**
+     * Save the current network settings to a file in the specified file location
+     *
+     * @param fileLocation String for the file location to be written
+     * @throws IOException
+     */
+    public void saveCurrentNetworkSettingsToFile(String fileLocation) throws IOException {
+        FileOutputStream fos = new FileOutputStream(currentNetworkSettings.getName());
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(currentNetworkSettings);
+    }
+
+    /**
+     * Save the customPerceptron object as a file
+     * @param fileLocation String for file location
+     * @throws IOException
+     */
+    public void saveCurrentPerceptronToFile(String fileLocation) throws IOException {
+        FileOutputStream fos = new FileOutputStream("customPerceptron"); //name of the current network settings name
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(customPerceptron);
     }
 }

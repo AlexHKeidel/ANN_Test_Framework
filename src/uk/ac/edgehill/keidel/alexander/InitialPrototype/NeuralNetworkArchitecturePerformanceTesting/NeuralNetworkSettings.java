@@ -3,6 +3,7 @@ package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitectu
 import org.neuroph.core.learning.LearningRule;
 import org.neuroph.util.TransferFunctionType;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -11,7 +12,7 @@ import java.util.ArrayList;
  * This includes the number of input, output and hidden layer neurons, transfer function, learning rule as well as
  * a performance score measured in standard deviation.
  */
-public class NeuralNetworkSettings {
+public class NeuralNetworkSettings implements Serializable {
     private String name;
     private int inputNeurons;
     private int outputNeurons;
