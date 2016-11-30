@@ -6,11 +6,11 @@ import org.neuroph.core.learning.SupervisedTrainingElement;
 import org.neuroph.core.learning.TrainingSet;
 import org.neuroph.nnet.MultiLayerPerceptron;
 import org.neuroph.util.TransferFunctionType;
+import org.neuroph.util.io.FileInputAdapter;
 import org.neuroph.util.io.FileOutputAdapter;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import java.io.*;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -178,24 +178,45 @@ public class CustomPerceptron implements GlobalVariablesInterface {
 
     /**
      * Save the current network settings to a file in the specified file location
-     *
-     * @param fileLocation String for the file location to be written
      * @throws IOException
      */
-    public void saveCurrentNetworkSettingsToFile(String fileLocation) throws IOException {
+    protected void saveCurrentNetworkSettingsToFile() throws IOException {
         FileOutputStream fos = new FileOutputStream(currentNetworkSettings.getName());
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(currentNetworkSettings);
     }
 
+    protected boolean loadCurrentNetworkSettingsFromFile() throws IOException{
+        FileInputStream fis = new FileInputStream((currentNetworkSettings).getName());
+        ObjectInputStream ois = new ObjectInputStream(fis);
+        try {
+            currentNetworkSettings = (NeuralNetworkSettings) ois.readObject();
+        } catch (Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Save the customPerceptron object as a file
-     * @param fileLocation String for file location
      * @throws IOException
      */
-    public void saveCurrentPerceptronToFile(String fileLocation) throws IOException {
+    protected void saveCurrentPerceptronToFile() throws IOException {
         FileOutputStream fos = new FileOutputStream("customPerceptron"); //name of the current network settings name
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(customPerceptron);
+    }
+
+    protected boolean loadPerceptronFromFile() throws  IOException {
+        FileInputStream fis = new FileInputStream("customPerceptron");
+        ObjectInputStream ios = new ObjectInputStream(fis);
+        try {
+            customPerceptron = (NeuralNetwork) ios.readObject();
+        } catch (Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }
