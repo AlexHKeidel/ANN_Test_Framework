@@ -16,8 +16,8 @@ public class NeuralNetworkSettingsListGenerator extends NeuralNetworkSettings{
     private static ArrayList<TransferFunctionType> transferFunctions = new ArrayList<>(); //list of all applicable transferfunctions
     private ArrayList<NeuralNetworkSettings> neuralNetworkList = new ArrayList<>();
 
-    public NeuralNetworkSettingsListGenerator(String baseName, int inputNeurons, int outputNeurons){
-        generateList(baseName, inputNeurons, outputNeurons);
+    public NeuralNetworkSettingsListGenerator(String baseName, int inputNeurons, int outputNeurons, int possibleHiddenLayers){
+        generateList(baseName, inputNeurons, outputNeurons, possibleHiddenLayers);
     }
 
     private void initArrayLists(){
@@ -75,14 +75,20 @@ public class NeuralNetworkSettingsListGenerator extends NeuralNetworkSettings{
         //END
     }
 
-    private boolean generateList(String baseName, int inputNeurons, int outputNeurons){
+    private boolean generateList(String baseName, int inputNeurons, int outputNeurons, int possibleHiddenLayers){
         try{
             initArrayLists();
             int counter = 0;
             for(LearningRule rule : learningRules){
                 for(TransferFunctionType tf : transferFunctions){
-                    for(int i = 0; i < 4; i++){
+                    for(int i = 0; i < possibleHiddenLayers; i++){
                         ArrayList<Integer> tmp = new ArrayList<>();
+                        for(int j = 0; j <= i;j ++){ //adding hidden layers based on selected complexity (based on #possibleHiddenlayers parameter
+                            tmp.add(inputNeurons);
+                        }
+                        neuralNetworkList.add(new NeuralNetworkSettings(baseName + " Settigns #" + counter,  inputNeurons, outputNeurons,tmp, tf, rule));
+
+                        /** Unoptimised old code
                         switch(i){
                             case 0: //try one hidden layer with the size of input neurons
                                 tmp.add(inputNeurons);
@@ -112,7 +118,7 @@ public class NeuralNetworkSettingsListGenerator extends NeuralNetworkSettings{
 
                             default:
                                 return false; //Error
-                        }
+                        } */
                     }
                 }
             }

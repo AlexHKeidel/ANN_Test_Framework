@@ -50,7 +50,7 @@ public class CustomPerceptron implements GlobalVariablesInterface {
         performanceLimit = DEFAULT_PERFORMANCE_REQUIERD_MINIMUM;
         //END
          */
-        neuralNetworkSettingsListGenerator = new NeuralNetworkSettingsListGenerator(testSetName, inputNeuronCount, outputNeuronCount); //a new settings generator with the specified values
+        neuralNetworkSettingsListGenerator = new NeuralNetworkSettingsListGenerator(testSetName, inputNeuronCount, outputNeuronCount, 4); //a new settings generator with the specified values
         ArrayList<NeuralNetworkSettings> allSettings = neuralNetworkSettingsListGenerator.getNeuralNetworkList();
 
         int networkCounter = 0;
