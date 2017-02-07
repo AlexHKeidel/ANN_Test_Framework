@@ -1,5 +1,7 @@
 package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.DataSetNormalisation;
 
+import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.GlobalVariablesInterface;
+
 import java.io.*;
 
 /**
@@ -8,13 +10,13 @@ import java.io.*;
  * This class should not be run more than once.
  * Provides a format for the artificial neural network architecture testing prototype to work with
  */
-public class Bi3Normaliser {
+public class Bi3Normaliser implements GlobalVariablesInterface {
     private FileReader fr;
     private BufferedReader br;
     private FileWriter fw;
-    private final String FOOTFALL_FILE_PATH = "D:/OneDrive/Edge Hill/Final Year Project/Interesting Datasets/Bi3 Data Sets/Footfall Data Comma Delimited.csv"; //make sure this is according to the file path on the machine
-    private final String DEMOGRAPHICS_FILE_PATH = "D:/OneDrive/Edge Hill/Final Year Project/Interesting Datasets/Bi3 Data Sets/Demographics Data Comma Delimited.csv"; //make sure this is according to the file path on the machine
-    private final String DIRECTORY = "D:/OneDrive/Edge Hill/Final Year Project/Interesting Datasets/Bi3 Data Sets/";
+    private final String FOOTFALL_FILE_PATH = System.getProperty("user.dir") + "/Data Sets/Bi3 Data Sets/Footfall Data Comma Delimited.csv"; //OLD "D:/OneDrive/Edge Hill/Final Year Project/Interesting Datasets/Bi3 Data Sets/Footfall Data Comma Delimited.csv"; //make sure this is according to the file path on the machine
+    private final String DEMOGRAPHICS_FILE_PATH = System.getProperty("user.dir") + "/Data Sets/Bi3 Data Sets/Demographics Data Comma Delmited.csv";//OLD "D:/OneDrive/Edge Hill/Final Year Project/Interesting Datasets/Bi3 Data Sets/Demographics Data Comma Delimited.csv"; //make sure this is according to the file path on the machine
+    private final String DIRECTORY = System.getProperty("user.dir") + "/Data Sets/Bi3 Data Sets/"; //OLD "D:/OneDrive/Edge Hill/Final Year Project/Interesting Datasets/Bi3 Data Sets/";
     private File footfallFile, demographicsFile;
     public Bi3Normaliser(){
         footfallFile = new File(FOOTFALL_FILE_PATH);
