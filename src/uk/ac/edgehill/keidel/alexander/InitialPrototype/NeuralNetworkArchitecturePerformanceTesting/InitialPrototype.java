@@ -6,10 +6,13 @@ package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitectu
  * The idea is to have a testing framework to decide on the best suited artificial neural network architecture for any
  * given data set.
  */
-public class InitialPrototype implements GlobalVariablesInterface{
-    public static void main(String[] args){
+public class InitialPrototype implements GlobalVariablesInterface {
+    public static void main(String[] args) {
+        String workingDirectory = System.getProperty("user.dir");
+        workingDirectory = workingDirectory.replace("\\", "/"); //replace all backward slashes with forward slashes to be used for file paths. See http://stackoverflow.com/questions/1701839/string-replaceall-single-backslashes-with-double-backslashes and http://stackoverflow.com/questions/4871051/getting-the-current-working-directory-in-java
+        System.out.println("Working Directory = " + workingDirectory);
         CustomPerceptron cp = new CustomPerceptron();
-        cp.createAndTestNeuralNetworkStructures(5,1, "trainingset name", "testset name", EXPECTED_STANDARD_DEVIATION_LIMIT);
+        cp.createAndTestNeuralNetworkStructures(5, 1, "trainingset name", "testset name", EXPECTED_STANDARD_DEVIATION_LIMIT);
         /**
          * See http://stackoverflow.com/questions/2914375/getting-file-path-in-java for saving in current file location
          */
@@ -17,7 +20,7 @@ public class InitialPrototype implements GlobalVariablesInterface{
         try {
             cp.saveCurrentNetworkSettingsToFile();
             cp.saveCurrentPerceptronToFile();
-        } catch (Exception ex){
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
