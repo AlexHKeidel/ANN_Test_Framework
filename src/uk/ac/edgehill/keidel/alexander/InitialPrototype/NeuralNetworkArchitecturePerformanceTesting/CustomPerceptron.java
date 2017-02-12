@@ -16,13 +16,15 @@ import java.util.List;
 
 /**
  * Created by Alexander Keidel, 22397868 on 15/06/2016.
+ * Custom Perceptron class which will do a number of different tasts. It trains and test neural networks with a given
+ * data set. It will compare their performance based on the specified standard deviation performance delimiter.
  */
 public class CustomPerceptron implements GlobalVariablesInterface {
     private NeuralNetwork customPerceptron;
-    private List<NeuralNetworkSettings> networkList; //list or collection of all tested networks
+    //private List<NeuralNetworkSettings> networkList; //list or collection of all tested networks
     private NeuralNetworkSettings currentNetworkSettings;
     private NeuralNetworkSettings bestNetworkSettings = new NeuralNetworkSettings();
-    private List<NeuralNetworkSettings> networkSettingsList;
+    private ArrayList<NeuralNetworkSettings> networkSettingsList = new ArrayList<>(); //array list of all network settings
     private NeuralNetworkSettingsListGenerator neuralNetworkSettingsListGenerator;
     public StringBuffer strDump = new StringBuffer(); //string buffer that can be read from outside this class
 
@@ -32,10 +34,10 @@ public class CustomPerceptron implements GlobalVariablesInterface {
     /**
      * Creates and tests different structures of multilayered Perceptrons against one another, with the specified training and testing sets.
      * The best result will be returned by the method.
-     * @param inputNeuronCount
-     * @param outputNeuronCount
-     * @param trainingSetName
-     * @param performanceLimit
+     * @param inputNeuronCount Integer amount of input nodes
+     * @param outputNeuronCount Integer amount of output nodes
+     * @param trainingSetName Name of the training set name
+     * @param performanceLimit Decimal value for the performance limit. Based on the desired standard deviation {@link GlobalVariablesInterface#DEFAULT_PERFORMANCE_REQUIERD_MINIMUM}
      * @return
      */
     public NeuralNetworkSettings createAndTestNeuralNetworkStructures(int inputNeuronCount, int outputNeuronCount, String trainingSetName, String testSetName, float performanceLimit){
@@ -52,7 +54,7 @@ public class CustomPerceptron implements GlobalVariablesInterface {
         //END
          */
         neuralNetworkSettingsListGenerator = new NeuralNetworkSettingsListGenerator(testSetName, inputNeuronCount, outputNeuronCount, 4); //a new settings generator with the specified values
-        ArrayList<NeuralNetworkSettings> allSettings = neuralNetworkSettingsListGenerator.getNeuralNetworkList();
+        ArrayList<NeuralNetworkSettings> allPossibleNetworkSettings = neuralNetworkSettingsListGenerator.getNeuralNetworkList();
 
         int networkCounter = 0;
         ArrayList<Integer> hiddenLayers = new ArrayList<>();
@@ -62,10 +64,11 @@ public class CustomPerceptron implements GlobalVariablesInterface {
         TrainingSet<SupervisedTrainingElement> currentTestSet = TrainingSet.createFromFile(DEFAULT_FILE_PATH + DEFAULT_TEST_SET_NAME, inputNeuronCount, outputNeuronCount, ","); //setting testing set with file location
         do{
             try{
-                hiddenLayers = allSettings.get(networkCounter).getHiddenLayers();
-                tft = allSettings.get(networkCounter).getTransferFunctionType();
-                lrnRule = allSettings.get(networkCounter).getLearningRule();
+                hiddenLayers = allPossibleNetworkSettings.get(networkCounter).getHiddenLayers();
+                tft = allPossibleNetworkSettings.get(networkCounter).getTransferFunctionType();
+                lrnRule = allPossibleNetworkSettings.get(networkCounter).getLearningRule();
                 currentNetworkSettings = new NeuralNetworkSettings(testSetName + " #" + networkCounter, inputNeuronCount, outputNeuronCount, hiddenLayers, tft, lrnRule);
+                networkSettingsList.add(currentNetworkSettings); //append the list of the settings with the next item
 
             } catch (Exception e){
                 e.printStackTrace();
@@ -239,5 +242,13 @@ public class CustomPerceptron implements GlobalVariablesInterface {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Getter for the array list of neural network settings
+     * @return Array List of all the {@link NeuralNetworkSettings} in this object.
+     */
+    public ArrayList<NeuralNetworkSettings> getNetworkSettingsList() {
+        return networkSettingsList;
     }
 }
