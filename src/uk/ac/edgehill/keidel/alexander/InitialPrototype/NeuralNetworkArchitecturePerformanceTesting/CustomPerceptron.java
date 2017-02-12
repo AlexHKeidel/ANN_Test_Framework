@@ -24,6 +24,7 @@ public class CustomPerceptron implements GlobalVariablesInterface {
     private NeuralNetworkSettings bestNetworkSettings = new NeuralNetworkSettings();
     private List<NeuralNetworkSettings> networkSettingsList;
     private NeuralNetworkSettingsListGenerator neuralNetworkSettingsListGenerator;
+    public StringBuffer strDump = new StringBuffer(); //string buffer that can be read from outside this class
 
     public CustomPerceptron(){
     }
@@ -69,10 +70,13 @@ public class CustomPerceptron implements GlobalVariablesInterface {
             } catch (Exception e){
                 e.printStackTrace();
                 System.out.println("No more possible settings to test.");
+                strDump.append("No more possible settings to test.\n");
                 try{
                     System.out.print("\nFinished training and testing network.\n\nFinal result:\nBest found neural network settings provide a correctness level of " + bestNetworkSettings.getPerformanceScore() +"%.");
+                    strDump.append("\nFinished training and testing network.\n\nFinal result:\nBest found neural network settings provide a correctness level of " + bestNetworkSettings.getPerformanceScore() +"%.\n");
                     if(bestNetworkSettings.getPerformanceScore() == 0.0f){
                         System.out.println("No network was tested. Please report this error.");
+                        strDump.append("No network was tested. Please report this error.\n");
                         return null;
                     }
                     return bestNetworkSettings;
@@ -98,6 +102,7 @@ public class CustomPerceptron implements GlobalVariablesInterface {
             }
             currentNetworkSettings.setPerformanceScore(calculateStandardDeviation(tmpvalues));
             System.out.println("Required Standard Deviation = " + performanceLimit + "\n" + convertNeuralNetworkSettingsToReadableString(currentNetworkSettings));
+            strDump.append("Required Standard Deviation = " + performanceLimit + "\n" + convertNeuralNetworkSettingsToReadableString(currentNetworkSettings) + "\n");
             if(currentNetworkSettings.getPerformanceScore() < bestNetworkSettings.getPerformanceScore())bestNetworkSettings = currentNetworkSettings; //replace the best network settings
             networkCounter++; //incrementing the network counter
         }
@@ -105,6 +110,12 @@ public class CustomPerceptron implements GlobalVariablesInterface {
         //System.out.print("\nFinished training and testing network.\n\nFinal result:\nBest found neural network settings provide a correctness level of " + bestNetworkSettings.getPerformanceScore() +"%.");
         System.out.println("\nFinished training and testing networks. Best result is the following architecture:\n");
         System.out.print(convertNeuralNetworkSettingsToReadableString(bestNetworkSettings));
+        strDump.append("\nFinished training and testing networks. Best result is the following architecture:\n" + convertNeuralNetworkSettingsToReadableString(bestNetworkSettings) + "\n");
+
+        synchronized (strDump){
+            strDump.notify();
+        }
+
         return bestNetworkSettings; //return the best found network settings.
     }
 
@@ -186,6 +197,11 @@ public class CustomPerceptron implements GlobalVariablesInterface {
         oos.writeObject(currentNetworkSettings);
     }
 
+    /**
+     * Load the network settings from a file into the program
+     * @return
+     * @throws IOException
+     */
     protected boolean loadCurrentNetworkSettingsFromFile() throws IOException{
         FileInputStream fis = new FileInputStream((currentNetworkSettings).getName());
         ObjectInputStream ois = new ObjectInputStream(fis);
@@ -208,6 +224,11 @@ public class CustomPerceptron implements GlobalVariablesInterface {
         oos.writeObject(customPerceptron);
     }
 
+    /**
+     * Loads a customPerceptron from file
+     * @return
+     * @throws IOException
+     */
     protected boolean loadPerceptronFromFile() throws  IOException {
         FileInputStream fis = new FileInputStream("customPerceptron");
         ObjectInputStream ios = new ObjectInputStream(fis);
