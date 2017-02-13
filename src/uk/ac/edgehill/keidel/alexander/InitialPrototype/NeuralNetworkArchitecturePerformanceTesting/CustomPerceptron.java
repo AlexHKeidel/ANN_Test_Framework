@@ -25,6 +25,8 @@ public class CustomPerceptron implements GlobalVariablesInterface {
     private NeuralNetworkSettings currentNetworkSettings;
     private NeuralNetworkSettings bestNetworkSettings = new NeuralNetworkSettings();
     private ArrayList<NeuralNetworkSettings> networkSettingsList = new ArrayList<>(); //array list of all network settings
+    private ArrayList<NeuralNetwork> allNeuralNets = new ArrayList<>();
+    private ArrayList<NeuralNetwork> loadedNeuralNets = new ArrayList<>();
     private NeuralNetworkSettingsListGenerator neuralNetworkSettingsListGenerator;
     public StringBuffer strDump = new StringBuffer(); //string buffer that can be read from outside this class
 
@@ -194,8 +196,8 @@ public class CustomPerceptron implements GlobalVariablesInterface {
      * Save the current network settings to a file in the specified file location
      * @throws IOException
      */
-    protected void saveCurrentNetworkSettingsToFile() throws IOException {
-        FileOutputStream fos = new FileOutputStream(currentNetworkSettings.getName());
+    public void saveCurrentNetworkSettingsToFile() throws IOException {
+        FileOutputStream fos = new FileOutputStream("customNetworkSettings");
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(currentNetworkSettings);
     }
@@ -204,9 +206,46 @@ public class CustomPerceptron implements GlobalVariablesInterface {
      * Load the network settings from a file into the program
      * @return
      * @throws IOException
+     * @deprecated
      */
-    protected boolean loadCurrentNetworkSettingsFromFile() throws IOException{
+    public boolean loadCurrentNetworkSettingsFromFile() throws IOException{
+        System.out.println("(currentNetworkSettings).getName() = " + (currentNetworkSettings).getName());
         FileInputStream fis = new FileInputStream((currentNetworkSettings).getName());
+        ObjectInputStream ois = new ObjectInputStream(fis);
+        try {
+            currentNetworkSettings = (NeuralNetworkSettings) ois.readObject();
+        } catch (Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Load a specified neural network into the arraylist of loaded nets
+     * @param fileName
+     * @return
+     */
+    public boolean loadNetworkSettingsFromFile(String fileName) {
+        try{
+            FileInputStream fis = new FileInputStream(fileName);
+            ObjectInputStream ios = new ObjectInputStream(fis);
+            loadedNeuralNets.add((NeuralNetwork) ios.readObject());
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Load the network settings from the specified file name into the program
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
+    public boolean loadCurrentNetworkSettingsFromFile(String fileName) throws IOException{
+        FileInputStream fis = new FileInputStream(fileName);
         ObjectInputStream ois = new ObjectInputStream(fis);
         try {
             currentNetworkSettings = (NeuralNetworkSettings) ois.readObject();
@@ -221,7 +260,7 @@ public class CustomPerceptron implements GlobalVariablesInterface {
      * Save the customPerceptron object as a file
      * @throws IOException
      */
-    protected void saveCurrentPerceptronToFile() throws IOException {
+    public void saveCurrentPerceptronToFile() throws IOException {
         FileOutputStream fos = new FileOutputStream("customPerceptron"); //name of the current network settings name
         ObjectOutputStream oos = new ObjectOutputStream(fos);
         oos.writeObject(customPerceptron);
@@ -232,10 +271,10 @@ public class CustomPerceptron implements GlobalVariablesInterface {
      * @return
      * @throws IOException
      */
-    protected boolean loadPerceptronFromFile() throws  IOException {
-        FileInputStream fis = new FileInputStream("customPerceptron");
-        ObjectInputStream ios = new ObjectInputStream(fis);
+    public boolean loadPerceptronFromFile(String fileName) throws  IOException {
         try {
+            FileInputStream fis = new FileInputStream(fileName);
+            ObjectInputStream ios = new ObjectInputStream(fis);
             customPerceptron = (NeuralNetwork) ios.readObject();
         } catch (Exception ex){
             ex.printStackTrace();
@@ -245,10 +284,32 @@ public class CustomPerceptron implements GlobalVariablesInterface {
     }
 
     /**
+     * Loads settings file into program
+     * @param fileName
+     * @return
+     * @throws IOException
+     */
+    public boolean loadPerceptronSettingsFromFile(String fileName) throws IOException {
+        try{
+            FileInputStream fis = new FileInputStream(fileName);
+            ObjectInputStream ios = new ObjectInputStream(fis);
+            currentNetworkSettings = (NeuralNetworkSettings) ios.readObject();
+            return true;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
      * Getter for the array list of neural network settings
      * @return Array List of all the {@link NeuralNetworkSettings} in this object.
      */
     public ArrayList<NeuralNetworkSettings> getNetworkSettingsList() {
         return networkSettingsList;
+    }
+
+    public NeuralNetworkSettings getCurrentNetworkSettings() {
+        return currentNetworkSettings;
     }
 }
