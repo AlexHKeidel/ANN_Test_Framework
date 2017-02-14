@@ -135,7 +135,8 @@ public class MainInterface extends Application implements GUIValues {
      * @TODO this is only for testing
      */
     private void startProcedure(){
-        prototype.startPrototype();
+        Thread t = new Thread(prototype);
+        t.run();
         //StartProcedureButton.setDisable(true);
 //        synchronized (prototype.cp.strDump){
 //            try {

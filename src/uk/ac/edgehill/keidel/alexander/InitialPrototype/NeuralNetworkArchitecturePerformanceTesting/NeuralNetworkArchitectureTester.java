@@ -42,7 +42,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
      * @param performanceLimit Decimal value for the performance limit. Based on the desired standard deviation {@link GlobalVariablesInterface#DEFAULT_PERFORMANCE_REQUIERD_MINIMUM}
      * @return
      */
-    public NeuralNetworkSettings createAndTestNeuralNetworkStructures(String testSetName, String trainingSetName, int inputNeuronCount, int outputNeuronCount, int maximumHiddenLayerCount, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit){
+    public NeuralNetworkSettings createAndTestNeuralNetworkStructures(File trainingSet, File testSet, String testSetName, String trainingSetName, int inputNeuronCount, int outputNeuronCount, int maximumHiddenLayerCount, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit){
         /**
         //BEGIN "Setting initial Testing values"
         ArrayList<Integer> hiddenLayers = new ArrayList<>();
@@ -63,11 +63,13 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
         TransferFunctionType tft;
         LearningRule lrnRule;
 
-        TrainingSet currentTrainingSet = TrainingSet.createFromFile(DEFAULT_FILE_PATH + DEFAULT_TRAINING_SET_NAME, inputNeuronCount, outputNeuronCount, DEFAULT_SEPARATOR); //setting training set location
-        TrainingSet<SupervisedTrainingElement> currentTestSet = TrainingSet.createFromFile(DEFAULT_FILE_PATH + DEFAULT_TEST_SET_NAME, inputNeuronCount, outputNeuronCount, ","); //setting testing set with file location
-
+//        TrainingSet currentTrainingSet = TrainingSet.createFromFile(DEFAULT_FILE_PATH + DEFAULT_TRAINING_SET_NAME, inputNeuronCount, outputNeuronCount, DEFAULT_SEPARATOR); //setting training set location
+//        TrainingSet<SupervisedTrainingElement> currentTestSet = TrainingSet.createFromFile(DEFAULT_FILE_PATH + DEFAULT_TEST_SET_NAME, inputNeuronCount, outputNeuronCount, ","); //setting testing set with file location
+        TrainingSet currentTrainingSet = TrainingSet.createFromFile(trainingSet.getPath(), inputNeuronCount, outputNeuronCount, ",");
+        TrainingSet<SupervisedTrainingElement> currentTestSet = TrainingSet.createFromFile(testSet.getPath(), inputNeuronCount, outputNeuronCount, ",");
         do{
             try{
+                System.out.println("In try catch block iteration " + networkCounter);
                 hiddenLayers = allPossibleNetworkSettings.get(networkCounter).getHiddenLayers();
                 tft = allPossibleNetworkSettings.get(networkCounter).getTransferFunctionType();
                 lrnRule = allPossibleNetworkSettings.get(networkCounter).getLearningRule();
@@ -100,7 +102,10 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             neuronCountInLayers.add(outputNeuronCount); //adding output layers
             customPerceptron = new MultiLayerPerceptron(neuronCountInLayers, currentNetworkSettings.getTransferFunctionType()); //create a custom multi layered perceptron with the given input, hidden and output layers, as well as transfer function
             customPerceptron.setLearningRule(currentNetworkSettings.getLearningRule()); //setting learning rule
-            customPerceptron.learn(currentTrainingSet); //training network with the training set
+            System.out.println("Training neural network.");
+            customPerceptron.learnInNewThread(currentTrainingSet);
+            //customPerceptron.learn(currentTrainingSet); //training network with the training set
+            System.out.println("Finished training neural network");
             ArrayList<Double> tmpvalues = new ArrayList<Double>();
             for(int i = 0; i < currentTestSet.elements().size(); i ++){
                 customPerceptron.setInput(currentTestSet.elementAt(i).getInput()); //set input values
