@@ -23,6 +23,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.InitialPrototype;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.NeuralNetworkSettings;
@@ -53,7 +54,7 @@ public class MainInterface extends Application implements GUIValues {
             primaryStage.setTitle(TITLE); //set the title
 
             //set up menu bar
-            MenuBar menuBar = setupMenuBar();
+            MenuBar menuBar = setupMenuBar(primaryStage);
 
 
             StartProcedureButton = new Button("Start Procedure");
@@ -128,6 +129,10 @@ public class MainInterface extends Application implements GUIValues {
         }
     }
 
+    /**
+     * Start Procedure of the button
+     * @TODO this is only for testing
+     */
     private void startProcedure(){
         prototype.startPrototype();
         //StartProcedureButton.setDisable(true);
@@ -172,27 +177,36 @@ public class MainInterface extends Application implements GUIValues {
      * See http://docs.oracle.com/javafx/2/ui_controls/menu_controls.htm
      * @return
      */
-    private MenuBar setupMenuBar(){
+    private MenuBar setupMenuBar(Stage primaryStage){
         MenuBar menuBar = new MenuBar();
         //File menu and sub menus
         final Menu fileMenu = new Menu(FILE_MENU); //file menu
+        final MenuItem fileLoadProject = new MenuItem(FILE_MENU_LOAD_PROJECT);
+        fileLoadProject.setOnAction(e -> openFileSelectorToLoadProjectFile(primaryStage));
         final MenuItem fileSaveProject = new MenuItem(FILE_MENU_SAVE_PROJECT);
+        final MenuItem fileGenerateChart = new MenuItem(FILE_MENU_GENERATE_CHART);
+        fileMenu.getItems().addAll(fileLoadProject, fileSaveProject, fileGenerateChart); //register sub menu items
+
 
         //Options menu and sub menus
         final Menu optionsMenu = new Menu(OPTIONS_MENU);
+        final MenuItem optionsPreferences = new MenuItem(OPTIONS_MENU_PREFERENCES);
+        optionsMenu.getItems().addAll(optionsPreferences); //register sub menus
 
         //Neural Network Menu and sub menus
         final Menu nnMenu = new Menu(NEURAL_NETWORK_MENU);
         final MenuItem loadNNMenuItem = new MenuItem(NEURAL_NETWORK_MENU_LOAD_NETWORK);
+        loadNNMenuItem.setOnAction(e -> openFileSelectorToNeuralNetworkFile(primaryStage));
         final MenuItem saveNNMenuItem = new MenuItem(NEURAL_NETWORK_MENU_SAVE_NETWORK);
         final MenuItem selectTrainingSetMenuItem = new MenuItem(NEURAL_NETWORK_MENU_SELECT_TRAINING_SET);
         final MenuItem selectTestSetMenuItem = new MenuItem(NEURAL_NETWORK_MENU_SELECT_TEST_SET);
-        nnMenu.getItems().addAll(loadNNMenuItem, saveNNMenuItem, selectTrainingSetMenuItem, selectTestSetMenuItem);
+        final MenuItem trainingPreferencesMenuItem = new MenuItem(NEURAL_NETWORK_MENU_TRAINING_PREFERENCES);
+        nnMenu.getItems().addAll(loadNNMenuItem, saveNNMenuItem, selectTrainingSetMenuItem, selectTestSetMenuItem, trainingPreferencesMenuItem); //register submenu items
 
         //Help menu and sub menus
         final Menu helpMenu = new Menu(HELP_MENU);
         final MenuItem aboutMenuItem = new MenuItem(HELP_MENU_ABOUT);
-        aboutMenuItem.setOnAction(e -> showAboutScreen());
+        aboutMenuItem.setOnAction(e -> showAboutScreen()); //lambda expression
         helpMenu.getItems().addAll(aboutMenuItem);
 //        final MenuItem fileLoad = new MenuItem("Load Neural Network");
 //        final MenuItem selectDataset = new MenuItem("Select Dataset");
@@ -207,6 +221,9 @@ public class MainInterface extends Application implements GUIValues {
         return menuBar;
     }
 
+    /**
+     * Display the about screen
+     */
     private void showAboutScreen() {
         AboutScreen as = new AboutScreen(primaryStage);
     }
@@ -259,4 +276,41 @@ public class MainInterface extends Application implements GUIValues {
             return false;
         }
     }
+
+    /**
+     * Open a file selector for the application to load a project file
+     * See http://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
+     * @return
+     */
+    private boolean openFileSelectorToLoadProjectFile(Stage stage){
+        try{
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Select a project file");
+            fileChooser.showOpenDialog(stage);
+            return true;
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Open a file selector for the application to load a neural network file
+     * See http://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
+     * @return
+     */
+    private boolean openFileSelectorToNeuralNetworkFile(Stage stage){
+        try{
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Select a project file");
+            fileChooser.showOpenDialog(stage);
+            return true;
+        }
+        catch (Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
 }
