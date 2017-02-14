@@ -16,10 +16,10 @@ import java.util.List;
 
 /**
  * Created by Alexander Keidel, 22397868 on 15/06/2016.
- * Custom Perceptron class which will do a number of different tasts. It trains and test neural networks with a given
+ * Custom Perceptron class which will do a number of different tasks. It trains and test neural networks with a given
  * data set. It will compare their performance based on the specified standard deviation performance delimiter.
  */
-public class CustomPerceptron implements GlobalVariablesInterface {
+public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface {
     private NeuralNetwork customPerceptron;
     //private List<NeuralNetworkSettings> networkList; //list or collection of all tested networks
     private NeuralNetworkSettings currentNetworkSettings;
@@ -30,7 +30,7 @@ public class CustomPerceptron implements GlobalVariablesInterface {
     private NeuralNetworkSettingsListGenerator neuralNetworkSettingsListGenerator;
     public StringBuffer strDump = new StringBuffer(); //string buffer that can be read from outside this class
 
-    public CustomPerceptron(){
+    public NeuralNetworkArchitectureTester(){
     }
 
     /**
@@ -42,7 +42,7 @@ public class CustomPerceptron implements GlobalVariablesInterface {
      * @param performanceLimit Decimal value for the performance limit. Based on the desired standard deviation {@link GlobalVariablesInterface#DEFAULT_PERFORMANCE_REQUIERD_MINIMUM}
      * @return
      */
-    public NeuralNetworkSettings createAndTestNeuralNetworkStructures(int inputNeuronCount, int outputNeuronCount, String trainingSetName, String testSetName, float performanceLimit){
+    public NeuralNetworkSettings createAndTestNeuralNetworkStructures(String testSetName, String trainingSetName, int inputNeuronCount, int outputNeuronCount, int maximumHiddenLayerCount, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit){
         /**
         //BEGIN "Setting initial Testing values"
         ArrayList<Integer> hiddenLayers = new ArrayList<>();
@@ -55,7 +55,7 @@ public class CustomPerceptron implements GlobalVariablesInterface {
         performanceLimit = DEFAULT_PERFORMANCE_REQUIERD_MINIMUM;
         //END
          */
-        neuralNetworkSettingsListGenerator = new NeuralNetworkSettingsListGenerator(testSetName, inputNeuronCount, outputNeuronCount, 4); //a new settings generator with the specified values
+        neuralNetworkSettingsListGenerator = new NeuralNetworkSettingsListGenerator(testSetName, inputNeuronCount, outputNeuronCount, maximumHiddenLayerCount, desiredTransferFunctions, desiredLearningRules); //a new settings generator with the specified values
         ArrayList<NeuralNetworkSettings> allPossibleNetworkSettings = neuralNetworkSettingsListGenerator.getNeuralNetworkList();
 
         int networkCounter = 0;

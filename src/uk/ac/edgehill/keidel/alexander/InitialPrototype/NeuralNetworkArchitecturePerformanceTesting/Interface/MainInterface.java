@@ -28,6 +28,7 @@ import javafx.stage.Stage;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.InitialPrototype;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.NeuralNetworkSettings;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -304,7 +305,7 @@ public class MainInterface extends Application implements GUIValues {
         try{
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Select a project file");
-            fileChooser.showOpenDialog(stage);
+            File file = fileChooser.showOpenDialog(stage);
             return true;
         }
         catch (Exception ex){

@@ -2,6 +2,7 @@ package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitectu
 
 import org.neuroph.contrib.matrixmlp.MatrixMomentumBackpropagation;
 import org.neuroph.core.learning.LearningRule;
+import org.neuroph.core.transfer.TransferFunction;
 import org.neuroph.nnet.learning.*;
 import org.neuroph.util.TransferFunctionType;
 
@@ -12,75 +13,109 @@ import java.util.ArrayList;
  * Creates a list of all the possible configurations of learning rules and transfer function combinations.
  */
 public class NeuralNetworkSettingsListGenerator extends NeuralNetworkSettings{
-    private static ArrayList<LearningRule> learningRules = new ArrayList<>(); //list of all applicable learning rules
-    private static ArrayList<TransferFunctionType> transferFunctions = new ArrayList<>(); //list of all applicable transferfunctions
+    private static ArrayList<LearningRule> allPossibleLearningRules = new ArrayList<>(); //list of all possible learning rules
+    private static ArrayList<TransferFunctionType> allPossibleTransferFunctions = new ArrayList<>(); //list of all possible transfer functions
     private ArrayList<NeuralNetworkSettings> neuralNetworkList = new ArrayList<>();
+    private boolean allPossibleListGenerated = false; //flag to see if the list is generated
 
-    public NeuralNetworkSettingsListGenerator(String baseName, int inputNeurons, int outputNeurons, int possibleHiddenLayers){
-        generateList(baseName, inputNeurons, outputNeurons, possibleHiddenLayers);
+    public NeuralNetworkSettingsListGenerator(String baseName, int inputNeurons, int outputNeurons, int possibleHiddenLayers, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules){
+        generateList(baseName, inputNeurons, outputNeurons, possibleHiddenLayers, desiredTransferFunctions, desiredLearningRules);
     }
 
-    private void initArrayLists(){
+    public NeuralNetworkSettingsListGenerator(){
+        populateAllPossibleLearningRulesAndTransferFunctionsIntoArraryLists();
+    }
+
+    public  ArrayList<LearningRule> getAllPossibleLearningRules() {
+        return allPossibleLearningRules;
+    }
+
+    public  ArrayList<TransferFunctionType> getAllPossibleTransferFunctions() {
+        return allPossibleTransferFunctions;
+    }
+
+    private void populateAllPossibleLearningRulesAndTransferFunctionsIntoArraryLists(){
         //START adding all possible learning rules supported by neuroph 2.92 to the ArrayList
-        learningRules.add(new BackPropagation());
-        learningRules.add(new DynamicBackPropagation());
-        learningRules.add(new AntiHebbianLearning());
-        learningRules.add(new BinaryHebbianLearning());
-        learningRules.add(new BinaryDeltaRule());
-        learningRules.add(new CompetitiveLearning());
-        learningRules.add(new ConvolutionalBackpropagation());
-        learningRules.add(new GeneralizedHebbianLearning());
-        learningRules.add(new HopfieldLearning());
-        learningRules.add(new InstarLearning());
-        learningRules.add(new AntiHebbianLearning());
-        learningRules.add(new KohonenLearning());
-        learningRules.add(new LMS());
-        learningRules.add(new MomentumBackpropagation());
-        learningRules.add(new OjaLearning());
-        learningRules.add(new OutstarLearning());
-        learningRules.add(new PerceptronLearning());
-        learningRules.add(new RBFLearning());
-        learningRules.add(new ResilientPropagation());
-        learningRules.add(new SigmoidDeltaRule());
-        learningRules.add(new MomentumBackpropagation());
-        learningRules.add(new SupervisedHebbianLearning());
-        learningRules.add(new MatrixMomentumBackpropagation());
+        allPossibleLearningRules.add(new BackPropagation());
+        allPossibleLearningRules.add(new DynamicBackPropagation());
+        allPossibleLearningRules.add(new AntiHebbianLearning());
+        allPossibleLearningRules.add(new BinaryHebbianLearning());
+        allPossibleLearningRules.add(new BinaryDeltaRule());
+        allPossibleLearningRules.add(new CompetitiveLearning());
+        allPossibleLearningRules.add(new ConvolutionalBackpropagation());
+        allPossibleLearningRules.add(new GeneralizedHebbianLearning());
+        allPossibleLearningRules.add(new HopfieldLearning());
+        allPossibleLearningRules.add(new InstarLearning());
+        allPossibleLearningRules.add(new AntiHebbianLearning());
+        allPossibleLearningRules.add(new KohonenLearning());
+        allPossibleLearningRules.add(new LMS());
+        allPossibleLearningRules.add(new MomentumBackpropagation());
+        allPossibleLearningRules.add(new OjaLearning());
+        allPossibleLearningRules.add(new OutstarLearning());
+        allPossibleLearningRules.add(new PerceptronLearning());
+        allPossibleLearningRules.add(new RBFLearning());
+        allPossibleLearningRules.add(new ResilientPropagation());
+        allPossibleLearningRules.add(new SigmoidDeltaRule());
+        allPossibleLearningRules.add(new MomentumBackpropagation());
+        allPossibleLearningRules.add(new SupervisedHebbianLearning());
+        allPossibleLearningRules.add(new MatrixMomentumBackpropagation());
         //END
 
         //START adding all possible transfer functions supported by neuroph 2.92 to the ArrayList
-        transferFunctions.add(TransferFunctionType.GAUSSIAN);
-        transferFunctions.add(TransferFunctionType.LINEAR);
-        transferFunctions.add(TransferFunctionType.LOG);
-        transferFunctions.add(TransferFunctionType.RAMP);
-        transferFunctions.add(TransferFunctionType.SGN);
-        transferFunctions.add(TransferFunctionType.SIGMOID);
-        transferFunctions.add(TransferFunctionType.SIN);
-        transferFunctions.add(TransferFunctionType.STEP);
-        transferFunctions.add(TransferFunctionType.TANH);
-        transferFunctions.add(TransferFunctionType.TRAPEZOID);
+        allPossibleTransferFunctions.add(TransferFunctionType.GAUSSIAN);
+        allPossibleTransferFunctions.add(TransferFunctionType.LINEAR);
+        allPossibleTransferFunctions.add(TransferFunctionType.LOG);
+        allPossibleTransferFunctions.add(TransferFunctionType.RAMP);
+        allPossibleTransferFunctions.add(TransferFunctionType.SGN);
+        allPossibleTransferFunctions.add(TransferFunctionType.SIGMOID);
+        allPossibleTransferFunctions.add(TransferFunctionType.SIN);
+        allPossibleTransferFunctions.add(TransferFunctionType.STEP);
+        allPossibleTransferFunctions.add(TransferFunctionType.TANH);
+        allPossibleTransferFunctions.add(TransferFunctionType.TRAPEZOID);
 
         /** wrong data type (?)
-        transferFunctions.add(new Gaussian());
-        transferFunctions.add(new Linear());
-        transferFunctions.add(new Log());
-        transferFunctions.add(new Ramp());
-        transferFunctions.add(new RectifiedLinear());
-        transferFunctions.add(new Sgn());
-        transferFunctions.add(new Sigmoid());
-        transferFunctions.add(new Sin());
-        transferFunctions.add(new Step());
-        transferFunctions.add(new Tanh());
-        transferFunctions.add(new Trapezoid());
+        allPossibleTransferFunctions.add(new Gaussian());
+        allPossibleTransferFunctions.add(new Linear());
+        allPossibleTransferFunctions.add(new Log());
+        allPossibleTransferFunctions.add(new Ramp());
+        allPossibleTransferFunctions.add(new RectifiedLinear());
+        allPossibleTransferFunctions.add(new Sgn());
+        allPossibleTransferFunctions.add(new Sigmoid());
+        allPossibleTransferFunctions.add(new Sin());
+        allPossibleTransferFunctions.add(new Step());
+        allPossibleTransferFunctions.add(new Tanh());
+        allPossibleTransferFunctions.add(new Trapezoid());
          */
         //END
+        allPossibleListGenerated = true; //flag set to true
     }
 
-    private boolean generateList(String baseName, int inputNeurons, int outputNeurons, int possibleHiddenLayers){
+
+    /**
+     * Generate a list of all the desired multi-layered perceptron architecture configurations.
+     * @TODO add size value for minimum and maximum hidden layer sizes
+     * @param baseName base name for all configurations, usually named after the training set
+     * @param inputNeurons number of input neurons
+     * @param outputNeurons number of output neurons
+     * @param possibleHiddenLayers number of possible layers
+     * @param desiredTransferFunctions list of desired transfer functions, if the list is null or empty all possibilities will be usd
+     * @param desiredLearningRules list of desired learning rules, if the list is null or empty all possibilities will be used
+     * @return
+     */
+    private boolean generateList(String baseName, int inputNeurons, int outputNeurons, int possibleHiddenLayers, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules){ //uses all possible learning rules and transfer function possibilities
         try{
-            initArrayLists();
+            if(desiredTransferFunctions == null || desiredTransferFunctions.isEmpty()){ //if the list is empty use all possibilities
+                if(!allPossibleListGenerated || allPossibleTransferFunctions == null | allPossibleTransferFunctions.isEmpty()) populateAllPossibleLearningRulesAndTransferFunctionsIntoArraryLists(); //generate the list if it is not already generated
+                desiredTransferFunctions = allPossibleTransferFunctions; //assign all possible ones
+            }
+            if(desiredLearningRules == null || desiredLearningRules.isEmpty()){ //if the list is empty use all possibilities
+                if(!allPossibleListGenerated || allPossibleLearningRules == null || allPossibleLearningRules.isEmpty()) populateAllPossibleLearningRulesAndTransferFunctionsIntoArraryLists(); //generate the list if it is not already generated
+                desiredLearningRules = allPossibleLearningRules; //assign all possible ones
+            }
+
             int counter = 0;
-            for(LearningRule rule : learningRules){
-                for(TransferFunctionType tf : transferFunctions){
+            for(LearningRule rule : desiredLearningRules){
+                for(TransferFunctionType tf : desiredTransferFunctions){
                     for(int i = 0; i < possibleHiddenLayers; i++){
                         ArrayList<Integer> tmp = new ArrayList<>();
                         for(int j = 0; j <= i;j ++){ //adding hidden layers based on selected complexity (based on #possibleHiddenlayers parameter

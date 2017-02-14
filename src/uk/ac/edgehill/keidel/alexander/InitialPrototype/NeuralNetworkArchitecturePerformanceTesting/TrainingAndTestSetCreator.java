@@ -23,7 +23,7 @@ public class TrainingAndTestSetCreator implements GlobalVariablesInterface {
     /**
      * Create the default training and testing files for the initial prototype custom perceptron tester.
      * 5 Input values, 1 output value (always 1.0)
-     * Every tenth generated entry for the training set is added to the test set, which is used in {@link CustomPerceptron#createAndTestNeuralNetworkStructures(int, int, String, String, float)}
+     * Every tenth generated entry for the training set is added to the test set, which is used in {@link NeuralNetworkArchitectureTester#createAndTestNeuralNetworkStructures(int, int, String, String, float)}
      * @return
      * @throws IOException
      */
