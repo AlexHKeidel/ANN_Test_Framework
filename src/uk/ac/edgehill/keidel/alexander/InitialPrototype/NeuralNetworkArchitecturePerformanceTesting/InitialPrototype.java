@@ -21,7 +21,7 @@ public class InitialPrototype implements GlobalVariablesInterface {
         System.out.println("Working Directory = " + workingDirectory);
 
         NeuralNetworkSettingsListGenerator generator = new NeuralNetworkSettingsListGenerator(); //careful using this! possible null pointers, only for debugging!
-        cp.createAndTestNeuralNetworkStructures("test set name", "training set name", 5, 1, 5, generator.getAllPossibleTransferFunctions(), generator.getAllPossibleLearningRules(), DEFAULT_PERFORMANCE_REQUIERD_MINIMUM);
+        cp.createAndTestNeuralNetworkStructures("Test Set Not Yet Generated!", "Supervised Demographics Data", 4, 1, 5, generator.getAllPossibleTransferFunctions(), generator.getAllPossibleLearningRules(), DEFAULT_PERFORMANCE_REQUIERD_MINIMUM);
 
         /**
          * See http://stackoverflow.com/questions/2914375/getting-file-path-in-java for saving in current file location

@@ -62,8 +62,10 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
         ArrayList<Integer> hiddenLayers = new ArrayList<>();
         TransferFunctionType tft;
         LearningRule lrnRule;
+
         TrainingSet currentTrainingSet = TrainingSet.createFromFile(DEFAULT_FILE_PATH + DEFAULT_TRAINING_SET_NAME, inputNeuronCount, outputNeuronCount, DEFAULT_SEPARATOR); //setting training set location
         TrainingSet<SupervisedTrainingElement> currentTestSet = TrainingSet.createFromFile(DEFAULT_FILE_PATH + DEFAULT_TEST_SET_NAME, inputNeuronCount, outputNeuronCount, ","); //setting testing set with file location
+
         do{
             try{
                 hiddenLayers = allPossibleNetworkSettings.get(networkCounter).getHiddenLayers();
