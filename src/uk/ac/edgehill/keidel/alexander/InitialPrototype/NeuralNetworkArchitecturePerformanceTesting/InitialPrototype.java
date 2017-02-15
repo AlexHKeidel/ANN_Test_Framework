@@ -32,7 +32,7 @@ public class InitialPrototype implements GlobalVariablesInterface, Runnable {
         ArrayList<LearningRule> desiredLearningRules = new ArrayList<>();
         desiredLearningRules.add(new BackPropagation());
         neuralNetworkArchitectureTester.trainAndTestNeuralNetworkStructures(trainingSet, testSet, "baseName Test", 4, 1, 2, 2, 4, desiredTransferFunctions, desiredLearningRules, DEFAULT_PERFORMANCE_REQUIERD_MINIMUM);
-        
+
         /**
          * See http://stackoverflow.com/questions/2914375/getting-file-path-in-java for saving in current file location
          */

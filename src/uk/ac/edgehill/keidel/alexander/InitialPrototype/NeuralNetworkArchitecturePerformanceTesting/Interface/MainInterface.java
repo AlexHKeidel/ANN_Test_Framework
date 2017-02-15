@@ -10,13 +10,20 @@ package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitectu
 
 import javafx.application.Application;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -31,7 +38,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 public class MainInterface extends Application implements GUIValues {
-    private Button StartProcedureButton;
+    private Button startProcedureButton;
     private TextArea ANNInfoTextArea;
     private BarChart barChart;
     private InitialPrototype prototype;
@@ -55,9 +62,13 @@ public class MainInterface extends Application implements GUIValues {
             //set up menu bar
             MenuBar menuBar = setupMenuBar(primaryStage);
 
+            VBox buttonsVBox = new VBox();
+            Button selectTestingPreferencesButton = new Button("Setup");
+            selectTestingPreferencesButton.setOnAction(e -> startSelectTestPreferencesScreen());
+            startProcedureButton = new Button("Start");
+            startProcedureButton.setOnAction(event -> startProcedure());
+            buttonsVBox.getChildren().addAll(selectTestingPreferencesButton, startProcedureButton);
 
-            StartProcedureButton = new Button("Start Procedure");
-            StartProcedureButton.setOnAction(event -> startProcedure());
 
             ANNInfoTextArea = new TextArea();
             ANNInfoTextArea.setText("Session Started.\n" + LocalDateTime.now().toLocalDate().toString() + " " + LocalDateTime.now().toLocalTime().toString() +"\n");
@@ -82,8 +93,8 @@ public class MainInterface extends Application implements GUIValues {
             BorderPane borderPane = new BorderPane(); //new border pane
             borderPane.setTop(menuBar);
             borderPane.setLeft(ANNInfoTextArea);
-            borderPane.setCenter(barChart);
-            borderPane.setBottom(StartProcedureButton);
+            borderPane.setRight(barChart);
+            borderPane.setBottom(buttonsVBox);
 
             Insets customInsets = new Insets(5, 5 , 5 , 5); //create new inset values
             VBox vBox = new VBox(10); //spacing defined in constructor
@@ -104,8 +115,8 @@ public class MainInterface extends Application implements GUIValues {
 //            groot.add(barChart, 0, 0);
 //            groot.add(ANNInfoTextArea, 0, 1);
 //            groot.setMargin(ANNInfoTextArea, customInsets); //setting margin
-//            groot.add(StartProcedureButton, 0, 2);
-//            groot.setMargin(StartProcedureButton, customInsets);
+//            groot.add(startProcedureButton, 0, 2);
+//            groot.setMargin(startProcedureButton, customInsets);
 
 //            //See https://docs.oracle.com/javase/8/javafx/api/javafx/scene/layout/GridPane.html
 //            ColumnConstraints column1 = new ColumnConstraints();
@@ -128,6 +139,10 @@ public class MainInterface extends Application implements GUIValues {
         }
     }
 
+    private void startSelectTestPreferencesScreen() {
+        SelectTestPreferencesScreen s = new SelectTestPreferencesScreen(primaryStage);
+    }
+
     /**
      * Start Procedure of the button
      * @TODO this is only for testing
@@ -135,7 +150,7 @@ public class MainInterface extends Application implements GUIValues {
     private void startProcedure(){
         Thread t = new Thread(prototype);
         t.run();
-        //StartProcedureButton.setDisable(true);
+        //startProcedureButton.setDisable(true);
 //        synchronized (prototype.neuralNetworkArchitectureTester.strDump){
 //            try {
 //                prototype.neuralNetworkArchitectureTester.strDump.wait();
@@ -285,7 +300,7 @@ public class MainInterface extends Application implements GUIValues {
     private boolean openFileSelectorToLoadProjectFile(Stage stage){
         try{
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Select a project file");
+            fileChooser.setTitle(FILE_MENU_LOAD_PROJECT_FILECHOOSER_TITLE);
             fileChooser.showOpenDialog(stage);
 
             return true;
@@ -304,7 +319,7 @@ public class MainInterface extends Application implements GUIValues {
     private boolean openFileSelectorToNeuralNetworkFile(Stage stage){
         try{
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Select a project file");
+            fileChooser.setTitle(NEURAL_NETWORK_MENU_LOAD_NETWORK_FILECHOOSER_TITLE);
             File file = fileChooser.showOpenDialog(stage);
             return true;
         }

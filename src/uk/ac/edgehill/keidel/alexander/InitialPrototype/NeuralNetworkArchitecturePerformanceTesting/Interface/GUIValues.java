@@ -1,5 +1,11 @@
 package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Interface;
 
+import javafx.geometry.Insets;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
+import javafx.scene.paint.Color;
+
 /**
  * Created by Alexander Keidel, 22397868 on 12/02/2017.
  * Interface class which holds values for the GUI
@@ -40,5 +46,13 @@ public interface GUIValues {
     String ABOUT_MENU_TEXT = "Artificial Neural Network Architecture Evaluation Tool\nThis prototype was created by Alexander Keidel.\nContact: Alexander.Keidel@Go.Edgehill.ac.uk";
 
 
+    //Preference screen values
+    String PREFERENCES_SCREEN_INSTRUCTIONS = "Select items to test";
+    String PREFERENCES_SCREEN_LEARNING_RULES_TAB = "Learning rules";
+    String PREFERENCES_SCREEN_TRANSFER_FUNCTIONS_TAB = "Transfer functions";
+    String PREFERENCES_SCREEN_BOUNDARIES_TAB = "Test Boundaries";
+
+    //note that the default background colour is Color.web("#F4F4F4")
+    Background PREFERENCES_SCREEN_BACKGROUND = new Background(new BackgroundFill(Color.web("#AAA"), CornerRadii.EMPTY, Insets.EMPTY));
 
 }

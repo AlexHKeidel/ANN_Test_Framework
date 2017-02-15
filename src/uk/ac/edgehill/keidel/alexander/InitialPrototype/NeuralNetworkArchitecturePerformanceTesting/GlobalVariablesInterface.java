@@ -1,6 +1,10 @@
 package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting;
 
+import org.neuroph.core.learning.LearningRule;
+import org.neuroph.util.TransferFunctionType;
+
 import java.net.URL;
+import java.util.ArrayList;
 
 /**
  * Created by Alexander Keidel, 22397868 on 21/09/2016.
@@ -15,4 +19,7 @@ public interface GlobalVariablesInterface { //all values contained here are "pub
     float DEFAULT_PERFORMANCE_REQUIERD_MINIMUM = 0.9999f; //unused since implementation of standard deviation
     float EXPECTED_STANDARD_DEVIATION_LIMIT = 0.00001f;
     String DEFAULT_SEPARATOR = ",";
+
+    ArrayList<TransferFunctionType> TRANSFER_FUNCTION_TYPES = new NeuralNetworkSettingsListGenerator().getAllPossibleTransferFunctions();
+    ArrayList<LearningRule> LEARNING_RULES = new NeuralNetworkSettingsListGenerator().getAllPossibleLearningRules();
 }

@@ -10,8 +10,9 @@ import java.awt.event.ActionListener;
 public class TestForm {
     private JPanel MainPanel;
     private JLabel MainLabel;
-    private JTextPane NNInfoTextPane;
     private JPanel NNTestPane;
+    private JTabbedPane tabbedPane1;
+    private JList list1;
     private JButton StartTestButton;
 
     public TestForm() {
