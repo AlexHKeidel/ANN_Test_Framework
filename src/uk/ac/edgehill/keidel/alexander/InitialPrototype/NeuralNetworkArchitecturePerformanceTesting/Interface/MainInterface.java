@@ -17,8 +17,6 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
@@ -138,16 +136,16 @@ public class MainInterface extends Application implements GUIValues {
         Thread t = new Thread(prototype);
         t.run();
         //StartProcedureButton.setDisable(true);
-//        synchronized (prototype.cp.strDump){
+//        synchronized (prototype.neuralNetworkArchitectureTester.strDump){
 //            try {
-//                prototype.cp.strDump.wait();
+//                prototype.neuralNetworkArchitectureTester.strDump.wait();
 //            } catch (InterruptedException e) {
 //                e.printStackTrace();
 //            }
 //        }
-        ANNInfoTextArea.appendText(prototype.cp.strDump.toString()); //insert the information
+        ANNInfoTextArea.appendText(prototype.neuralNetworkArchitectureTester.strDump.toString()); //insert the information
         ANNInfoTextArea.setScrollTop(Double.MAX_VALUE); //scroll down
-        populateBarChart();
+       // populateBarChart();
     }
 
     /**
@@ -155,8 +153,8 @@ public class MainInterface extends Application implements GUIValues {
      */
     private void populateBarChart(){
         double worstStandardDeviation = 100;
-        for(int i = 0; i < prototype.cp.getNetworkSettingsList().size(); i++){ //for each neural network setting
-            NeuralNetworkSettings tmp = prototype.cp.getNetworkSettingsList().get(i); //assign the neural network setting to a local object
+        for(int i = 0; i < prototype.neuralNetworkArchitectureTester.getNetworkSettingsList().size(); i++){ //for each neural network setting
+            NeuralNetworkSettings tmp = prototype.neuralNetworkArchitectureTester.getNetworkSettingsList().get(i); //assign the neural network setting to a local object
             if(i == 0) worstStandardDeviation = tmp.getPerformanceScore(); //assign first value in the first iteration
             XYChart.Series s = new XYChart.Series<String, Double>(); //create a new series for the chart
             s.setName(tmp.getLearningRule().getClass().getSimpleName() + " " + tmp.getTransferFunctionType().getTypeLabel()); //set the name of the series
@@ -236,8 +234,8 @@ public class MainInterface extends Application implements GUIValues {
      */
     private boolean saveOperation(){
         try{
-            prototype.cp.saveCurrentNetworkSettingsToFile();
-            prototype.cp.saveCurrentPerceptronToFile();
+            prototype.neuralNetworkArchitectureTester.saveCurrentNetworkSettingsToFile();
+            prototype.neuralNetworkArchitectureTester.saveCurrentPerceptronToFile();
             ANNInfoTextArea.appendText("\nSaved best network settings and perceptron file to disk.\n");
             return true;
         } catch (IOException e) {
@@ -253,8 +251,8 @@ public class MainInterface extends Application implements GUIValues {
      */
     private boolean loadOnStartup(){
         try{
-            prototype.cp.loadPerceptronFromFile("customPerceptron");
-            prototype.cp.loadPerceptronSettingsFromFile("customNetworkSettings");
+            prototype.neuralNetworkArchitectureTester.loadPerceptronFromFile("customPerceptron");
+            prototype.neuralNetworkArchitectureTester.loadPerceptronSettingsFromFile("customNetworkSettings");
             populateBarChart();
             return true;
         } catch (Exception ex){
@@ -289,6 +287,7 @@ public class MainInterface extends Application implements GUIValues {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Select a project file");
             fileChooser.showOpenDialog(stage);
+
             return true;
         }
         catch (Exception ex){

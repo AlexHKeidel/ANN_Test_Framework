@@ -16,7 +16,7 @@ public class AboutScreen implements GUIValues {
         Stage myStage = new Stage(); //new stage
         //see http://stackoverflow.com/questions/19953306/block-parent-stage-until-child-stage-closes
         myStage.initModality(Modality.WINDOW_MODAL); //set modality
-        myStage.initOwner(parentStage); //make the paretnStage the owner, so this window has to be closed in order for the user to return to the main part of the program
+        myStage.initOwner(parentStage); //make the parent Stage the owner, so this window has to be closed in order for the user to return to the main part of the program
 
         myStage.setTitle("About"); //title of the stage
         BorderPane borderPane = new BorderPane(); //new border pane

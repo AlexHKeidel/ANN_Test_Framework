@@ -1,5 +1,10 @@
 package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting;
 
+import com.sun.corba.se.impl.orbutil.threadpool.ThreadPoolImpl;
+import com.sun.corba.se.impl.orbutil.threadpool.WorkQueueImpl;
+import com.sun.corba.se.spi.orbutil.threadpool.ThreadPool;
+import com.sun.corba.se.spi.orbutil.threadpool.Work;
+import com.sun.corba.se.spi.orbutil.threadpool.WorkQueue;
 import org.neuroph.core.NeuralNetwork;
 import org.neuroph.core.learning.LearningRule;
 import org.neuroph.core.learning.SupervisedTrainingElement;
@@ -8,11 +13,15 @@ import org.neuroph.nnet.MultiLayerPerceptron;
 import org.neuroph.util.TransferFunctionType;
 import org.neuroph.util.io.FileInputAdapter;
 import org.neuroph.util.io.FileOutputAdapter;
+import org.omg.CORBA.TIMEOUT;
 
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.*;
 
 /**
  * Created by Alexander Keidel, 22397868 on 15/06/2016.
@@ -21,7 +30,7 @@ import java.util.List;
  */
 public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface {
     private NeuralNetwork customPerceptron;
-    //private List<NeuralNetworkSettings> networkList; //list or collection of all tested networks
+    private ArrayList<NeuralNetworkSettings> neuralNetworkSettingsList = new ArrayList<>(); //array list of all neural network settings
     private NeuralNetworkSettings currentNetworkSettings;
     private NeuralNetworkSettings bestNetworkSettings = new NeuralNetworkSettings();
     private ArrayList<NeuralNetworkSettings> networkSettingsList = new ArrayList<>(); //array list of all network settings
@@ -33,9 +42,59 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
     public NeuralNetworkArchitectureTester(){
     }
 
+    public boolean trainAndTestNeuralNetworkStructures(File trainingSetFile, File testSetFile, String baseName, int inputNeuronCount, int outputNeuronCount, int maximumHiddenLayerCount, int minimumHiddenLayerNeurons, int maximumHiddenLayerNeurons, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit){
+        try{
+            //create test set and training set
+            TrainingSet trainingSet = TrainingSet.createFromFile(trainingSetFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
+            TrainingSet<SupervisedTrainingElement> testSet = TrainingSet.createFromFile(testSetFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
+            int networkCounter = 1;
+
+
+            //thread pool requirements
+            /**
+             * see http://www.journaldev.com/1069/threadpoolexecutor-java-thread-pool-example-executorservice
+             * https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/BlockingQueue.html
+             * https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/ThreadPoolExecutor.html
+             * https://docs.oracle.com/javase/tutorial/essential/concurrency/pools.html
+             */
+            RejectedExecutionHandler reh = new ThreadPoolExecutor.DiscardPolicy(); //rejection handler
+            ThreadFactory threadFactory = Executors.defaultThreadFactory(); //default thread factory
+            BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(2);
+            ThreadPoolExecutor executor = new ThreadPoolExecutor(2, 10, 10, TimeUnit.DAYS, blockingQueue, threadFactory, reh);
+
+            //for each learning rule and transfer function
+            for(LearningRule rule : desiredLearningRules){
+                for(TransferFunctionType transferFunctionType : desiredTransferFunctions){
+                    for(int i = 1; i <= maximumHiddenLayerCount; i++){ //for each hidden layer size
+                        for(int s = minimumHiddenLayerNeurons; s <= maximumHiddenLayerNeurons; s++){ //from the minimum count to the maximum count of hidden layer sizes
+                            ArrayList<Integer> hiddenLayers = new ArrayList<>();
+                            //@TODO add variation for hidden layer sizes so not all hidden layers are the same size!
+                            for(int h = 0; h < i; h++){ //add amount of hidden layers
+                                hiddenLayers.add(s);
+                            }
+                            NeuralNetworkSettings network = new NeuralNetworkSettings(baseName + " #" + networkCounter, inputNeuronCount, outputNeuronCount, hiddenLayers, transferFunctionType, rule, trainingSet, testSet);
+                            neuralNetworkSettingsList.add(network); //add the network settings to the array list of all neural network settings
+                            Thread t = new Thread(network); //assign new thread to the network
+                            executor.execute(t); //add the thread to the executor
+                            System.out.println("Thread #" + i + " added to executor");
+                        }
+                    }
+                }
+            }
+            executor.shutdown();//shut down thread pool executor
+            return true; //success
+        }
+        catch(Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+
     /**
      * Creates and tests different structures of multilayered Perceptrons against one another, with the specified training and testing sets.
      * The best result will be returned by the method.
+     * @deprecated  new version up above!!!
      * @param inputNeuronCount Integer amount of input nodes
      * @param outputNeuronCount Integer amount of output nodes
      * @param trainingSetName Name of the training set name
@@ -104,6 +163,13 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             customPerceptron.setLearningRule(currentNetworkSettings.getLearningRule()); //setting learning rule
             System.out.println("Training neural network.");
             customPerceptron.learnInNewThread(currentTrainingSet);
+            /**
+             * @TODO fix multi threading!!!!!!!
+             * start array list of threads to train all perceptrons
+             * each thread first trains the network structure, and then tests it
+             * create ranking of all network structures (charts?)
+             * rank the array list with a sort function
+             */
             //customPerceptron.learn(currentTrainingSet); //training network with the training set
             System.out.println("Finished training neural network");
             ArrayList<Double> tmpvalues = new ArrayList<Double>();
