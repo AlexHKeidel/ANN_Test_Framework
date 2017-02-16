@@ -32,6 +32,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
     private Stage myStage;
     private TabPane allPreferencesTabPane;
     private ArrayList<String> checkBoxItems = new ArrayList<>(); //array list of items that have been checked in this screen
+    private float desiredPerformance = 0; //desired performance level selected by the user
 
     public SelectTestPreferencesScreen(Stage parentStage){
         myStage = new Stage(); //new stage
@@ -123,16 +124,11 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
                     parentFormatter.setValue(oldValue);
                 }
             }
-//            if(newValue.intValue() > 100 || newValue.intValue() < 0){
-//                parentFormatter.setValue(oldValue); //reset value
-//            }
-//
-//            if(newValue.floatValue() > 100.0 || newValue.floatValue() < 0.0){
-//                parentFormatter.setValue(oldValue); //reset value
-//            }
             if(newValue.longValue() > 100.0 || newValue.longValue() < 0.000001){
                 parentFormatter.setValue(oldValue); //reset value
             }
+            desiredPerformance = newValue.floatValue(); //set desired performance
+            System.out.println("desiredPerformance = " + desiredPerformance);
         } catch (Exception ex){
             ex.printStackTrace();
             //cannot perform operation NaN!
