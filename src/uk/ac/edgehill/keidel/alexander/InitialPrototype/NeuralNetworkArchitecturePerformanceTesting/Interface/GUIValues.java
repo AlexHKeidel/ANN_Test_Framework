@@ -51,6 +51,11 @@ public interface GUIValues {
     String PREFERENCES_SCREEN_LEARNING_RULES_TAB = "Learning rules";
     String PREFERENCES_SCREEN_TRANSFER_FUNCTIONS_TAB = "Transfer functions";
     String PREFERENCES_SCREEN_BOUNDARIES_TAB = "Test Boundaries";
+    String PREFERENCES_SCREEN_BOUNDARIES_NETWORK_TESTING_TITLE = "Network Testing Options";
+    String PREFERENCES_SCREEN_BOUNDARIES_NETWORK_TESTING_PERFORMANCE_SCORE = "Performance Limit (Standard Deviation)";
+//    String PREFERENCES_SCREEN_BOUNDARIES_
+//    String PREFERENCES_SCREEN_BOUNDARIES_
+//    String PREFERENCES_SCREEN_BOUNDARIES_
 
     //note that the default background colour is Color.web("#F4F4F4")
     Background PREFERENCES_SCREEN_BACKGROUND = new Background(new BackgroundFill(Color.web("#AAA"), CornerRadii.EMPTY, Insets.EMPTY));

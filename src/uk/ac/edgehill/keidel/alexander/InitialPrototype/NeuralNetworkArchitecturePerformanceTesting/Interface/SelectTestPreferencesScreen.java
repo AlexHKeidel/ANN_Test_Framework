@@ -1,5 +1,8 @@
 package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Interface;
 
+import com.sun.org.apache.xpath.internal.SourceTree;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -10,9 +13,12 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.converter.NumberStringConverter;
 import org.neuroph.core.learning.LearningRule;
 import org.neuroph.util.TransferFunctionType;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.GlobalVariablesInterface;
+
+import java.util.ArrayList;
 
 /**
  * Created by Alexander Keidel, 22397868 on 15/02/2017.
@@ -24,6 +30,8 @@ import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitectur
  */
 public class SelectTestPreferencesScreen extends Stage implements GUIValues, GlobalVariablesInterface {
     private Stage myStage;
+    private TabPane allPreferencesTabPane;
+    private ArrayList<String> checkBoxItems = new ArrayList<>(); //array list of items that have been checked in this screen
 
     public SelectTestPreferencesScreen(Stage parentStage){
         myStage = new Stage(); //new stage
@@ -49,8 +57,8 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         buttonHBox.setMargin(cancelButton, new Insets(5)); //set cancel button margin
 
         //setup tab pane
-        TabPane tabPane = new TabPane();
-        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE); //make sure you can't close tabs
+        allPreferencesTabPane = new TabPane();
+        allPreferencesTabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE); //make sure you can't close tabs
         Tab boundariesTab = new Tab(PREFERENCES_SCREEN_BOUNDARIES_TAB);
         boundariesTab.setClosable(false);//make sure you can't close the tab
         boundariesTab.setContent(generateBoundariesContent());
@@ -60,7 +68,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         Tab transferFunctionsTab = new Tab(PREFERENCES_SCREEN_TRANSFER_FUNCTIONS_TAB);
         transferFunctionsTab.setClosable(false);//make sure you can't close tabs
         transferFunctionsTab.setContent(generateTransferFunctionContent());
-        tabPane.getTabs().addAll(learningRulesTab, transferFunctionsTab);
+        allPreferencesTabPane.getTabs().addAll(boundariesTab, learningRulesTab, transferFunctionsTab);
 
 
         //setup border pane
@@ -71,7 +79,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         Text preferenceInstructions = new Text(PREFERENCES_SCREEN_INSTRUCTIONS); //instructinos textfield (single line)
         borderPane.setTop(preferenceInstructions);
         borderPane.setAlignment(preferenceInstructions, Pos.TOP_CENTER);
-        borderPane.setCenter(tabPane);
+        borderPane.setCenter(allPreferencesTabPane);
 
 
         borderPane.setPadding(new Insets(10)); //set padding to 10
@@ -86,9 +94,49 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
      * @return
      */
     private Node generateBoundariesContent() {
-        ScrollPane scrollPane = new ScrollPane();
-        
+        ScrollPane scrollPane = new ScrollPane(); //scroll pane to contain the vBox
+        VBox vBox = new VBox(); //vertical box to contain the test boundary fields
+        Text networkTestOptionsText = new Text(PREFERENCES_SCREEN_BOUNDARIES_NETWORK_TESTING_TITLE);
+        HBox performanceHbox = new HBox(); //Hbox to contain the performance instructions plus field
+        Text performanceText = new Text(PREFERENCES_SCREEN_BOUNDARIES_NETWORK_TESTING_PERFORMANCE_SCORE);
+        TextField performanceNumberField = new TextField(); //performance setter text field for only numbers
+        NumberStringConverter numberStringConverter = new NumberStringConverter(); //number to string converter
+        TextFormatter<Number> formatter = new TextFormatter(numberStringConverter); //assign converter
+        performanceNumberField.setTextFormatter(formatter); //assign formatter
+        formatter.valueProperty().addListener((observable, oldValue, newValue) -> validatePerformanceValue(observable, oldValue, newValue, formatter));
+        performanceHbox.getChildren().addAll(performanceText, performanceNumberField); //add items to hbox
+        vBox.getChildren().addAll(networkTestOptionsText, performanceHbox); //add items to vbox
+        scrollPane.setContent(vBox); //add vbox to scrollpane
         return scrollPane;
+    }
+
+    /**
+     * Validate the user entered performance value to make sure they enter something sensible
+     */
+    private void validatePerformanceValue(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter parentFormatter) {
+        try{
+            if(newValue == null){
+                if(oldValue == null){
+                    //set to default value
+                    parentFormatter.setValue(1);
+                } else {
+                    parentFormatter.setValue(oldValue);
+                }
+            }
+//            if(newValue.intValue() > 100 || newValue.intValue() < 0){
+//                parentFormatter.setValue(oldValue); //reset value
+//            }
+//
+//            if(newValue.floatValue() > 100.0 || newValue.floatValue() < 0.0){
+//                parentFormatter.setValue(oldValue); //reset value
+//            }
+            if(newValue.longValue() > 100.0 || newValue.longValue() < 0.000001){
+                parentFormatter.setValue(oldValue); //reset value
+            }
+        } catch (Exception ex){
+            ex.printStackTrace();
+            //cannot perform operation NaN!
+        }
     }
 
     /**
@@ -101,11 +149,25 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
 
         for(TransferFunctionType t : TRANSFER_FUNCTION_TYPES){
             CheckBox c = new CheckBox(t.getTypeLabel());
+            c.setOnAction(event -> checkBoxTicked(c.getText())); //add listener event to add or remove checked items
             vBox.getChildren().add(c);
             vBox.setMargin(c, new Insets(5));
         }
         scrollPane.setContent(vBox);
         return scrollPane;
+    }
+
+    private void checkBoxTicked(String text) {
+        if(checkBoxItems.contains(text)){ //item already exists, must be unchecked!
+            checkBoxItems.remove(text); //remove the item (uncheck!)
+        } else {
+            checkBoxItems.add(text);
+        }
+
+        System.out.println("Printing all checkBoxItems");
+        for(String i : checkBoxItems){
+            System.out.println(i);
+        }
     }
 
     /**
@@ -118,6 +180,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         for(LearningRule l : LEARNING_RULES){
             String name = l.getClass().getName().substring(l.getClass().getName().lastIndexOf('.') + 1, l.getClass().getName().length()); //get the name based on the last index of '.' (last package identifier) + 1 to exclude the .
             CheckBox c = new CheckBox(name);
+            c.setOnAction(event -> checkBoxTicked(c.getText())); //add listener event to add or remove checked items
             vBox.getChildren().add(c);
             vBox.setMargin(c, new Insets(5));
         }
@@ -129,8 +192,16 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         myStage.close();
     }
 
+    /**
+     * Save all the values selected on the setup interface screen
+     * @return
+     */
     private boolean savePreferences(){
         try{
+            ObservableList<Node> allChildrenTabs = allPreferencesTabPane.getChildrenUnmodifiable();
+            Node boundariesTab = allChildrenTabs.get(0);
+            Node learningRulesTab = allChildrenTabs.get(1);
+            Node transferFunctionsTab = allChildrenTabs.get(2);
 
             return true;
         }
