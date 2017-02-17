@@ -33,8 +33,7 @@ import javafx.stage.Stage;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.InitialPrototype;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.NeuralNetworkSettings;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDateTime;
 
 public class MainInterface extends Application implements GUIValues {
@@ -43,6 +42,7 @@ public class MainInterface extends Application implements GUIValues {
     private BarChart barChart;
     private InitialPrototype prototype;
     public static Stage primaryStage;
+    private TestingPreferences testingPreferences = new TestingPreferences(); //testing preferences file
 
     public static void main(String[] args) {
         launch(args);
@@ -148,6 +148,19 @@ public class MainInterface extends Application implements GUIValues {
      * @TODO this is only for testing
      */
     private void startProcedure(){
+        //load the preferences file
+        try {
+            FileInputStream fis = new FileInputStream(testingPreferences.getClass().getSimpleName());
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            testingPreferences = (TestingPreferences) ois.readObject();
+            prototype.testingPreferences = testingPreferences; //set testing preferences inside prototype class
+        } catch (FileNotFoundException e){
+            e.printStackTrace();
+        } catch (IOException e){
+            e.printStackTrace();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         Thread t = new Thread(prototype);
         t.run();
         //startProcedureButton.setDisable(true);
@@ -328,5 +341,6 @@ public class MainInterface extends Application implements GUIValues {
             return false;
         }
     }
+
 
 }

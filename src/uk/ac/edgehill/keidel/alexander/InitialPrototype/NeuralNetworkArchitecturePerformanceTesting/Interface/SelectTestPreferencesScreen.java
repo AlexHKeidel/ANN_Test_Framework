@@ -18,6 +18,10 @@ import org.neuroph.core.learning.LearningRule;
 import org.neuroph.util.TransferFunctionType;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.GlobalVariablesInterface;
 
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -32,7 +36,11 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
     private Stage myStage;
     private TabPane allPreferencesTabPane;
     private ArrayList<String> checkBoxItems = new ArrayList<>(); //array list of items that have been checked in this screen
+    private ArrayList<String> selectedTransferFunctions = new ArrayList<>();
+    private ArrayList<String> selectedLearningRules = new ArrayList<>();
     private float desiredPerformance = 0; //desired performance level selected by the user
+    private final String PREFERENCES_PREFIX = "pref_";
+    private TestingPreferences testingPreferences = new TestingPreferences(); //testing preference object
 
     public SelectTestPreferencesScreen(Stage parentStage){
         myStage = new Stage(); //new stage
@@ -145,7 +153,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
 
         for(TransferFunctionType t : TRANSFER_FUNCTION_TYPES){
             CheckBox c = new CheckBox(t.getTypeLabel());
-            c.setOnAction(event -> checkBoxTicked(c.getText())); //add listener event to add or remove checked items
+            c.setOnAction(event -> transferFunctionTicked(c.getText())); //add listener event to add or remove checked items
             vBox.getChildren().add(c);
             vBox.setMargin(c, new Insets(5));
         }
@@ -166,6 +174,22 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         }
     }
 
+    private void transferFunctionTicked(String text){
+        if(selectedTransferFunctions.contains(text)){
+            selectedTransferFunctions.remove(text);
+        } else {
+            selectedTransferFunctions.add(text);
+        }
+    }
+
+    private void learningRuleTicked(String text){
+        if(selectedLearningRules.contains(text)){
+            selectedLearningRules.remove(text);
+        } else {
+            selectedLearningRules.add(text);
+        }
+    }
+
     /**
      * Generate the learning rule content based on a scrollable vbox which a checkbox for each learning rule
      * @return
@@ -176,7 +200,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         for(LearningRule l : LEARNING_RULES){
             String name = l.getClass().getName().substring(l.getClass().getName().lastIndexOf('.') + 1, l.getClass().getName().length()); //get the name based on the last index of '.' (last package identifier) + 1 to exclude the .
             CheckBox c = new CheckBox(name);
-            c.setOnAction(event -> checkBoxTicked(c.getText())); //add listener event to add or remove checked items
+            c.setOnAction(event -> learningRuleTicked(c.getText())); //add listener event to add or remove checked items
             vBox.getChildren().add(c);
             vBox.setMargin(c, new Insets(5));
         }
@@ -194,11 +218,16 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
      */
     private boolean savePreferences(){
         try{
-            ObservableList<Node> allChildrenTabs = allPreferencesTabPane.getChildrenUnmodifiable();
-            Node boundariesTab = allChildrenTabs.get(0);
-            Node learningRulesTab = allChildrenTabs.get(1);
-            Node transferFunctionsTab = allChildrenTabs.get(2);
-
+            //set the testingPreferences to the selected values
+            testingPreferences.setLearningRuleNames(selectedLearningRules);
+            testingPreferences.setTransferFunctionNames(selectedTransferFunctions);
+            testingPreferences.setPerformance(desiredPerformance);
+            FileOutputStream fos = new FileOutputStream(testingPreferences.getClass().getSimpleName()); //new output stream with the name of the testing preferences class
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(testingPreferences);
+            oos.flush();
+            oos.close();
+            //@TODO notify the main screen of changes
             return true;
         }
         catch(Exception ex){
