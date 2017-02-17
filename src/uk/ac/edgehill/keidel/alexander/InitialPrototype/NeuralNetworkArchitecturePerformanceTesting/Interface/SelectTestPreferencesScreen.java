@@ -41,6 +41,8 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
     private float desiredPerformance = 0; //desired performance level selected by the user
     private final String PREFERENCES_PREFIX = "pref_";
     private TestingPreferences testingPreferences = new TestingPreferences(); //testing preference object
+    private int maximumHiddenLayers = 0;
+    private int maximumHiddenLayerSize = 0;
 
     public SelectTestPreferencesScreen(Stage parentStage){
         myStage = new Stage(); //new stage
@@ -106,17 +108,77 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         ScrollPane scrollPane = new ScrollPane(); //scroll pane to contain the vBox
         VBox vBox = new VBox(); //vertical box to contain the test boundary fields
         Text networkTestOptionsText = new Text(PREFERENCES_SCREEN_BOUNDARIES_NETWORK_TESTING_TITLE);
+
         HBox performanceHbox = new HBox(); //Hbox to contain the performance instructions plus field
         Text performanceText = new Text(PREFERENCES_SCREEN_BOUNDARIES_NETWORK_TESTING_PERFORMANCE_SCORE);
         TextField performanceNumberField = new TextField(); //performance setter text field for only numbers
-        NumberStringConverter numberStringConverter = new NumberStringConverter(); //number to string converter
-        TextFormatter<Number> formatter = new TextFormatter(numberStringConverter); //assign converter
-        performanceNumberField.setTextFormatter(formatter); //assign formatter
-        formatter.valueProperty().addListener((observable, oldValue, newValue) -> validatePerformanceValue(observable, oldValue, newValue, formatter));
+        NumberStringConverter n1 = new NumberStringConverter(); //number to string converter
+        TextFormatter<Number> formatter1 = new TextFormatter(n1); //assign converter
+        performanceNumberField.setTextFormatter(formatter1); //assign formatter
+        formatter1.valueProperty().addListener((observable, oldValue, newValue) -> validatePerformanceValue(observable, oldValue, newValue, formatter1));
         performanceHbox.getChildren().addAll(performanceText, performanceNumberField); //add items to hbox
-        vBox.getChildren().addAll(networkTestOptionsText, performanceHbox); //add items to vbox
+
+        //see above for comments (same structure) @TODO really this means that this should be separate methods
+        HBox maximumHiddenLayersHBox = new HBox();
+        Text maxHidLayText = new Text(PREFERENCES_SCREEN_BOUNDARIES_MAXIMUM_HIDDEN_LAYERS_TEXT);
+        TextField maxHidLayTextField = new TextField();
+        NumberStringConverter n2 = new NumberStringConverter();
+        TextFormatter<Number> formatter2 = new TextFormatter<Number>(n2);
+        maxHidLayTextField.setTextFormatter(formatter2);
+        formatter2.valueProperty().addListener((observable, oldValue, newValue) -> validateMaxHiddenLayersValue(observable, oldValue, newValue, formatter2));
+        maximumHiddenLayersHBox.getChildren().addAll(maxHidLayText, maxHidLayTextField);
+
+        //see above for comments (same structure)
+        HBox maximumHiddenLayerSizeHBox = new HBox();
+        Text maxHidLaySizeText = new Text(PREFERENCES_SCREEN_BOUNDARIES_MAXIMUM_HIDDEN_LAYER_SIZE_TEXT);
+        TextField maxHidLaySizeTextField = new TextField();
+        NumberStringConverter n3 = new NumberStringConverter();
+        TextFormatter<Number> formatter3 = new TextFormatter<Number>(n3);
+        maxHidLaySizeTextField.setTextFormatter(formatter3);
+        formatter3.valueProperty().addListener((observable, oldValue, newValue) -> validateMaxHiddenLayerSizeValue(observable, oldValue, newValue, formatter3));
+        maximumHiddenLayerSizeHBox.getChildren().addAll(maxHidLaySizeText, maxHidLaySizeTextField);
+
+        vBox.getChildren().addAll(networkTestOptionsText, performanceHbox, maximumHiddenLayersHBox, maximumHiddenLayerSizeHBox); //add items to vbox
         scrollPane.setContent(vBox); //add vbox to scrollpane
         return scrollPane;
+    }
+
+    /**
+     * Validate the user input for the maximum hidden layer size value
+     * The value must be over 0 and an integer. (positive integer)
+     * @param observable
+     * @param oldValue
+     * @param newValue
+     * @param formatter
+     */
+    private void validateMaxHiddenLayerSizeValue(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter<Number> formatter) {
+        if(newValue.floatValue() % 1 != 0){ //the value is not a whole number!
+            formatter.setValue(oldValue);
+        }
+        if(newValue.intValue() < 0){ //value cannot be below 0
+            formatter.setValue(oldValue);
+        }
+        //validated
+        maximumHiddenLayerSize = newValue.intValue(); //assign value
+    }
+
+    /**
+     * Validate the user input for the maximum hidden layers value.
+     * This value can not be under 0 and must be an integer.
+     * @param observable
+     * @param oldValue
+     * @param newValue
+     * @param formatter
+     */
+    private void validateMaxHiddenLayersValue(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter<Number> formatter) {
+        if(newValue.floatValue() % 1 != 0){ //the value is not a whole number!
+            formatter.setValue(oldValue);
+        }
+        if(newValue.intValue() < 0){ //value cannot be below 0
+            formatter.setValue(oldValue);
+        }
+        //validated
+        maximumHiddenLayers = newValue.intValue(); //assign value
     }
 
     /**
@@ -222,6 +284,8 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             testingPreferences.setLearningRuleNames(selectedLearningRules);
             testingPreferences.setTransferFunctionNames(selectedTransferFunctions);
             testingPreferences.setPerformance(desiredPerformance);
+            testingPreferences.setMaximumHiddenLayers(maximumHiddenLayers);
+            testingPreferences.setMaximumHiddenLayerSize(maximumHiddenLayerSize);
             FileOutputStream fos = new FileOutputStream(testingPreferences.getClass().getSimpleName()); //new output stream with the name of the testing preferences class
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(testingPreferences);

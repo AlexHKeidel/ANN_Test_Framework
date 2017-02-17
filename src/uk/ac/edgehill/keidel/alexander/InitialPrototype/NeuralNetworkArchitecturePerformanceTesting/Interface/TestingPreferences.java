@@ -18,6 +18,8 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
     private ArrayList<String> transferFunctionNames = new ArrayList<>();
     private ArrayList<String> learningRuleNames = new ArrayList<>();
     private float performance = 100.0f; //default is unusable!
+    private int maximumHiddenLayers = 0; //default is 0
+    private int maximumHiddenLayerSize = 0; //default is 0
 
     public TestingPreferences(){}
 
@@ -93,5 +95,21 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
 
     public void setPerformance(float performance) {
         this.performance = performance;
+    }
+
+    public int getMaximumHiddenLayers() {
+        return maximumHiddenLayers;
+    }
+
+    public void setMaximumHiddenLayers(int maximumHiddenLayers) {
+        this.maximumHiddenLayers = maximumHiddenLayers;
+    }
+
+    public int getMaximumHiddenLayerSize() {
+        return maximumHiddenLayerSize;
+    }
+
+    public void setMaximumHiddenLayerSize(int maximumHiddenLayerSize) {
+        this.maximumHiddenLayerSize = maximumHiddenLayerSize;
     }
 }

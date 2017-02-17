@@ -31,7 +31,7 @@ public class InitialPrototype implements GlobalVariablesInterface, Runnable {
         //neuralNetworkArchitectureTester.createAndTestNeuralNetworkStructures(trainingSet, testSet,"Test Set Not Yet Generated!", "Supervised Demographics Data", 4, 1, 5, generator.getAllPossibleTransferFunctions(), generator.getAllPossibleLearningRules(), DEFAULT_PERFORMANCE_REQUIERD_MINIMUM);
 
         try {
-            neuralNetworkArchitectureTester.trainAndTestNeuralNetworkStructures(trainingSet, testSet, "baseName Test", 4, 1, 2, 2, 4, testingPreferences.getTransferFunctions(), testingPreferences.getLearningRules(), DEFAULT_PERFORMANCE_REQUIERD_MINIMUM);
+            neuralNetworkArchitectureTester.trainAndTestNeuralNetworkStructures(trainingSet, testSet, "baseName Test", 4, 1, testingPreferences.getMaximumHiddenLayers(), 1, testingPreferences.getMaximumHiddenLayerSize(), testingPreferences.getTransferFunctions(), testingPreferences.getLearningRules(), testingPreferences.getPerformance());
         } catch (LearningRuleNotFoundException le){
             le.printStackTrace();
         } catch (TransferFunctionNotFoundException te){

@@ -152,7 +152,7 @@ public class MainInterface extends Application implements GUIValues {
         try {
             FileInputStream fis = new FileInputStream(testingPreferences.getClass().getSimpleName());
             ObjectInputStream ois = new ObjectInputStream(fis);
-            testingPreferences = (TestingPreferences) ois.readObject();
+            testingPreferences = (TestingPreferences) ois.readObject(); //read object from file
             prototype.testingPreferences = testingPreferences; //set testing preferences inside prototype class
         } catch (FileNotFoundException e){
             e.printStackTrace();
