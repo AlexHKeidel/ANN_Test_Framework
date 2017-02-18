@@ -38,6 +38,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
     private ArrayList<NeuralNetwork> loadedNeuralNets = new ArrayList<>();
     private NeuralNetworkSettingsListGenerator neuralNetworkSettingsListGenerator;
     public StringBuffer strDump = new StringBuffer(); //string buffer that can be read from outside this class
+    public boolean running = false;
 
     public NeuralNetworkArchitectureTester(){
     }
@@ -60,8 +61,8 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             RejectedExecutionHandler reh = new ThreadPoolExecutor.DiscardPolicy(); //rejection handler
             ThreadFactory threadFactory = Executors.defaultThreadFactory(); //default thread factory
             BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(2);
-            ThreadPoolExecutor executor = new ThreadPoolExecutor(2, 10, 10, TimeUnit.DAYS, blockingQueue, threadFactory, reh);
-
+            ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 10, 10, TimeUnit.DAYS, blockingQueue, threadFactory, reh);
+            running = true;
             //for each learning rule and transfer function
             for(LearningRule rule : desiredLearningRules){
                 for(TransferFunctionType transferFunctionType : desiredTransferFunctions){
@@ -72,16 +73,26 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
                             for(int h = 0; h < i; h++){ //add amount of hidden layers
                                 hiddenLayers.add(s);
                             }
-                            NeuralNetworkSettings network = new NeuralNetworkSettings(baseName + " #" + networkCounter, inputNeuronCount, outputNeuronCount, hiddenLayers, transferFunctionType, rule, trainingSet, testSet);
+                            NeuralNetworkSettings network = new NeuralNetworkSettings(baseName + " #" + networkCounter, inputNeuronCount, outputNeuronCount, hiddenLayers, transferFunctionType, rule, trainingSet, testSet, strDump);
                             neuralNetworkSettingsList.add(network); //add the network settings to the array list of all neural network settings
                             Thread t = new Thread(network); //assign new thread to the network
                             executor.execute(t); //add the thread to the executor
-                            System.out.println("Thread #" + i + " added to executor");
+                            //System.out.println("Thread #" + i + " added to executor");
                         }
                     }
                 }
             }
-            executor.shutdown();//shut down thread pool executor
+            while(true){
+                //System.out.println(executor.getActiveCount());
+                if(executor.getActiveCount() == 0){
+                    executor.shutdown();
+                }
+                if(executor.isShutdown() || executor.isTerminated() || executor.isTerminating()){
+                    System.out.println("strDump = " + strDump);
+                    running = false;
+                    break;
+                }
+            }
             return true; //success
         }
         catch(Exception ex){

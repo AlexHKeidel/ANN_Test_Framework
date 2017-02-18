@@ -40,7 +40,10 @@ public class MainInterface extends Application implements GUIValues {
     private Button startProcedureButton;
     private TextArea ANNInfoTextArea;
     private BarChart barChart;
-    private InitialPrototype prototype;
+    private ProgressBar progressBar;
+    private int totalTrainingThreads = 0;
+    private int currentTrainingThreads = 0;
+    private static InitialPrototype prototype;
     public static Stage primaryStage;
     private TestingPreferences testingPreferences = new TestingPreferences(); //testing preferences file
 
@@ -51,8 +54,8 @@ public class MainInterface extends Application implements GUIValues {
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
-        prototype = new InitialPrototype();
         initialiseResources(primaryStage); //init all the resources for the GUI
+        prototype = new InitialPrototype(ANNInfoTextArea);
     }
 
     private boolean initialiseResources(Stage primaryStage){
@@ -67,6 +70,9 @@ public class MainInterface extends Application implements GUIValues {
             selectTestingPreferencesButton.setOnAction(e -> startSelectTestPreferencesScreen());
             startProcedureButton = new Button("Start");
             startProcedureButton.setOnAction(event -> startProcedure());
+            //add progress bar to buttonsVBox
+            progressBar = new ProgressBar();
+            progressBar.setProgress(0);
             buttonsVBox.getChildren().addAll(selectTestingPreferencesButton, startProcedureButton);
 
 
@@ -139,13 +145,14 @@ public class MainInterface extends Application implements GUIValues {
         }
     }
 
+
+
     private void startSelectTestPreferencesScreen() {
         SelectTestPreferencesScreen s = new SelectTestPreferencesScreen(primaryStage);
     }
 
     /**
-     * Start Procedure of the button
-     * @TODO this is only for testing
+     * Start the testing procedure
      */
     private void startProcedure(){
         //load the preferences file
@@ -171,8 +178,8 @@ public class MainInterface extends Application implements GUIValues {
 //                e.printStackTrace();
 //            }
 //        }
-        ANNInfoTextArea.appendText(prototype.neuralNetworkArchitectureTester.strDump.toString()); //insert the information
-        ANNInfoTextArea.setScrollTop(Double.MAX_VALUE); //scroll down
+//        ANNInfoTextArea.appendText(prototype.neuralNetworkArchitectureTester.strDump.toString()); //insert the information
+//        ANNInfoTextArea.setScrollTop(Double.MAX_VALUE); //scroll down
        // populateBarChart();
     }
 
@@ -341,6 +348,4 @@ public class MainInterface extends Application implements GUIValues {
             return false;
         }
     }
-
-
 }

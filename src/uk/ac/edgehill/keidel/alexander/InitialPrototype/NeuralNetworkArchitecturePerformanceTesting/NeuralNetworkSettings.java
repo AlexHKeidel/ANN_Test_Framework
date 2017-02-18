@@ -28,6 +28,7 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
     private NeuralNetwork neuralNetwork;
     private TrainingSet trainingSet;
     private TrainingSet<SupervisedTrainingElement> testSet;
+    private static StringBuffer parentStrDump;
 
     public NeuralNetworkSettings(){}
 
@@ -41,7 +42,7 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         this.learningRule = learningRule;
     }
 
-    public NeuralNetworkSettings(String name, int inputNeurons, int outputNeurons, ArrayList<Integer> hiddenLayers, TransferFunctionType transferFunctionType, LearningRule learningRule, TrainingSet trainingSet, TrainingSet<SupervisedTrainingElement> testSet){
+    public NeuralNetworkSettings(String name, int inputNeurons, int outputNeurons, ArrayList<Integer> hiddenLayers, TransferFunctionType transferFunctionType, LearningRule learningRule, TrainingSet trainingSet, TrainingSet<SupervisedTrainingElement> testSet, StringBuffer parentBuffer){
         this.setName(name);
         this.setInputNeurons(inputNeurons);
         this.setOutputNeurons(outputNeurons);
@@ -50,6 +51,7 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         this.learningRule = learningRule;
         this.trainingSet = trainingSet;
         this.testSet = testSet;
+        this.parentStrDump = parentBuffer;
     }
 
     private void trainNeuralNetworkWithSettings(){
@@ -71,7 +73,25 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
             outputValues.add(neuralNetwork.getOutput()[0]); //get the output
         }
         performanceScore = calculateStandardDeviation(outputValues); //calculate the performance score of this neural network
-        System.out.println("My performance score is = " + performanceScore);
+        System.out.println(convertNeuralNetworkSettingsToReadableString());
+        parentStrDump.append(convertNeuralNetworkSettingsToReadableString() + "\n");
+    }
+
+    /**
+     * Create a human readable string from the information contained in this object. This can be printed to the console
+     * or some GUI.
+     * @param
+     * @return
+     */
+    public String convertNeuralNetworkSettingsToReadableString(){
+        String s = "";
+        s += "Neural Network Settings\n" + "Name: " + getName() + "\nPerformance Score (Standard Deviation): " + getPerformanceScore() + "\nInput Neurons: " + getInputNeurons() + "\n";
+        String tmp = "";
+        for (int i : getHiddenLayers()) {
+            tmp += "(" + i + ")";
+        }
+        s += "Hidden Layers: " + tmp + "\nOutput Neurons: " + getOutputNeurons() + "\nTransfer Function: " + getTransferFunctionType().getTypeLabel() + "\nLearning Rule: " + getLearningRule().getClass().getSimpleName() + "\n";
+        return s;
     }
 
     /**

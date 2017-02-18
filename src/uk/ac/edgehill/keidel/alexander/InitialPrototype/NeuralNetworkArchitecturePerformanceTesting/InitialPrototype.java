@@ -1,5 +1,7 @@
 package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting;
 
+import com.sun.org.apache.xml.internal.security.Init;
+import javafx.scene.control.TextArea;
 import org.neuroph.core.learning.LearningRule;
 import org.neuroph.nnet.learning.BackPropagation;
 import org.neuroph.util.TransferFunctionType;
@@ -19,6 +21,11 @@ import java.util.ArrayList;
 public class InitialPrototype implements GlobalVariablesInterface, Runnable {
     public static NeuralNetworkArchitectureTester neuralNetworkArchitectureTester = new NeuralNetworkArchitectureTester();
     public static TestingPreferences testingPreferences = new TestingPreferences();
+    private TextArea parentTextArea;
+
+    public InitialPrototype(TextArea parentTextArea){
+        this.parentTextArea = parentTextArea;
+    }
 
     private void startPrototype(){
         String workingDirectory = System.getProperty("user.dir");
@@ -32,6 +39,7 @@ public class InitialPrototype implements GlobalVariablesInterface, Runnable {
 
         try {
             neuralNetworkArchitectureTester.trainAndTestNeuralNetworkStructures(trainingSet, testSet, "baseName Test", 4, 1, testingPreferences.getMaximumHiddenLayers(), 1, testingPreferences.getMaximumHiddenLayerSize(), testingPreferences.getTransferFunctions(), testingPreferences.getLearningRules(), testingPreferences.getPerformance());
+
         } catch (LearningRuleNotFoundException le){
             le.printStackTrace();
         } catch (TransferFunctionNotFoundException te){
@@ -51,5 +59,6 @@ public class InitialPrototype implements GlobalVariablesInterface, Runnable {
     @Override
     public void run() {
         startPrototype();
+        parentTextArea.appendText(neuralNetworkArchitectureTester.strDump.toString());
     }
 }
