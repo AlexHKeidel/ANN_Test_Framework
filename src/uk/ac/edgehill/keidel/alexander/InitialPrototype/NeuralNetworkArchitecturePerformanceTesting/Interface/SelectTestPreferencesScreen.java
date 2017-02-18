@@ -16,12 +16,12 @@ import javafx.stage.StageStyle;
 import javafx.util.converter.NumberStringConverter;
 import org.neuroph.core.learning.LearningRule;
 import org.neuroph.util.TransferFunctionType;
+import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Exceptions.LearningRuleNotFoundException;
+import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Exceptions.TransferFunctionNotFoundException;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.GlobalVariablesInterface;
 
-import java.io.BufferedOutputStream;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.ObjectOutputStream;
+import java.io.*;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -36,6 +36,8 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
     private Stage myStage;
     private TabPane allPreferencesTabPane;
     private ArrayList<String> checkBoxItems = new ArrayList<>(); //array list of items that have been checked in this screen
+    private ArrayList<CheckBox> transferFunctionCheckBoxes = new ArrayList<>();
+    private ArrayList<CheckBox> learningRuleCheckBoxes = new ArrayList<>();
     private ArrayList<String> selectedTransferFunctions = new ArrayList<>();
     private ArrayList<String> selectedLearningRules = new ArrayList<>();
     private float desiredPerformance = 0; //desired performance level selected by the user
@@ -52,7 +54,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         myStage.initStyle(StageStyle.UNDECORATED); //remove minimize, maximise and close buttons from stage
         myStage.setResizable(false); //can not resize stage
         myStage.setTitle("Neural Network Testing Preferences"); //set title
-        loadPreferences(); //load preferences from file
+
 
 
         //set up Hbox for buttons
@@ -98,6 +100,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         Scene myScene = new Scene(borderPane, 600, 600);
         myStage.setScene(myScene);
         myStage.show(); //show
+        loadPreferences(); //load preferences from file
     }
 
     /**
@@ -215,6 +218,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
 
         for(TransferFunctionType t : TRANSFER_FUNCTION_TYPES){
             CheckBox c = new CheckBox(t.getTypeLabel());
+            transferFunctionCheckBoxes.add(c);
             c.setOnAction(event -> transferFunctionTicked(c.getText())); //add listener event to add or remove checked items
             vBox.getChildren().add(c);
             vBox.setMargin(c, new Insets(5));
@@ -262,6 +266,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         for(LearningRule l : LEARNING_RULES){
             String name = l.getClass().getName().substring(l.getClass().getName().lastIndexOf('.') + 1, l.getClass().getName().length()); //get the name based on the last index of '.' (last package identifier) + 1 to exclude the .
             CheckBox c = new CheckBox(name);
+            learningRuleCheckBoxes.add(c);
             c.setOnAction(event -> learningRuleTicked(c.getText())); //add listener event to add or remove checked items
             vBox.getChildren().add(c);
             vBox.setMargin(c, new Insets(5));
@@ -308,11 +313,48 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
      */
     private boolean loadPreferences() {
         try{
+            FileInputStream fis = new FileInputStream(testingPreferences.getClass().getSimpleName());
+            ObjectInputStream ios = new ObjectInputStream(fis);
+            testingPreferences = (TestingPreferences) ios.readObject();
+
+            //display the correct values inside the UI
+
+
+            for(TransferFunctionType t : testingPreferences.getTransferFunctions()){
+                //update selected transfer function to be set as ticked
+                for(int i = 0; i < transferFunctionCheckBoxes.size(); i++){
+                    if(transferFunctionCheckBoxes.get(i).getText().equals(t.getTypeLabel())){
+                        transferFunctionCheckBoxes.get(i).setSelected(true); //selected to true
+                        continue;
+                    }
+                }
+            }
+
+            for(LearningRule r : testingPreferences.getLearningRules()){
+                for(int i = 0; i < learningRuleCheckBoxes.size(); i++){
+                    if(learningRuleCheckBoxes.get(i).getText().equals(r.getClass().getSimpleName())){
+                        learningRuleCheckBoxes.get(i).setSelected(true);
+                        continue;
+                    }
+                }
+            }
 
             return true;
         }
-        catch(Exception ex){
-            ex.printStackTrace();
+        catch(FileNotFoundException fex){
+            fex.printStackTrace();
+            return false; //file not found
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        } catch (TransferFunctionNotFoundException e) {
+            e.printStackTrace();
+            return false;
+        } catch (LearningRuleNotFoundException e) {
+            e.printStackTrace();
             return false;
         }
     }
