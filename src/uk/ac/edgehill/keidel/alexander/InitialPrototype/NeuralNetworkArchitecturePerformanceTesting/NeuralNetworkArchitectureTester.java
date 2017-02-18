@@ -64,7 +64,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             RejectedExecutionHandler reh = new ThreadPoolExecutor.DiscardPolicy(); //rejection handler
             ThreadFactory threadFactory = Executors.defaultThreadFactory(); //default thread factory
             BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(2);
-            ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 100000, 10, TimeUnit.DAYS, blockingQueue, threadFactory, reh);
+            ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 1000, 10, TimeUnit.DAYS, blockingQueue, threadFactory, reh);
             //for each learning rule and transfer function
             for(LearningRule rule : desiredLearningRules){
                 for(TransferFunctionType transferFunctionType : desiredTransferFunctions){
@@ -396,5 +396,9 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
 
     public NeuralNetworkSettings getCurrentNetworkSettings() {
         return currentNetworkSettings;
+    }
+
+    public ArrayList<NeuralNetworkSettings> getNeuralNetworkSettingsList() {
+        return neuralNetworkSettingsList;
     }
 }

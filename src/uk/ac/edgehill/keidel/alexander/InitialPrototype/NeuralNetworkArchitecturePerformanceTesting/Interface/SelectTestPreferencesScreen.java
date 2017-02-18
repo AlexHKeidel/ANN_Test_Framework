@@ -38,6 +38,9 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
     private ArrayList<String> checkBoxItems = new ArrayList<>(); //array list of items that have been checked in this screen
     private ArrayList<CheckBox> transferFunctionCheckBoxes = new ArrayList<>();
     private ArrayList<CheckBox> learningRuleCheckBoxes = new ArrayList<>();
+    private TextField desiredPerformanceTextField = new TextField();
+    private TextField desiredMaxHidLayersTextField = new TextField();
+    private TextField desiredMaxHidLayerSizeTextField = new TextField();
     private ArrayList<String> selectedTransferFunctions = new ArrayList<>();
     private ArrayList<String> selectedLearningRules = new ArrayList<>();
     private float desiredPerformance = 0; //desired performance level selected by the user
@@ -119,6 +122,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         TextFormatter<Number> formatter1 = new TextFormatter(n1); //assign converter
         performanceNumberField.setTextFormatter(formatter1); //assign formatter
         formatter1.valueProperty().addListener((observable, oldValue, newValue) -> validatePerformanceValue(observable, oldValue, newValue, formatter1));
+        desiredPerformanceTextField = performanceNumberField;
         performanceHbox.getChildren().addAll(performanceText, performanceNumberField); //add items to hbox
 
         //see above for comments (same structure) @TODO really this means that this should be separate methods
@@ -129,6 +133,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         TextFormatter<Number> formatter2 = new TextFormatter<Number>(n2);
         maxHidLayTextField.setTextFormatter(formatter2);
         formatter2.valueProperty().addListener((observable, oldValue, newValue) -> validateMaxHiddenLayersValue(observable, oldValue, newValue, formatter2));
+        desiredMaxHidLayersTextField = maxHidLayTextField;
         maximumHiddenLayersHBox.getChildren().addAll(maxHidLayText, maxHidLayTextField);
 
         //see above for comments (same structure)
@@ -139,6 +144,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         TextFormatter<Number> formatter3 = new TextFormatter<Number>(n3);
         maxHidLaySizeTextField.setTextFormatter(formatter3);
         formatter3.valueProperty().addListener((observable, oldValue, newValue) -> validateMaxHiddenLayerSizeValue(observable, oldValue, newValue, formatter3));
+        desiredMaxHidLayerSizeTextField = maxHidLaySizeTextField;
         maximumHiddenLayerSizeHBox.getChildren().addAll(maxHidLaySizeText, maxHidLaySizeTextField);
 
         vBox.getChildren().addAll(networkTestOptionsText, performanceHbox, maximumHiddenLayersHBox, maximumHiddenLayerSizeHBox); //add items to vbox
@@ -316,9 +322,14 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             FileInputStream fis = new FileInputStream(testingPreferences.getClass().getSimpleName());
             ObjectInputStream ios = new ObjectInputStream(fis);
             testingPreferences = (TestingPreferences) ios.readObject();
+            selectedLearningRules = testingPreferences.getLearningRuleNames();
+            selectedTransferFunctions = testingPreferences.getTransferFunctionNames();
 
             //display the correct values inside the UI
 
+            desiredPerformanceTextField.setText(String.valueOf(testingPreferences.getPerformance()));
+            desiredMaxHidLayersTextField.setText(String.valueOf(testingPreferences.getMaximumHiddenLayers()));
+            desiredMaxHidLayerSizeTextField.setText(String.valueOf(testingPreferences.getMaximumHiddenLayerSize()));
 
             for(TransferFunctionType t : testingPreferences.getTransferFunctions()){
                 //update selected transfer function to be set as ticked

@@ -35,6 +35,8 @@ import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitectur
 
 import java.io.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class MainInterface extends Application implements GUIValues {
     private Button startProcedureButton;
@@ -145,6 +147,21 @@ public class MainInterface extends Application implements GUIValues {
         }
     }
 
+    private void orderAllNetworkSettingsByPerformance(){
+        ArrayList<NeuralNetworkSettings> allArchitectures = prototype.neuralNetworkArchitectureTester.getNetworkSettingsList();
+        allArchitectures.sort((o1, o2) -> (comparePerformances(o1, o2)));
+        for(NeuralNetworkSettings n : allArchitectures){
+            System.out.println("n performance = " + n.getPerformanceScore());
+        }
+    }
+
+    private int comparePerformances(NeuralNetworkSettings o1, NeuralNetworkSettings o2) {
+        if(o1.getPerformanceScore() > o2.getPerformanceScore()){
+            return 0;
+        } else {
+            return 1;
+        }
+    }
 
 
     private void startSelectTestPreferencesScreen() {
@@ -207,6 +224,25 @@ public class MainInterface extends Application implements GUIValues {
         ((NumberAxis) barChart.getYAxis()).setLowerBound(((1  - worstStandardDeviation) * 99.99)); //set lower bound for the chart
     }
 
+    private void populateTopFiveBarChart() {
+        //orderAllNetworkSettingsByPerformance(); //sort the structures by performance
+        barChart.getData().clear(); //clear the bar chart in case it is populated
+        System.out.println("prototype = " + prototype.neuralNetworkArchitectureTester.getNeuralNetworkSettingsList());
+        for(int i = 0; i < 4; i++){
+            NeuralNetworkSettings tmp = prototype.neuralNetworkArchitectureTester.getNeuralNetworkSettingsList().get(i);
+            XYChart.Series s = new XYChart.Series<String, Double>();
+            s.setName(tmp.getLearningRule().getClass().getSimpleName() + " " + tmp.getTransferFunctionType().getTypeLabel());
+            String structure = "" + tmp.getInputNeurons(); //generate structure
+            for(int h : tmp.getHiddenLayers()){
+                structure += " (" + h + ") ";
+            }
+            structure += tmp.getOutputNeurons();
+            double score = (1 - tmp.getPerformanceScore()) * 100; //calculate performance
+            s.getData().add(new XYChart.Data<>(structure, score));
+            barChart.getData().add(s);
+        }
+    }
+
     /**
      * Set up the menu bar for the interface
      * See http://docs.oracle.com/javafx/2/ui_controls/menu_controls.htm
@@ -220,6 +256,7 @@ public class MainInterface extends Application implements GUIValues {
         fileLoadProject.setOnAction(e -> openFileSelectorToLoadProjectFile(primaryStage));
         final MenuItem fileSaveProject = new MenuItem(FILE_MENU_SAVE_PROJECT);
         final MenuItem fileGenerateChart = new MenuItem(FILE_MENU_GENERATE_CHART);
+        fileGenerateChart.setOnAction(e -> populateTopFiveBarChart());
         fileMenu.getItems().addAll(fileLoadProject, fileSaveProject, fileGenerateChart); //register sub menu items
 
 
@@ -255,6 +292,7 @@ public class MainInterface extends Application implements GUIValues {
 
         return menuBar;
     }
+
 
     /**
      * Display the about screen
