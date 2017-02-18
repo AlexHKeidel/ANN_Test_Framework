@@ -55,7 +55,7 @@ public class MainInterface extends Application implements GUIValues {
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         initialiseResources(primaryStage); //init all the resources for the GUI
-        prototype = new InitialPrototype(ANNInfoTextArea);
+        prototype = new InitialPrototype(ANNInfoTextArea, progressBar);
     }
 
     private boolean initialiseResources(Stage primaryStage){
@@ -73,7 +73,7 @@ public class MainInterface extends Application implements GUIValues {
             //add progress bar to buttonsVBox
             progressBar = new ProgressBar();
             progressBar.setProgress(0);
-            buttonsVBox.getChildren().addAll(selectTestingPreferencesButton, startProcedureButton);
+            buttonsVBox.getChildren().addAll(progressBar, selectTestingPreferencesButton, startProcedureButton);
 
 
             ANNInfoTextArea = new TextArea();

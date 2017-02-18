@@ -5,6 +5,7 @@ import com.sun.corba.se.impl.orbutil.threadpool.WorkQueueImpl;
 import com.sun.corba.se.spi.orbutil.threadpool.ThreadPool;
 import com.sun.corba.se.spi.orbutil.threadpool.Work;
 import com.sun.corba.se.spi.orbutil.threadpool.WorkQueue;
+import javafx.scene.control.ProgressBar;
 import org.neuroph.core.NeuralNetwork;
 import org.neuroph.core.learning.LearningRule;
 import org.neuroph.core.learning.SupervisedTrainingElement;
@@ -38,12 +39,14 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
     private ArrayList<NeuralNetwork> loadedNeuralNets = new ArrayList<>();
     private NeuralNetworkSettingsListGenerator neuralNetworkSettingsListGenerator;
     public StringBuffer strDump = new StringBuffer(); //string buffer that can be read from outside this class
-    public boolean running = false;
+    public static float progressPercentage = 0.0f;
+    private int totalThreadCount = 0;
+    private int completedThreadCount = 0;
 
     public NeuralNetworkArchitectureTester(){
     }
 
-    public boolean trainAndTestNeuralNetworkStructures(File trainingSetFile, File testSetFile, String baseName, int inputNeuronCount, int outputNeuronCount, int maximumHiddenLayerCount, int minimumHiddenLayerNeurons, int maximumHiddenLayerNeurons, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit){
+    public boolean trainAndTestNeuralNetworkStructures(File trainingSetFile, File testSetFile, String baseName, int inputNeuronCount, int outputNeuronCount, int maximumHiddenLayerCount, int minimumHiddenLayerNeurons, int maximumHiddenLayerNeurons, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit, ProgressBar progressBar){
         try{
             //create test set and training set
             TrainingSet trainingSet = TrainingSet.createFromFile(trainingSetFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
@@ -61,8 +64,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             RejectedExecutionHandler reh = new ThreadPoolExecutor.DiscardPolicy(); //rejection handler
             ThreadFactory threadFactory = Executors.defaultThreadFactory(); //default thread factory
             BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(2);
-            ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 10, 10, TimeUnit.DAYS, blockingQueue, threadFactory, reh);
-            running = true;
+            ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 100000, 10, TimeUnit.DAYS, blockingQueue, threadFactory, reh);
             //for each learning rule and transfer function
             for(LearningRule rule : desiredLearningRules){
                 for(TransferFunctionType transferFunctionType : desiredTransferFunctions){
@@ -77,6 +79,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
                             neuralNetworkSettingsList.add(network); //add the network settings to the array list of all neural network settings
                             Thread t = new Thread(network); //assign new thread to the network
                             executor.execute(t); //add the thread to the executor
+                            totalThreadCount++; //increment total thread counter
                             //System.out.println("Thread #" + i + " added to executor");
                         }
                     }
@@ -84,13 +87,11 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             }
             while(true){
                 //System.out.println(executor.getActiveCount());
-                if(executor.getActiveCount() == 0){
-                    executor.shutdown();
-                }
-                if(executor.isShutdown() || executor.isTerminated() || executor.isTerminating()){
-                    System.out.println("strDump = " + strDump);
-                    running = false;
-                    break;
+                if(completedThreadCount == totalThreadCount) break; //break loop
+                if(completedThreadCount != (int) executor.getCompletedTaskCount()){
+                    completedThreadCount = (int) executor.getCompletedTaskCount();
+                    System.out.println("completed " + completedThreadCount + "/" + totalThreadCount);
+                    progressBar.setProgress(totalThreadCount / completedThreadCount); //update progress bar
                 }
             }
             return true; //success

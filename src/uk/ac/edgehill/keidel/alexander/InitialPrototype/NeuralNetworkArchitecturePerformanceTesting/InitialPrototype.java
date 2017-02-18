@@ -1,6 +1,7 @@
 package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting;
 
 import com.sun.org.apache.xml.internal.security.Init;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
 import org.neuroph.core.learning.LearningRule;
 import org.neuroph.nnet.learning.BackPropagation;
@@ -22,9 +23,11 @@ public class InitialPrototype implements GlobalVariablesInterface, Runnable {
     public static NeuralNetworkArchitectureTester neuralNetworkArchitectureTester = new NeuralNetworkArchitectureTester();
     public static TestingPreferences testingPreferences = new TestingPreferences();
     private TextArea parentTextArea;
+    private ProgressBar parentProgressBar;
 
-    public InitialPrototype(TextArea parentTextArea){
+    public InitialPrototype(TextArea parentTextArea, ProgressBar progressBar){
         this.parentTextArea = parentTextArea;
+        this.parentProgressBar = progressBar;
     }
 
     private void startPrototype(){
@@ -38,7 +41,7 @@ public class InitialPrototype implements GlobalVariablesInterface, Runnable {
         //neuralNetworkArchitectureTester.createAndTestNeuralNetworkStructures(trainingSet, testSet,"Test Set Not Yet Generated!", "Supervised Demographics Data", 4, 1, 5, generator.getAllPossibleTransferFunctions(), generator.getAllPossibleLearningRules(), DEFAULT_PERFORMANCE_REQUIERD_MINIMUM);
 
         try {
-            neuralNetworkArchitectureTester.trainAndTestNeuralNetworkStructures(trainingSet, testSet, "baseName Test", 4, 1, testingPreferences.getMaximumHiddenLayers(), 1, testingPreferences.getMaximumHiddenLayerSize(), testingPreferences.getTransferFunctions(), testingPreferences.getLearningRules(), testingPreferences.getPerformance());
+            neuralNetworkArchitectureTester.trainAndTestNeuralNetworkStructures(trainingSet, testSet, "baseName Test", 4, 1, testingPreferences.getMaximumHiddenLayers(), 1, testingPreferences.getMaximumHiddenLayerSize(), testingPreferences.getTransferFunctions(), testingPreferences.getLearningRules(), testingPreferences.getPerformance(), parentProgressBar);
 
         } catch (LearningRuleNotFoundException le){
             le.printStackTrace();
