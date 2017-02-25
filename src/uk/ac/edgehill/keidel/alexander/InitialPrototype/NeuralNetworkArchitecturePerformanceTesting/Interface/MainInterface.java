@@ -147,6 +147,9 @@ public class MainInterface extends Application implements GUIValues {
         }
     }
 
+    private void addTextToBarChartBars() {
+    }
+
     private void orderAllNetworkSettingsByPerformance(){
         ArrayList<NeuralNetworkSettings> allArchitectures = prototype.neuralNetworkArchitectureTester.getNetworkSettingsList();
         allArchitectures.sort((o1, o2) -> (comparePerformances(o1, o2)));

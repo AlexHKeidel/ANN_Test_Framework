@@ -36,12 +36,20 @@ public class InitialPrototype implements GlobalVariablesInterface, Runnable {
         System.out.println("Working Directory = " + workingDirectory);
 
         NeuralNetworkSettingsListGenerator generator = new NeuralNetworkSettingsListGenerator(); //careful using this! possible null pointers, only for debugging!
-        File trainingSet = new File(System.getProperty("user.dir") + "/Data Sets/Bi3 Data Sets/Demographics Training Set");
-        File testSet = new File(System.getProperty("user.dir") + "/Data Sets/Bi3 Data Sets/Demographics Test Set");
+//        File trainingSet = new File(System.getProperty("user.dir") + "/Data Sets/Bi3 Data Sets/Demographics Training Set");
+//        File testSet = new File(System.getProperty("user.dir") + "/Data Sets/Bi3 Data Sets/Demographics Test Set");
+        File trainingSet = testingPreferences.getTrainingDataFile();
+        File testSet = testingPreferences.getTestDataFile();
+        int inputNeuronCount = testingPreferences.getInputLayers();
+        int outputNeuronCount = testingPreferences.getOutputLayers();
+        int maxHiddenLayerCount = testingPreferences.getMaximumHiddenLayers();
+        int maxHiddenLayerSize = testingPreferences.getMaximumHiddenLayerSize();
+        int minHiddenLayerSize = 0;
+        String baseName = testingPreferences.getTestName();
         //neuralNetworkArchitectureTester.createAndTestNeuralNetworkStructures(trainingSet, testSet,"Test Set Not Yet Generated!", "Supervised Demographics Data", 4, 1, 5, generator.getAllPossibleTransferFunctions(), generator.getAllPossibleLearningRules(), DEFAULT_PERFORMANCE_REQUIERD_MINIMUM);
 
         try {
-            neuralNetworkArchitectureTester.trainAndTestNeuralNetworkStructures(trainingSet, testSet, "baseName Test", 4, 1, testingPreferences.getMaximumHiddenLayers(), 1, testingPreferences.getMaximumHiddenLayerSize(), testingPreferences.getTransferFunctions(), testingPreferences.getLearningRules(), testingPreferences.getPerformance(), parentProgressBar);
+            neuralNetworkArchitectureTester.trainAndTestNeuralNetworkStructures(trainingSet, testSet, baseName, inputNeuronCount, outputNeuronCount, maxHiddenLayerCount, minHiddenLayerSize, maxHiddenLayerSize, testingPreferences.getTransferFunctions(), testingPreferences.getLearningRules(), testingPreferences.getPerformance(), parentProgressBar);
 
         } catch (LearningRuleNotFoundException le){
             le.printStackTrace();
