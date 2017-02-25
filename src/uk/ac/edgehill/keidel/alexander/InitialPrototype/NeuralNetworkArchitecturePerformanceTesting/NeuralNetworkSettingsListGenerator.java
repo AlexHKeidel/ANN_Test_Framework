@@ -36,6 +36,7 @@ public class NeuralNetworkSettingsListGenerator extends NeuralNetworkSettings{
 
     private void populateAllPossibleLearningRulesAndTransferFunctionsIntoArraryLists(){
         //START adding all possible learning rules supported by neuroph 2.92 to the ArrayList
+        allPossibleLearningRules.clear();
         allPossibleLearningRules.add(new BackPropagation());
         allPossibleLearningRules.add(new DynamicBackPropagation());
         allPossibleLearningRules.add(new AntiHebbianLearning());
@@ -62,6 +63,7 @@ public class NeuralNetworkSettingsListGenerator extends NeuralNetworkSettings{
         //END
 
         //START adding all possible transfer functions supported by neuroph 2.92 to the ArrayList
+        allPossibleTransferFunctions.clear();
         allPossibleTransferFunctions.add(TransferFunctionType.GAUSSIAN);
         allPossibleTransferFunctions.add(TransferFunctionType.LINEAR);
         allPossibleTransferFunctions.add(TransferFunctionType.LOG);

@@ -397,6 +397,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         ScrollPane scrollPane = new ScrollPane();
         VBox vBox = new VBox();
         for(LearningRule l : LEARNING_RULES){
+            System.out.println(l);
             String name = l.getClass().getName().substring(l.getClass().getName().lastIndexOf('.') + 1, l.getClass().getName().length()); //get the name based on the last index of '.' (last package identifier) + 1 to exclude the .
             CheckBox c = new CheckBox(name);
             learningRuleCheckBoxes.add(c);
