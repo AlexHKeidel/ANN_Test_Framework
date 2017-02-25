@@ -13,6 +13,7 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.converter.NumberStringConverter;
+import org.encog.util.file.Directory;
 import org.neuroph.core.learning.LearningRule;
 import org.neuroph.util.TransferFunctionType;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Exceptions.LearningRuleNotFoundException;
@@ -138,7 +139,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         NumberStringConverter inputConverter = new NumberStringConverter();
         TextFormatter<Number> inputLayerFormatter = new TextFormatter<>(inputConverter);
         inputLayerTextField.setTextFormatter(inputLayerFormatter);
-        inputLayerFormatter.valueProperty().addListener((observable, oldValue, newValue) -> validateMaxHiddenLayersValue(observable, oldValue, newValue, inputLayerFormatter));
+        inputLayerFormatter.valueProperty().addListener((observable, oldValue, newValue) -> validateInputLayers(observable, oldValue, newValue, inputLayerFormatter));
         desiredInputLayerSizeTextField = inputLayerTextField;
         inputLayerHBox.getChildren().addAll(inputLayerText, inputLayerTextField);
 
@@ -149,7 +150,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         NumberStringConverter outputConverter = new NumberStringConverter();
         TextFormatter<Number> outputLayerFormatter = new TextFormatter<>(outputConverter);
         outputLayerTextField.setTextFormatter(outputLayerFormatter);
-        outputLayerFormatter.valueProperty().addListener((observable, oldValue, newValue) -> validateMaxHiddenLayersValue(observable, oldValue, newValue, outputLayerFormatter));
+        outputLayerFormatter.valueProperty().addListener((observable, oldValue, newValue) -> validateOutputLayers(observable, oldValue, newValue, outputLayerFormatter));
         desiredOutputLayerSizeTextField = outputLayerTextField;
         outputLayerHBox.getChildren().addAll(outputLayerText, outputLayerTextField);
 
@@ -208,10 +209,11 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         testSetHBox.getChildren().addAll(testSetPrefix, testSetCurrentFileName, selectTestSetButton);
 
 
-        vBox.getChildren().addAll(networkTestOptionsText, testNameHBox, inputLayerHBox, maximumHiddenLayersHBox, maximumHiddenLayerSizeHBox, performanceHBox, trainingSetHBox, testSetHBox); //add items to vbox
+        vBox.getChildren().addAll(networkTestOptionsText, testNameHBox, inputLayerHBox, outputLayerHBox, maximumHiddenLayersHBox, maximumHiddenLayerSizeHBox, performanceHBox, trainingSetHBox, testSetHBox); //add items to vbox
         scrollPane.setContent(vBox); //add vbox to scrollpane
         return scrollPane;
     }
+
 
     /**
      * Open file chooser to select a training set file
@@ -220,6 +222,8 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         try{
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle(NEURAL_NETWORK_MENU_SELECT_TRAINING_SET);
+            fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("comma delimited csv files only", ".csv"));
+            fileChooser.setInitialDirectory(trainingSetFile);
             trainingSetFile = fileChooser.showOpenDialog(this);
             currentFileName.setText(trainingSetFile.getName());
 
@@ -235,6 +239,8 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         try{
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle(NEURAL_NETWORK_MENU_SELECT_TRAINING_SET);
+            fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("comma delimited csv files only", ".csv"));
+            fileChooser.setInitialDirectory(testSetFile);
             testSetFile = fileChooser.showOpenDialog(this);
             currentFileName.setText(testSetFile.getName());
 
@@ -279,6 +285,36 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         }
         //validated
         maximumHiddenLayers = newValue.intValue(); //assign value
+    }
+
+    private void validateInputLayers(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter parentFormatter){
+        try{
+            if(newValue == null || newValue.longValue() < 0){
+                if(oldValue == null){
+                    parentFormatter.setValue(1);
+                } else if(newValue.longValue() % 1 != 0){ //the number is not an integer
+                    parentFormatter.setValue(oldValue);
+                }
+            }
+            inputLayers = newValue.intValue();
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    private void validateOutputLayers(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter<Number> parentFormatter) {
+        try{
+            if(newValue == null || newValue.longValue() < 0){
+                if(oldValue == null){
+                    parentFormatter.setValue(1);
+                } else if(newValue.longValue() % 1 != 0){ //the number is not an integer
+                    parentFormatter.setValue(oldValue);
+                }
+            }
+            outputLayers = newValue.intValue();
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     /**
