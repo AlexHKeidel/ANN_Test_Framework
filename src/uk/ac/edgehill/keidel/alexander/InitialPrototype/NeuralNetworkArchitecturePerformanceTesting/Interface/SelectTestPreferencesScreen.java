@@ -1,8 +1,6 @@
 package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Interface;
 
-import com.sun.org.apache.xpath.internal.SourceTree;
 import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -10,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -21,7 +20,6 @@ import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitectur
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.GlobalVariablesInterface;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 /**
@@ -38,16 +36,27 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
     private ArrayList<String> checkBoxItems = new ArrayList<>(); //array list of items that have been checked in this screen
     private ArrayList<CheckBox> transferFunctionCheckBoxes = new ArrayList<>();
     private ArrayList<CheckBox> learningRuleCheckBoxes = new ArrayList<>();
+    private TextField desiredTestName = new TextField();
     private TextField desiredPerformanceTextField = new TextField();
     private TextField desiredMaxHidLayersTextField = new TextField();
     private TextField desiredMaxHidLayerSizeTextField = new TextField();
+    private TextField desiredInputLayerSizeTextField = new TextField();
+    private TextField desiredOutputLayerSizeTextField = new TextField();
+    private Text desiredTrainingSetText = new Text();
+    private Text desiredTestSetText = new Text();
+
     private ArrayList<String> selectedTransferFunctions = new ArrayList<>();
     private ArrayList<String> selectedLearningRules = new ArrayList<>();
     private float desiredPerformance = 0; //desired performance level selected by the user
     private final String PREFERENCES_PREFIX = "pref_";
     private TestingPreferences testingPreferences = new TestingPreferences(); //testing preference object
+    private String testPreferencesName = "Default";
+    private int inputLayers = 0;
+    private int outputLayers = 0;
     private int maximumHiddenLayers = 0;
     private int maximumHiddenLayerSize = 0;
+    private File trainingSetFile;
+    private File testSetFile;
 
     public SelectTestPreferencesScreen(Stage parentStage){
         myStage = new Stage(); //new stage
@@ -115,7 +124,37 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         VBox vBox = new VBox(); //vertical box to contain the test boundary fields
         Text networkTestOptionsText = new Text(PREFERENCES_SCREEN_BOUNDARIES_NETWORK_TESTING_TITLE);
 
-        HBox performanceHbox = new HBox(); //Hbox to contain the performance instructions plus field
+        //test preference name HBox
+        HBox testNameHBox = new HBox();
+        Text testNameText = new Text(PREFERENCES_SCREEN_BOUNDARIES_TEST_NAME);
+        TextField textNameTextField = new TextField();
+        desiredTestName = textNameTextField;
+        testNameHBox.getChildren().addAll(testNameText, textNameTextField);
+
+        //input neurons HBox
+        HBox inputLayerHBox = new HBox();
+        Text inputLayerText = new Text(PREFERENCES_SCREEN_BOUNDARIES_INPUT_LAYER_SIZE);
+        TextField inputLayerTextField = new TextField();
+        NumberStringConverter inputConverter = new NumberStringConverter();
+        TextFormatter<Number> inputLayerFormatter = new TextFormatter<>(inputConverter);
+        inputLayerTextField.setTextFormatter(inputLayerFormatter);
+        inputLayerFormatter.valueProperty().addListener((observable, oldValue, newValue) -> validateMaxHiddenLayersValue(observable, oldValue, newValue, inputLayerFormatter));
+        desiredInputLayerSizeTextField = inputLayerTextField;
+        inputLayerHBox.getChildren().addAll(inputLayerText, inputLayerTextField);
+
+        //output neurons HBox
+        HBox outputLayerHBox = new HBox();
+        Text outputLayerText = new Text(PREFERENCES_SCREEN_BOUNDARIES_OUTPUT_LAYER_SIZE);
+        TextField outputLayerTextField = new TextField();
+        NumberStringConverter outputConverter = new NumberStringConverter();
+        TextFormatter<Number> outputLayerFormatter = new TextFormatter<>(outputConverter);
+        outputLayerTextField.setTextFormatter(outputLayerFormatter);
+        outputLayerFormatter.valueProperty().addListener((observable, oldValue, newValue) -> validateMaxHiddenLayersValue(observable, oldValue, newValue, outputLayerFormatter));
+        desiredOutputLayerSizeTextField = outputLayerTextField;
+        outputLayerHBox.getChildren().addAll(outputLayerText, outputLayerTextField);
+
+        //performance HBox
+        HBox performanceHBox = new HBox(); //HBox to contain the performance instructions plus field
         Text performanceText = new Text(PREFERENCES_SCREEN_BOUNDARIES_NETWORK_TESTING_PERFORMANCE_SCORE);
         TextField performanceNumberField = new TextField(); //performance setter text field for only numbers
         NumberStringConverter n1 = new NumberStringConverter(); //number to string converter
@@ -123,7 +162,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         performanceNumberField.setTextFormatter(formatter1); //assign formatter
         formatter1.valueProperty().addListener((observable, oldValue, newValue) -> validatePerformanceValue(observable, oldValue, newValue, formatter1));
         desiredPerformanceTextField = performanceNumberField;
-        performanceHbox.getChildren().addAll(performanceText, performanceNumberField); //add items to hbox
+        performanceHBox.getChildren().addAll(performanceText, performanceNumberField); //add items to hbox
 
         //see above for comments (same structure) @TODO really this means that this should be separate methods
         HBox maximumHiddenLayersHBox = new HBox();
@@ -137,6 +176,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         maximumHiddenLayersHBox.getChildren().addAll(maxHidLayText, maxHidLayTextField);
 
         //see above for comments (same structure)
+        //maximum hidden layers
         HBox maximumHiddenLayerSizeHBox = new HBox();
         Text maxHidLaySizeText = new Text(PREFERENCES_SCREEN_BOUNDARIES_MAXIMUM_HIDDEN_LAYER_SIZE_TEXT);
         TextField maxHidLaySizeTextField = new TextField();
@@ -147,9 +187,60 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         desiredMaxHidLayerSizeTextField = maxHidLaySizeTextField;
         maximumHiddenLayerSizeHBox.getChildren().addAll(maxHidLaySizeText, maxHidLaySizeTextField);
 
-        vBox.getChildren().addAll(networkTestOptionsText, performanceHbox, maximumHiddenLayersHBox, maximumHiddenLayerSizeHBox); //add items to vbox
+        //training set HBox
+        HBox trainingSetHBox = new HBox();
+        Text trainingSetPrefix = new Text(PREFERENCES_SCREEN_BOUNDARIES_TRAINING_SET_FILE_NAME);
+        Text trainingSetCurrentFileName = new Text("no file selected");
+        Button selectTrainingSetButton = new Button();
+        selectTrainingSetButton.setText(PREFERENCES_SCREEN_BOUNDARIES_SELECT_BUTTON);
+        selectTrainingSetButton.setOnAction(event -> selectTrainingSetAction(trainingSetCurrentFileName));
+        desiredTrainingSetText = trainingSetCurrentFileName;
+        trainingSetHBox.getChildren().addAll(trainingSetPrefix, trainingSetCurrentFileName, selectTrainingSetButton);
+
+        //test set HBox
+        HBox testSetHBox = new HBox();
+        Text testSetPrefix = new Text(PREFERENCES_SCREEN_BOUNDARIES_TEST_SET_FILE_NAME);
+        Text testSetCurrentFileName = new Text("no file selected");
+        Button selectTestSetButton = new Button();
+        selectTestSetButton.setText(PREFERENCES_SCREEN_BOUNDARIES_SELECT_BUTTON);
+        selectTestSetButton.setOnAction(event -> selectTestSetAction(testSetCurrentFileName));
+        desiredTestSetText = testSetCurrentFileName;
+        testSetHBox.getChildren().addAll(testSetPrefix, testSetCurrentFileName, selectTestSetButton);
+
+
+        vBox.getChildren().addAll(networkTestOptionsText, testNameHBox, inputLayerHBox, maximumHiddenLayersHBox, maximumHiddenLayerSizeHBox, performanceHBox, trainingSetHBox, testSetHBox); //add items to vbox
         scrollPane.setContent(vBox); //add vbox to scrollpane
         return scrollPane;
+    }
+
+    /**
+     * Open file chooser to select a training set file
+     */
+    private void selectTrainingSetAction(Text currentFileName) {
+        try{
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle(NEURAL_NETWORK_MENU_SELECT_TRAINING_SET);
+            trainingSetFile = fileChooser.showOpenDialog(this);
+            currentFileName.setText(trainingSetFile.getName());
+
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
+    }
+
+    /**
+     * Open file chooser to select a test set file
+     */
+    private void selectTestSetAction(Text currentFileName) {
+        try{
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle(NEURAL_NETWORK_MENU_SELECT_TRAINING_SET);
+            testSetFile = fileChooser.showOpenDialog(this);
+            currentFileName.setText(testSetFile.getName());
+
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -297,6 +388,11 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             testingPreferences.setPerformance(desiredPerformance);
             testingPreferences.setMaximumHiddenLayers(maximumHiddenLayers);
             testingPreferences.setMaximumHiddenLayerSize(maximumHiddenLayerSize);
+            testingPreferences.setTestName(testPreferencesName);
+            testingPreferences.setInputLayers(inputLayers);
+            testingPreferences.setOutputLayers(outputLayers);
+            testingPreferences.setTrainingDataFile(trainingSetFile);
+            testingPreferences.setTestDataFile(testSetFile);
             FileOutputStream fos = new FileOutputStream(testingPreferences.getClass().getSimpleName()); //new output stream with the name of the testing preferences class
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(testingPreferences);
@@ -322,14 +418,24 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             FileInputStream fis = new FileInputStream(testingPreferences.getClass().getSimpleName());
             ObjectInputStream ios = new ObjectInputStream(fis);
             testingPreferences = (TestingPreferences) ios.readObject();
+            inputLayers = testingPreferences.getInputLayers();
+            outputLayers = testingPreferences.getOutputLayers();
+            testPreferencesName = testingPreferences.getTestName();
             selectedLearningRules = testingPreferences.getLearningRuleNames();
             selectedTransferFunctions = testingPreferences.getTransferFunctionNames();
+            trainingSetFile = testingPreferences.getTrainingDataFile();
+            testSetFile = testingPreferences.getTrainingDataFile();
 
             //display the correct values inside the UI
 
+            desiredTestName.setText(String.valueOf(testingPreferences.getTestName()));
             desiredPerformanceTextField.setText(String.valueOf(testingPreferences.getPerformance()));
             desiredMaxHidLayersTextField.setText(String.valueOf(testingPreferences.getMaximumHiddenLayers()));
             desiredMaxHidLayerSizeTextField.setText(String.valueOf(testingPreferences.getMaximumHiddenLayerSize()));
+            desiredInputLayerSizeTextField.setText(String.valueOf(testingPreferences.getInputLayers()));
+            desiredOutputLayerSizeTextField.setText(String.valueOf(testingPreferences.getOutputLayers()));
+            desiredTrainingSetText.setText(String.valueOf(testingPreferences.getTrainingDataFile().getName()));
+            desiredTestSetText.setText(String.valueOf(testingPreferences.getTestDataFile().getName()));
 
             for(TransferFunctionType t : testingPreferences.getTransferFunctions()){
                 //update selected transfer function to be set as ticked

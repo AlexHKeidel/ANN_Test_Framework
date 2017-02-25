@@ -6,6 +6,7 @@ import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitectur
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Exceptions.TransferFunctionNotFoundException;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.GlobalVariablesInterface;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
@@ -18,8 +19,13 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
     private ArrayList<String> transferFunctionNames = new ArrayList<>();
     private ArrayList<String> learningRuleNames = new ArrayList<>();
     private float performance = 100.0f; //default is unusable!
+    private String testName = "Default";
+    private int inputLayers = 0;
+    private int outputLayers = 0;
     private int maximumHiddenLayers = 0; //default is 0
     private int maximumHiddenLayerSize = 0; //default is 0
+    private File trainingDataFile;
+    private File testDataFile;
 
     public TestingPreferences(){}
 
@@ -111,5 +117,45 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
 
     public void setMaximumHiddenLayerSize(int maximumHiddenLayerSize) {
         this.maximumHiddenLayerSize = maximumHiddenLayerSize;
+    }
+
+    public File getTrainingDataFile() {
+        return trainingDataFile;
+    }
+
+    public void setTrainingDataFile(File trainingDataFile) {
+        this.trainingDataFile = trainingDataFile;
+    }
+
+    public File getTestDataFile() {
+        return testDataFile;
+    }
+
+    public void setTestDataFile(File testDataFile) {
+        this.testDataFile = testDataFile;
+    }
+
+    public int getInputLayers() {
+        return inputLayers;
+    }
+
+    public void setInputLayers(int inputLayers) {
+        this.inputLayers = inputLayers;
+    }
+
+    public int getOutputLayers() {
+        return outputLayers;
+    }
+
+    public void setOutputLayers(int outputLayers) {
+        this.outputLayers = outputLayers;
+    }
+
+    public String getTestName() {
+        return testName;
+    }
+
+    public void setTestName(String testName) {
+        this.testName = testName;
     }
 }
