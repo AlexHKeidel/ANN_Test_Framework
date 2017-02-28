@@ -68,14 +68,22 @@ public class MainInterface extends Application implements GUIValues {
             MenuBar menuBar = setupMenuBar(primaryStage);
 
             VBox buttonsVBox = new VBox();
-            Button selectTestingPreferencesButton = new Button("Setup");
+            Button selectTestingPreferencesButton = new Button(SETUP_BUTTON_TEXT);
+            selectTestingPreferencesButton.setPadding(BUTTON_INSETS);
+            selectTestingPreferencesButton.setPrefWidth(PREF_BUTTON_WIDTH);
+            selectTestingPreferencesButton.setPrefHeight(PREF_BUTTON_HEIGHT);
             selectTestingPreferencesButton.setOnAction(e -> startSelectTestPreferencesScreen());
-            startProcedureButton = new Button("Start");
+            startProcedureButton = new Button(START_PROCEDURE_BUTTON_TEXT);
+            startProcedureButton.setPadding(BUTTON_INSETS);
+            startProcedureButton.setPrefWidth(PREF_BUTTON_WIDTH);
+            startProcedureButton.setPrefHeight(PREF_BUTTON_HEIGHT);
             startProcedureButton.setOnAction(event -> startProcedure());
             //add progress bar to buttonsVBox
             progressBar = new ProgressBar();
             progressBar.setProgress(0);
             buttonsVBox.getChildren().addAll(progressBar, selectTestingPreferencesButton, startProcedureButton);
+            buttonsVBox.setMargin(startProcedureButton, BUTTON_INSETS);
+            buttonsVBox.setMargin(selectTestingPreferencesButton, BUTTON_INSETS);
 
 
             ANNInfoTextArea = new TextArea();
@@ -276,6 +284,7 @@ public class MainInterface extends Application implements GUIValues {
         final MenuItem selectTrainingSetMenuItem = new MenuItem(NEURAL_NETWORK_MENU_SELECT_TRAINING_SET);
         final MenuItem selectTestSetMenuItem = new MenuItem(NEURAL_NETWORK_MENU_SELECT_TEST_SET);
         final MenuItem trainingPreferencesMenuItem = new MenuItem(NEURAL_NETWORK_MENU_TRAINING_PREFERENCES);
+        trainingPreferencesMenuItem.setOnAction(e -> startSelectTestPreferencesScreen());
         nnMenu.getItems().addAll(loadNNMenuItem, saveNNMenuItem, selectTrainingSetMenuItem, selectTestSetMenuItem, trainingPreferencesMenuItem); //register submenu items
 
         //Help menu and sub menus

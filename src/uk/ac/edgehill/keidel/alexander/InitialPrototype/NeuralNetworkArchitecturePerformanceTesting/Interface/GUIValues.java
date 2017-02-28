@@ -14,6 +14,15 @@ import javafx.scene.paint.Color;
 public interface GUIValues {
     String TITLE = "Neural Network Prototype";
 
+    //buttons at the bottom of main UI
+    String START_PROCEDURE_BUTTON_TEXT = "Start";
+    String SETUP_BUTTON_TEXT = "Setup";
+//    int BUTTON_WIDTH = 80;
+//    int BUTTON_HEIGHT = 35;
+    float PREF_BUTTON_WIDTH = 80.0f;
+    float PREF_BUTTON_HEIGHT = 35.0f;
+    Insets BUTTON_INSETS = new Insets(5);
+
     //Menu bar items
 
     String FILE_MENU = "File";

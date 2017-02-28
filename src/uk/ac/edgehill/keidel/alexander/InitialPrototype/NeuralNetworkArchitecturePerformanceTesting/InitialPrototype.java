@@ -70,6 +70,7 @@ public class InitialPrototype implements GlobalVariablesInterface, Runnable {
     @Override
     public void run() {
         startPrototype();
-        parentTextArea.appendText(neuralNetworkArchitectureTester.strDump.toString());
+        parentTextArea.appendText(neuralNetworkArchitectureTester.strDump.toString()); //dump string into gui
+        parentTextArea.setScrollTop(Double.MAX_VALUE); //scroll down
     }
 }

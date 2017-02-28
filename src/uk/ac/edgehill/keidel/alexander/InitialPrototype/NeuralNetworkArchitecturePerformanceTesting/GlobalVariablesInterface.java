@@ -8,6 +8,7 @@ import java.util.ArrayList;
 
 /**
  * Created by Alexander Keidel, 22397868 on 21/09/2016.
+ * Global variables used throughout the application
  */
 public interface GlobalVariablesInterface { //all values contained here are "public static final"
     String DEFAULT_FILE_PATH = System.getProperty("user.dir").replace("\\", "/") + "\\"; //"D:/OneDrive/Edge Hill/Final Year Project/NeurophPrototypes/";
