@@ -3,6 +3,7 @@ package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitectu
 import org.neuroph.core.learning.LearningRule;
 import org.neuroph.util.TransferFunctionType;
 
+import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -14,6 +15,7 @@ public interface GlobalVariablesInterface { //all values contained here are "pub
     String DEFAULT_FILE_PATH = System.getProperty("user.dir").replace("\\", "/") + "\\"; //"D:/OneDrive/Edge Hill/Final Year Project/NeurophPrototypes/";
             //"C:/Users/Alex/OneDrive/Edge Hill/Final Year Project/NeurophPrototypes/";
             // make sure this coincides with the project path on the machine!
+    File DEFAULT_DIRECTORY_FILE = new File(System.getProperty("user.dir"));
     String DEFAULT_TEST_SET_NAME = "Default Perceptron Test Set.csv";
     String DEFAULT_TRAINING_SET_NAME = "Default Perceptron Training Set.csv";
     String DEFAULT_PERCEPTRON_NAME = "custom perceptron";

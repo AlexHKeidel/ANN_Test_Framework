@@ -8,6 +8,7 @@ package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitectu
  *
  */
 
+import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -30,15 +31,21 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.neuroph.core.NeuralNetwork;
+import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.GlobalVariablesInterface;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.InitialPrototype;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.NeuralNetworkSettings;
 
+import javax.swing.filechooser.FileNameExtensionFilter;
 import java.io.*;
+import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
-public class MainInterface extends Application implements GUIValues {
+public class MainInterface extends Application implements GUIValues, GlobalVariablesInterface {
     private Button startProcedureButton;
     private TextArea ANNInfoTextArea;
     private BarChart barChart;
@@ -158,22 +165,21 @@ public class MainInterface extends Application implements GUIValues {
     private void addTextToBarChartBars() {
     }
 
-    private void orderAllNetworkSettingsByPerformance(){
-        ArrayList<NeuralNetworkSettings> allArchitectures = prototype.neuralNetworkArchitectureTester.getNetworkSettingsList();
-        allArchitectures.sort((o1, o2) -> (comparePerformances(o1, o2)));
-        for(NeuralNetworkSettings n : allArchitectures){
-            System.out.println("n performance = " + n.getPerformanceScore());
+    /**
+     * Order all neural network settings (ascending)
+     * See http://beginnersbook.com/2013/12/java-arraylist-of-object-sort-example-comparable-and-comparator/
+     * @return
+     */
+    private ArrayList<NeuralNetworkSettings> orderAllNetworkSettingsByPerformance(){
+        ArrayList<NeuralNetworkSettings> orderedArchitectures = prototype.neuralNetworkArchitectureTester.getNeuralNetworkSettingsList();
+        System.out.println("original arraylist size = " + prototype.neuralNetworkArchitectureTester.getNeuralNetworkSettingsList().size());
+        System.out.println("ordered arraylist size = " + orderedArchitectures.size());
+        orderedArchitectures.sort(NetworkPerformanceComparator); //sort the list using the defined comparator
+        for(NeuralNetworkSettings settings : orderedArchitectures){
+            System.out.println(settings.getPerformanceScore());
         }
+        return orderedArchitectures;
     }
-
-    private int comparePerformances(NeuralNetworkSettings o1, NeuralNetworkSettings o2) {
-        if(o1.getPerformanceScore() > o2.getPerformanceScore()){
-            return 0;
-        } else {
-            return 1;
-        }
-    }
-
 
     private void startSelectTestPreferencesScreen() {
         SelectTestPreferencesScreen s = new SelectTestPreferencesScreen(primaryStage);
@@ -235,14 +241,18 @@ public class MainInterface extends Application implements GUIValues {
         ((NumberAxis) barChart.getYAxis()).setLowerBound(((1  - worstStandardDeviation) * 99.99)); //set lower bound for the chart
     }
 
+    /**
+     * Populate the barchart with the top 5 performing network structures
+     */
     private void populateTopFiveBarChart() {
-        //orderAllNetworkSettingsByPerformance(); //sort the structures by performance
+        ArrayList<NeuralNetworkSettings> orderedSettings = orderAllNetworkSettingsByPerformance(); //sort the structures by performance
         barChart.getData().clear(); //clear the bar chart in case it is populated
+        ((NumberAxis) barChart.getYAxis()).setLowerBound(((1 - orderedSettings.get(4).getPerformanceScore()) * 99.99)); //set lower bound for bar chart based on fifth value
         System.out.println("prototype = " + prototype.neuralNetworkArchitectureTester.getNeuralNetworkSettingsList());
         for(int i = 0; i < 4; i++){
-            NeuralNetworkSettings tmp = prototype.neuralNetworkArchitectureTester.getNeuralNetworkSettingsList().get(i);
+            NeuralNetworkSettings tmp = orderedSettings.get(i);
             XYChart.Series s = new XYChart.Series<String, Double>();
-            s.setName(tmp.getLearningRule().getClass().getSimpleName() + " " + tmp.getTransferFunctionType().getTypeLabel());
+            s.setName(tmp.getName() + " (" + tmp.getLearningRule().getClass().getSimpleName() + " " + tmp.getTransferFunctionType().getTypeLabel() + ")");
             String structure = "" + tmp.getInputNeurons(); //generate structure
             for(int h : tmp.getHiddenLayers()){
                 structure += " (" + h + ") ";
@@ -309,6 +319,9 @@ public class MainInterface extends Application implements GUIValues {
 
     private void saveProjectAs() {
         FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(DEFAULT_DIRECTORY_FILE);
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("NNAT Project Files", ".nnatprj");
+        fileChooser.getExtensionFilters().addAll(filter);
         fileChooser.setTitle(FILE_MENU_SAVE_AS);
         saveProject(fileChooser.showSaveDialog(primaryStage)); //save the project file as the selected file
     }
@@ -394,8 +407,15 @@ public class MainInterface extends Application implements GUIValues {
         try{
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle(FILE_MENU_LOAD_PROJECT_FILECHOOSER_TITLE);
-            prototype.loadNeuralNetworkTesterFromFile(fileChooser.showOpenDialog(stage));
-            prototype.updateAssosiatedTextArea();
+            fileChooser.setInitialDirectory(DEFAULT_DIRECTORY_FILE);
+            FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("NNAT Project Files", ".nnatprj"); //set up filter for custom project files
+            fileChooser.getExtensionFilters().addAll(filter); //add filter
+            File projectFile = fileChooser.showOpenDialog(stage); //open dialog and assign file to user selected file
+            prototype.loadNeuralNetworkTesterFromFile(projectFile); //load project fail
+            ANNInfoTextArea.clear(); //clear text area
+            barChart.getData().clear(); //clear bar chart
+            ANNInfoTextArea.setText("Loaded project: " + projectFile.getName() + "\n"); //update text area
+            prototype.updateAssosiatedTextArea(); //update text area with test information string dump
             return true;
         }
         catch (Exception ex){
@@ -421,4 +441,21 @@ public class MainInterface extends Application implements GUIValues {
             return false;
         }
     }
+
+    /**
+     * Comparator for neural network settings to produce ordered arraylists
+     * See http://beginnersbook.com/2013/12/java-arraylist-of-object-sort-example-comparable-and-comparator/
+     */
+    private static Comparator<NeuralNetworkSettings> NetworkPerformanceComparator = new Comparator<NeuralNetworkSettings>() {
+        @Override
+        public int compare(NeuralNetworkSettings o1, NeuralNetworkSettings o2) {
+            double o1performance = o1.getPerformanceScore();
+            double o2performance = o2.getPerformanceScore();
+            if(o1performance > o2performance){ //sort by ascending order (smallest to biggest)
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+    };
 }
