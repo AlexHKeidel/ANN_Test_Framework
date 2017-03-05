@@ -29,7 +29,7 @@ import java.util.concurrent.*;
  * Custom Perceptron class which will do a number of different tasks. It trains and test neural networks with a given
  * data set. It will compare their performance based on the specified standard deviation performance delimiter.
  */
-public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface {
+public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface, Serializable {
     private NeuralNetwork customPerceptron;
     private ArrayList<NeuralNetworkSettings> neuralNetworkSettingsList = new ArrayList<>(); //array list of all neural network settings
     private NeuralNetworkSettings currentNetworkSettings;
@@ -64,7 +64,9 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             RejectedExecutionHandler reh = new ThreadPoolExecutor.DiscardPolicy(); //rejection handler
             ThreadFactory threadFactory = Executors.defaultThreadFactory(); //default thread factory
             BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(2);
-            ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 1000, 10, TimeUnit.DAYS, blockingQueue, threadFactory, reh);
+            //ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 1000, 10, TimeUnit.DAYS, blockingQueue, threadFactory, reh);
+            ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 1000, 10, TimeUnit.SECONDS, blockingQueue, threadFactory, reh);
+
             //for each learning rule and transfer function
             for(LearningRule rule : desiredLearningRules){
                 for(TransferFunctionType transferFunctionType : desiredTransferFunctions){
@@ -80,6 +82,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
                             Thread t = new Thread(network); //assign new thread to the network
                             executor.execute(t); //add the thread to the executor
                             totalThreadCount++; //increment total thread counter
+                            networkCounter++; //increment network counter for base name to number all neural nets
                             //System.out.println("Thread #" + i + " added to executor");
                         }
                     }
@@ -385,6 +388,29 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             return false;
         }
     }
+
+    /**
+     * Save this object to a file with the specified String as name of the file
+     * @param name
+     * @return
+     */
+    public boolean saveAllToFile(String name){
+        try{
+            FileOutputStream fos = new FileOutputStream(new File(name));
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(this); //write this object
+            oos.flush();
+            oos.close();
+            return true;
+        } catch (Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+
+
+
 
     /**
      * Getter for the array list of neural network settings

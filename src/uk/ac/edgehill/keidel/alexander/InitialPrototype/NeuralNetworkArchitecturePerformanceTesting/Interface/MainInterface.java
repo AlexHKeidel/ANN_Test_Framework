@@ -266,9 +266,11 @@ public class MainInterface extends Application implements GUIValues {
         final MenuItem fileLoadProject = new MenuItem(FILE_MENU_LOAD_PROJECT);
         fileLoadProject.setOnAction(e -> openFileSelectorToLoadProjectFile(primaryStage));
         final MenuItem fileSaveProject = new MenuItem(FILE_MENU_SAVE_PROJECT);
+        final MenuItem fileSaveAs = new MenuItem(FILE_MENU_SAVE_AS);
+        fileSaveAs.setOnAction(e -> saveProjectAs());
         final MenuItem fileGenerateChart = new MenuItem(FILE_MENU_GENERATE_CHART);
         fileGenerateChart.setOnAction(e -> populateTopFiveBarChart());
-        fileMenu.getItems().addAll(fileLoadProject, fileSaveProject, fileGenerateChart); //register sub menu items
+        fileMenu.getItems().addAll(fileLoadProject, fileSaveProject, fileSaveAs, fileGenerateChart); //register sub menu items
 
 
         //Options menu and sub menus
@@ -305,6 +307,12 @@ public class MainInterface extends Application implements GUIValues {
         return menuBar;
     }
 
+    private void saveProjectAs() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle(FILE_MENU_SAVE_AS);
+        saveProject(fileChooser.showSaveDialog(primaryStage)); //save the project file as the selected file
+    }
+
 
     /**
      * Display the about screen
@@ -313,18 +321,33 @@ public class MainInterface extends Application implements GUIValues {
         AboutScreen as = new AboutScreen(primaryStage);
     }
 
+
     /**
-     * Saves all the custom perceptron data
+     * Save project to selected file
+     * @param file
      * @return
      */
-    private boolean saveOperation(){
+    private boolean saveProject(File file){
         try{
-            prototype.neuralNetworkArchitectureTester.saveCurrentNetworkSettingsToFile();
-            prototype.neuralNetworkArchitectureTester.saveCurrentPerceptronToFile();
-            ANNInfoTextArea.appendText("\nSaved best network settings and perceptron file to disk.\n");
+            prototype.saveNeuralNetworkTesterToFile(file);
             return true;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * Save project file with the specified file name
+     * @param fileName
+     * @return
+     */
+    private boolean saveProject(String fileName){
+        try{
+
+            return true;
+        } catch(Exception ex){
+            ex.printStackTrace();
             return false;
         }
     }
@@ -336,9 +359,9 @@ public class MainInterface extends Application implements GUIValues {
      */
     private boolean loadOnStartup(){
         try{
-            prototype.neuralNetworkArchitectureTester.loadPerceptronFromFile("customPerceptron");
-            prototype.neuralNetworkArchitectureTester.loadPerceptronSettingsFromFile("customNetworkSettings");
-            populateBarChart();
+//            prototype.neuralNetworkArchitectureTester.loadPerceptronFromFile("customPerceptron");
+//            prototype.neuralNetworkArchitectureTester.loadPerceptronSettingsFromFile("customNetworkSettings");
+//            populateBarChart();
             return true;
         } catch (Exception ex){
             ex.printStackTrace();
@@ -371,8 +394,8 @@ public class MainInterface extends Application implements GUIValues {
         try{
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle(FILE_MENU_LOAD_PROJECT_FILECHOOSER_TITLE);
-            fileChooser.showOpenDialog(stage);
-
+            prototype.loadNeuralNetworkTesterFromFile(fileChooser.showOpenDialog(stage));
+            prototype.updateAssosiatedTextArea();
             return true;
         }
         catch (Exception ex){

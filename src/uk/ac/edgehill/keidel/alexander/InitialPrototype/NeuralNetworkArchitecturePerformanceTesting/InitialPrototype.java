@@ -10,7 +10,7 @@ import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitectur
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Exceptions.TransferFunctionNotFoundException;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Interface.TestingPreferences;
 
-import java.io.File;
+import java.io.*;
 import java.util.ArrayList;
 
 /**
@@ -70,7 +70,41 @@ public class InitialPrototype implements GlobalVariablesInterface, Runnable {
     @Override
     public void run() {
         startPrototype();
+    }
+
+    public void updateAssosiatedTextArea(){
         parentTextArea.appendText(neuralNetworkArchitectureTester.strDump.toString()); //dump string into gui
         parentTextArea.setScrollTop(Double.MAX_VALUE); //scroll down
+    }
+
+    /**
+     * Save this object to a file with the specified file
+     * @param file
+     * @return
+     */
+    public boolean saveNeuralNetworkTesterToFile(File file){
+        try{
+            FileOutputStream fos = new FileOutputStream(file);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(neuralNetworkArchitectureTester); //write this object
+            oos.flush();
+            oos.close();
+            return true;
+        } catch (Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean loadNeuralNetworkTesterFromFile(File file){
+        try{
+            FileInputStream fis = new FileInputStream(file);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            neuralNetworkArchitectureTester = (NeuralNetworkArchitectureTester) ois.readObject();
+            return true;
+        } catch (Exception ex){
+            ex.printStackTrace();
+            return false;
+        }
     }
 }

@@ -223,7 +223,8 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle(NEURAL_NETWORK_MENU_SELECT_TRAINING_SET);
             fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("comma delimited csv files only", ".csv"));
-            fileChooser.setInitialDirectory(trainingSetFile);
+            //@TODO set initial directory to base directory of the program
+            // /fileChooser.setInitialDirectory(trainingSetFile);
             trainingSetFile = fileChooser.showOpenDialog(this);
             currentFileName.setText(trainingSetFile.getName());
 
