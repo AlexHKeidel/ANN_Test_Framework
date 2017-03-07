@@ -23,6 +23,7 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
     private int inputLayers = 0;
     private int outputLayers = 0;
     private int maximumHiddenLayers = 0; //default is 0
+    private int minimumHiddenLayerSize = 0; //default is 0
     private int maximumHiddenLayerSize = 0; //default is 0
     private File trainingDataFile;
     private File testDataFile;
@@ -77,6 +78,32 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
             throw new LearningRuleNotFoundException("Some learning rule does not exist!");
         }
         return learningRules;
+    }
+
+    /**
+     * Convert the testing preferences into a readable String
+     * @return String in human readable format summarising all testing preferences stored in this object
+     */
+    public String getPreferencesInReadableFormat(){
+        String readable = "Testing Preferences: " + testName;
+        readable += "Input neurons: " + inputLayers + "\n";
+        readable += "Output neurons: " + outputLayers + "\n";
+        readable += "Maximum hidden layers: " + getMaximumHiddenLayers() + "\n";
+        readable += "Minimum hidden layer size: " + getMinimumHiddenLayerSize() + "\n";
+        readable += "Maximum hidden layer size: " + getMaximumHiddenLayerSize() + "\n";
+        readable += "Performance score (SD): " + getPerformance() + "\n";
+        readable += "Transfer functions:\n";
+        for(String s : getTransferFunctionNames()){
+            readable += s + "\n";
+        }
+        readable += "Learning rules: \n";
+        for(String s : getLearningRuleNames()){
+            readable += s + "\n";
+        }
+        readable += "Training set file name: " + getTrainingDataFile().getName() + "\n";
+        readable += "Test set file name: " + getTestDataFile().getName() + "\n";
+        readable += "-----End of testing preferences-----";
+        return readable;
     }
 
     public ArrayList<String> getTransferFunctionNames() {
@@ -157,5 +184,13 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
 
     public void setTestName(String testName) {
         this.testName = testName;
+    }
+
+    public int getMinimumHiddenLayerSize() {
+        return minimumHiddenLayerSize;
+    }
+
+    public void setMinimumHiddenLayerSize(int minimumHiddenLayerSize) {
+        this.minimumHiddenLayerSize = minimumHiddenLayerSize;
     }
 }

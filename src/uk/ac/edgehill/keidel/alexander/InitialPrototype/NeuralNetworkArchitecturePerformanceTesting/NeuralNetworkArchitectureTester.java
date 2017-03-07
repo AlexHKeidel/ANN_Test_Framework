@@ -6,6 +6,7 @@ import com.sun.corba.se.spi.orbutil.threadpool.ThreadPool;
 import com.sun.corba.se.spi.orbutil.threadpool.Work;
 import com.sun.corba.se.spi.orbutil.threadpool.WorkQueue;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.control.TextArea;
 import org.neuroph.core.NeuralNetwork;
 import org.neuroph.core.learning.LearningRule;
 import org.neuroph.core.learning.SupervisedTrainingElement;
@@ -63,7 +64,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
      * @param progressBar Progress bar for the interface, updated when the training and testing of a single neural network architecture has finished.
      * @return True if successful, false if some error occurred
      */
-    public boolean trainAndTestNeuralNetworkStructures(File trainingSetFile, File testSetFile, String baseName, int inputNeuronCount, int outputNeuronCount, int maximumHiddenLayerCount, int minimumHiddenLayerNeurons, int maximumHiddenLayerNeurons, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit, ProgressBar progressBar){
+    public boolean trainAndTestNeuralNetworkStructures(File trainingSetFile, File testSetFile, String baseName, int inputNeuronCount, int outputNeuronCount, int maximumHiddenLayerCount, int minimumHiddenLayerNeurons, int maximumHiddenLayerNeurons, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit, ProgressBar progressBar, TextArea textArea){
         try{
             //create test set and training set
             TrainingSet trainingSet = TrainingSet.createFromFile(trainingSetFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
@@ -111,6 +112,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
                 if(completedThreadCount != (int) executor.getCompletedTaskCount()){
                     completedThreadCount = (int) executor.getCompletedTaskCount();
                     System.out.println("completed " + completedThreadCount + "/" + totalThreadCount);
+                    //StextArea.setText("strDump = " + strDump);
                     progressBar.setProgress(totalThreadCount / completedThreadCount); //update progress bar
                 }
             }

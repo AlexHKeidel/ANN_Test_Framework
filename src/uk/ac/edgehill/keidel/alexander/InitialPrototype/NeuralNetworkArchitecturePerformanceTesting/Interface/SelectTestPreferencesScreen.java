@@ -222,6 +222,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         try{
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle(NEURAL_NETWORK_MENU_SELECT_TRAINING_SET);
+            fileChooser.setInitialDirectory(new File (System.getProperty("user.dir")));
             fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("comma delimited csv files only", ".csv"));
             //@TODO set initial directory to base directory of the program
             // /fileChooser.setInitialDirectory(trainingSetFile);
@@ -240,6 +241,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         try{
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle(NEURAL_NETWORK_MENU_SELECT_TRAINING_SET);
+            fileChooser.setInitialDirectory(new File (System.getProperty("user.dir")));
             fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("comma delimited csv files only", ".csv"));
             fileChooser.setInitialDirectory(testSetFile);
             testSetFile = fileChooser.showOpenDialog(this);
