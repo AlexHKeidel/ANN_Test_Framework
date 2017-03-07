@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -40,6 +41,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
     private TextField desiredTestName = new TextField();
     private TextField desiredPerformanceTextField = new TextField();
     private TextField desiredMaxHidLayersTextField = new TextField();
+    private TextField desiredMinHidLayerSizeTextField = new TextField();
     private TextField desiredMaxHidLayerSizeTextField = new TextField();
     private TextField desiredInputLayerSizeTextField = new TextField();
     private TextField desiredOutputLayerSizeTextField = new TextField();
@@ -122,15 +124,25 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
      */
     private Node generateBoundariesContent() {
         ScrollPane scrollPane = new ScrollPane(); //scroll pane to contain the vBox
+        scrollPane.setFitToWidth(true); //fill the whole window
         VBox vBox = new VBox(); //vertical box to contain the test boundary fields
         Text networkTestOptionsText = new Text(PREFERENCES_SCREEN_BOUNDARIES_NETWORK_TESTING_TITLE);
+        vBox.setFillWidth(true); //make sure the VBox fills the width of the parent
+
+        // For the spacer idea see http://stackoverflow.com/questions/39214586/how-to-align-a-button-right-in-javafx
+//        Pane spacer = new Pane();
+//        spacer.setMinWidth(10);
+//        HBox.setHgrow(spacer, Priority.ALWAYS);
 
         //test preference name HBox
         HBox testNameHBox = new HBox();
         Text testNameText = new Text(PREFERENCES_SCREEN_BOUNDARIES_TEST_NAME);
         TextField textNameTextField = new TextField();
         desiredTestName = textNameTextField;
-        testNameHBox.getChildren().addAll(testNameText, textNameTextField);
+        Pane testNameSpacer = new Pane();
+        testNameSpacer.setMinWidth(10);
+        testNameHBox.setHgrow(testNameSpacer, Priority.ALWAYS);
+        testNameHBox.getChildren().addAll(testNameText, testNameSpacer, textNameTextField);
 
         //input neurons HBox
         HBox inputLayerHBox = new HBox();
@@ -141,7 +153,10 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         inputLayerTextField.setTextFormatter(inputLayerFormatter);
         inputLayerFormatter.valueProperty().addListener((observable, oldValue, newValue) -> validateInputLayers(observable, oldValue, newValue, inputLayerFormatter));
         desiredInputLayerSizeTextField = inputLayerTextField;
-        inputLayerHBox.getChildren().addAll(inputLayerText, inputLayerTextField);
+        Pane inputLayerSpacer = new Pane();
+        inputLayerSpacer.setMinWidth(10);
+        inputLayerHBox.setHgrow(inputLayerSpacer, Priority.ALWAYS);
+        inputLayerHBox.getChildren().addAll(inputLayerText, inputLayerSpacer, inputLayerTextField);
 
         //output neurons HBox
         HBox outputLayerHBox = new HBox();
@@ -152,7 +167,10 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         outputLayerTextField.setTextFormatter(outputLayerFormatter);
         outputLayerFormatter.valueProperty().addListener((observable, oldValue, newValue) -> validateOutputLayers(observable, oldValue, newValue, outputLayerFormatter));
         desiredOutputLayerSizeTextField = outputLayerTextField;
-        outputLayerHBox.getChildren().addAll(outputLayerText, outputLayerTextField);
+        Pane outputSpacer = new Pane();
+        outputSpacer.setMinWidth(10);
+        outputLayerHBox.setHgrow(outputSpacer, Priority.ALWAYS);
+        outputLayerHBox.getChildren().addAll(outputLayerText, outputSpacer, outputLayerTextField);
 
         //performance HBox
         HBox performanceHBox = new HBox(); //HBox to contain the performance instructions plus field
@@ -163,7 +181,10 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         performanceNumberField.setTextFormatter(formatter1); //assign formatter
         formatter1.valueProperty().addListener((observable, oldValue, newValue) -> validatePerformanceValue(observable, oldValue, newValue, formatter1));
         desiredPerformanceTextField = performanceNumberField;
-        performanceHBox.getChildren().addAll(performanceText, performanceNumberField); //add items to hbox
+        Pane performanceSpacer = new Pane();
+        performanceSpacer.setMinWidth(10);
+        performanceHBox.setHgrow(performanceSpacer, Priority.ALWAYS);
+        performanceHBox.getChildren().addAll(performanceText, performanceSpacer, performanceNumberField); //add items to hbox
 
         //see above for comments (same structure) @TODO really this means that this should be separate methods
         HBox maximumHiddenLayersHBox = new HBox();
@@ -174,7 +195,26 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         maxHidLayTextField.setTextFormatter(formatter2);
         formatter2.valueProperty().addListener((observable, oldValue, newValue) -> validateMaxHiddenLayersValue(observable, oldValue, newValue, formatter2));
         desiredMaxHidLayersTextField = maxHidLayTextField;
-        maximumHiddenLayersHBox.getChildren().addAll(maxHidLayText, maxHidLayTextField);
+        Pane maxHidLaySpacer = new Pane();
+        maxHidLaySpacer.setMinWidth(10);
+        maximumHiddenLayersHBox.setHgrow(maxHidLaySpacer, Priority.ALWAYS);
+        maximumHiddenLayersHBox.getChildren().addAll(maxHidLayText, maxHidLaySpacer, maxHidLayTextField);
+
+        //see above for comments (same structure)
+        //minimum hidden layers
+        HBox minimumHiddenLayersSizeHBox = new HBox();
+        Text minimumHiddenLayersSizeText = new Text(PREFERENCES_SCREEN_BOUNDARIES_MINIMUM_HIDDEN_LAYER_SIZE_TEXT);
+        TextField minimumHiddenLayersSizeTextField = new TextField();
+        NumberStringConverter minhidlayerConverter = new NumberStringConverter();
+        TextFormatter<Number> minhidlayerFormatter = new TextFormatter<Number>(minhidlayerConverter);
+        minimumHiddenLayersSizeTextField.setTextFormatter(minhidlayerFormatter);
+        minhidlayerFormatter.valueProperty().addListener((observable, oldValue, newValue) -> validateMinHiddenLayerSizeValue(observable, oldValue, newValue, minhidlayerFormatter));
+        //desiredMinHidLayerSizeTextField.setAlignment(Pos.BASELINE_RIGHT);
+        Pane minimumHiddenLayersSpacer = new Pane();
+        minimumHiddenLayersSpacer.setMinWidth(10);
+        minimumHiddenLayersSizeHBox.setHgrow(minimumHiddenLayersSpacer, Priority.ALWAYS);
+        desiredMinHidLayerSizeTextField = minimumHiddenLayersSizeTextField;
+        minimumHiddenLayersSizeHBox.getChildren().addAll(minimumHiddenLayersSizeText, minimumHiddenLayersSpacer, minimumHiddenLayersSizeTextField);
 
         //see above for comments (same structure)
         //maximum hidden layers
@@ -186,7 +226,10 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         maxHidLaySizeTextField.setTextFormatter(formatter3);
         formatter3.valueProperty().addListener((observable, oldValue, newValue) -> validateMaxHiddenLayerSizeValue(observable, oldValue, newValue, formatter3));
         desiredMaxHidLayerSizeTextField = maxHidLaySizeTextField;
-        maximumHiddenLayerSizeHBox.getChildren().addAll(maxHidLaySizeText, maxHidLaySizeTextField);
+        Pane maxHidLaySizeSpacer = new Pane();
+        maxHidLaySizeSpacer.setMinWidth(10);
+        maximumHiddenLayersHBox.setHgrow(maxHidLaySizeSpacer, Priority.ALWAYS);
+        maximumHiddenLayerSizeHBox.getChildren().addAll(maxHidLaySizeText, maxHidLaySizeSpacer, maxHidLaySizeTextField);
 
         //training set HBox
         HBox trainingSetHBox = new HBox();
@@ -196,7 +239,10 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         selectTrainingSetButton.setText(PREFERENCES_SCREEN_BOUNDARIES_SELECT_BUTTON);
         selectTrainingSetButton.setOnAction(event -> selectTrainingSetAction(trainingSetCurrentFileName));
         desiredTrainingSetText = trainingSetCurrentFileName;
-        trainingSetHBox.getChildren().addAll(trainingSetPrefix, trainingSetCurrentFileName, selectTrainingSetButton);
+        Pane desiredTrainigSetSpacer = new Pane();
+        desiredTrainigSetSpacer.setMinWidth(10);
+        trainingSetHBox.setHgrow(desiredTrainigSetSpacer, Priority.ALWAYS);
+        trainingSetHBox.getChildren().addAll(trainingSetPrefix, trainingSetCurrentFileName, desiredTrainigSetSpacer, selectTrainingSetButton);
 
         //test set HBox
         HBox testSetHBox = new HBox();
@@ -206,12 +252,18 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         selectTestSetButton.setText(PREFERENCES_SCREEN_BOUNDARIES_SELECT_BUTTON);
         selectTestSetButton.setOnAction(event -> selectTestSetAction(testSetCurrentFileName));
         desiredTestSetText = testSetCurrentFileName;
-        testSetHBox.getChildren().addAll(testSetPrefix, testSetCurrentFileName, selectTestSetButton);
+        Pane desiredTestSetSpacer = new Pane();
+        desiredTestSetSpacer.setMinWidth(10);
+        testNameHBox.setHgrow(desiredTestSetSpacer, Priority.ALWAYS);
+        testSetHBox.getChildren().addAll(testSetPrefix, testSetCurrentFileName, desiredTestSetSpacer, selectTestSetButton);
 
 
-        vBox.getChildren().addAll(networkTestOptionsText, testNameHBox, inputLayerHBox, outputLayerHBox, maximumHiddenLayersHBox, maximumHiddenLayerSizeHBox, performanceHBox, trainingSetHBox, testSetHBox); //add items to vbox
-        scrollPane.setContent(vBox); //add vbox to scrollpane
+        vBox.getChildren().addAll(networkTestOptionsText, testNameHBox, inputLayerHBox, outputLayerHBox, maximumHiddenLayersHBox, minimumHiddenLayersSizeHBox, maximumHiddenLayerSizeHBox, performanceHBox, trainingSetHBox, testSetHBox); //add items to vbox
+        scrollPane.setContent(vBox); //add VBox to Scrollpane
         return scrollPane;
+    }
+
+    private void validateMinHiddenLayerSizeValue(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter<Number> minhidlayerFormatter) {
     }
 
 
