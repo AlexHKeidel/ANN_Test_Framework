@@ -46,6 +46,23 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
     public NeuralNetworkArchitectureTester(){
     }
 
+    /**
+     * The main function for this prototype. It will produce an array list of trained neural networks
+     * with all the different specified learning rules and transfer functions using the provided training and test set.
+     * @param trainingSetFile Training set file
+     * @param testSetFile Test set file
+     * @param baseName Base name for all neural networks (for human readability)
+     * @param inputNeuronCount Number of input neurons. Must be in accordance with the training and test set files
+     * @param outputNeuronCount Number of output neurons. Must be in accordance with the training and test set files
+     * @param maximumHiddenLayerCount Maximum amount of hidden layers
+     * @param minimumHiddenLayerNeurons Minimum size of each hidden layer
+     * @param maximumHiddenLayerNeurons Maximum size of each hidden layer
+     * @param desiredTransferFunctions ArrayList of all desired transfer functions for this test
+     * @param desiredLearningRules ArrayList of all desired learning rules for this test
+     * @param performanceLimit Performance limit based on standard deviation between the output of a trained set against the actual output from the test set
+     * @param progressBar Progress bar for the interface, updated when the training and testing of a single neural network architecture has finished.
+     * @return True if successful, false if some error occurred
+     */
     public boolean trainAndTestNeuralNetworkStructures(File trainingSetFile, File testSetFile, String baseName, int inputNeuronCount, int outputNeuronCount, int maximumHiddenLayerCount, int minimumHiddenLayerNeurons, int maximumHiddenLayerNeurons, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit, ProgressBar progressBar){
         try{
             //create test set and training set
@@ -179,7 +196,8 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             System.out.println("Training neural network.");
             customPerceptron.learnInNewThread(currentTrainingSet);
             /**
-             * @TODO fix multi threading!!!!!!!
+             * @TODO fix multi threading!
+             * This is done with a sepearte function. This is now deprecated
              * start array list of threads to train all perceptrons
              * each thread first trains the network structure, and then tests it
              * create ranking of all network structures (charts?)
