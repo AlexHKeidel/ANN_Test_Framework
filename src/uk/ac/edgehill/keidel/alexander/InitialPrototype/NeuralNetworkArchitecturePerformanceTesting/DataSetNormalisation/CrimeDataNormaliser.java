@@ -10,7 +10,7 @@ import java.nio.ByteBuffer;
  */
 public class CrimeDataNormaliser {
     public CrimeDataNormaliser(){
-        //convertDataSetToNeuralNetworkTrainingAndTestSet();
+        convertDataSetToNeuralNetworkTrainingAndTestSet();
 
         //This example shows how to convert a string into a double value and print it out to the console
         //This concept is applied to the data set in order to create inputs for the training of neural networks
@@ -19,14 +19,14 @@ public class CrimeDataNormaliser {
 //        //double doublevalue = ByteBuffer.wrap(bytes).getDouble();
 //        //System.out.println(String.valueOf(doublevalue));
 
-        String testString = "this is a test of some text that I want to convert into a decimal value independent of it's length";
-        byte[] bytes = testString.getBytes();
-        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
-        String tmp = "";
-        int f = 0;
-        while((f = byteArrayInputStream.read()) != -1){
-            System.out.println(f);
-        }
+//        String testString = "this is a test of some text that I want to convert into a decimal value independent of it's length";
+//        byte[] bytes = testString.getBytes();
+//        ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(bytes);
+//        String tmp = "";
+//        int f = 0;
+//        while((f = byteArrayInputStream.read()) != -1){
+//            System.out.println(f);
+//        }
     }
 
     /**
@@ -41,6 +41,7 @@ public class CrimeDataNormaliser {
             String fullNormalisedData = "";
             while((currentLine = br.readLine())  != null){
                 fullNormalisedData += normaliseCrime2015(currentLine);
+                //System.out.println("fullNormalisedData" + fullNormalisedData);
             }
             FileWriter fileWriter = new FileWriter(System.getProperty("user.dir") + "/Data Sets/Crime Data/crime2015 full supervised set");
             fileWriter.write(fullNormalisedData);
@@ -63,26 +64,32 @@ public class CrimeDataNormaliser {
      */
     private String normaliseCrime2015(String currentLine) {
         String[] values = currentLine.split(","); //split current line into individual values
+        String normalisedString = "";
         //ignore values[0] as it is the crime ID
-        for(int i = 0; i < values.length; i++){
-            if(values[i] == null){
-                values[i] = "EMPTY";
+        String[] normalisedValues = new String[9]; //8 inputs and 1 output (starting at 1 going through to 9
+        for(int i = 0; i < normalisedValues.length; i++){
+            byte[] bytes = values[i + 1].getBytes();
+            ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+            int readValue = -2;
+            int totalValue = 0;
+            while((readValue = bais.read()) != -1){
+                totalValue += readValue;
             }
-            if(values[i].length() > 8){
-                values[i] = values[i].substring(0, 7);
-            }
+            //System.out.println("totalValue = " + totalValue);
+            normalisedValues[i] = String.valueOf(totalValue);
+            normalisedString += normalisedValues[i] + ","; //concat the total string with the calculated value plus a comma delimiter
         }
-        String input1 = String.valueOf(ByteBuffer.wrap(values[1].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
-        String input2 = String.valueOf(ByteBuffer.wrap(values[2].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
-        String input3 = String.valueOf(ByteBuffer.wrap(values[3].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
-        String input4 = String.valueOf(ByteBuffer.wrap(values[4].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
-        String input5 = String.valueOf(ByteBuffer.wrap(values[5].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
-        String input6 = String.valueOf(ByteBuffer.wrap(values[6].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
-        String input7 = String.valueOf(ByteBuffer.wrap(values[7].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
-        String input8 = String.valueOf(ByteBuffer.wrap(values[8].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
 
-        String output1 = String.valueOf(ByteBuffer.wrap(values[1].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
-        return input1 + "," + input2 + "," + input3 + "," + input4 + "," + input5 + "," + input6 + "," + input7 + "," + input8 + "," + output1 + "\n";
+
+//        String input1 = String.valueOf(ByteBuffer.wrap(values[1].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
+//        String input2 = String.valueOf(ByteBuffer.wrap(values[2].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
+//        String input3 = String.valueOf(ByteBuffer.wrap(values[3].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
+//        String input4 = String.valueOf(ByteBuffer.wrap(values[4].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
+//        String input5 = String.valueOf(ByteBuffer.wrap(values[5].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
+//        String input6 = String.valueOf(ByteBuffer.wrap(values[6].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
+//        String input7 = String.valueOf(ByteBuffer.wrap(values[7].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
+//        String input8 = String.valueOf(ByteBuffer.wrap(values[8].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
+        return normalisedString + "\n";
     }
 
     public static void main(String args[]){
