@@ -37,15 +37,30 @@ public class CrimeDataNormaliser {
         File inputFile = new File(System.getProperty("user.dir") + "/Data Sets/Crime Data/crime2015.csv");
         try {
             BufferedReader br = new BufferedReader(new FileReader((inputFile)));
+            FileWriter fileWriter = new FileWriter(System.getProperty("user.dir") + "/Data Sets/Crime Data/crime2015 full supervised set.csv");
             String currentLine = "";
             String fullNormalisedData = "";
-            while((currentLine = br.readLine())  != null){
-                if(currentLine != "ERROR") {
-                    fullNormalisedData += normaliseCrime2015(currentLine);
+            long counter = 0;
+            try {
+                while ((currentLine = br.readLine()) != null) {
+                    if (!currentLine.equals("ERROR")) {
+                        fullNormalisedData += normaliseCrime2015(currentLine);
+                        counter++;
+                        System.out.println(normaliseCrime2015(currentLine));
+                    }
+                    //System.out.println("fullNormalisedData" + fullNormalisedData);
+                    //trying to improve performance, every 10000 read lines write to file (append)
+                    if(counter % 10000 == 0){
+                        fileWriter.append(fullNormalisedData);
+                        fileWriter.flush();
+                        fullNormalisedData = "";
+                        System.out.println("appending file");
+                    }
+                    System.out.println(counter);
                 }
-                //System.out.println("fullNormalisedData" + fullNormalisedData);
+            } catch (Exception ex){
+                ex.printStackTrace();
             }
-            FileWriter fileWriter = new FileWriter(System.getProperty("user.dir") + "/Data Sets/Crime Data/crime2015 full supervised set");
             fileWriter.write(fullNormalisedData);
             fileWriter.flush();
             fileWriter.close();
@@ -83,6 +98,7 @@ public class CrimeDataNormaliser {
                 normalisedString += normalisedValues[i] + ","; //concat the total string with the calculated value plus a comma delimiter
             }
 
+            normalisedString = normalisedString.substring(0, normalisedString.length() - 1);
 
 //        String input1 = String.valueOf(ByteBuffer.wrap(values[1].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
 //        String input2 = String.valueOf(ByteBuffer.wrap(values[2].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
@@ -92,7 +108,7 @@ public class CrimeDataNormaliser {
 //        String input6 = String.valueOf(ByteBuffer.wrap(values[6].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
 //        String input7 = String.valueOf(ByteBuffer.wrap(values[7].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
 //        String input8 = String.valueOf(ByteBuffer.wrap(values[8].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
-            return normalisedString + "\n";
+            return normalisedString + System.lineSeparator();
         } catch (Exception ex){
             ex.printStackTrace();
             return "ERROR";
