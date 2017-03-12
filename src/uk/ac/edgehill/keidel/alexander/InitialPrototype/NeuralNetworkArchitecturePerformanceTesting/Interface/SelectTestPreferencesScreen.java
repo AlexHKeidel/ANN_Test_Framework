@@ -56,6 +56,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
     private String testPreferencesName = "Default";
     private int inputLayers = 0;
     private int outputLayers = 0;
+    private int minimumHiddenLayers = 0;
     private int maximumHiddenLayers = 0;
     private int maximumHiddenLayerSize = 0;
     private File trainingSetFile;
@@ -263,8 +264,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         return scrollPane;
     }
 
-    private void validateMinHiddenLayerSizeValue(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter<Number> minhidlayerFormatter) {
-    }
+
 
 
     /**
@@ -295,7 +295,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             fileChooser.setTitle(NEURAL_NETWORK_MENU_SELECT_TRAINING_SET);
             fileChooser.setInitialDirectory(new File (System.getProperty("user.dir")));
             fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("comma delimited csv files only", ".csv"));
-            fileChooser.setInitialDirectory(testSetFile);
+            //fileChooser.setInitialDirectory(testSetFile);
             testSetFile = fileChooser.showOpenDialog(this);
             currentFileName.setText(testSetFile.getName());
 
@@ -304,6 +304,26 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         }
     }
 
+    /**
+     * Validate the minimum hidden layer size input field
+     * @TODO Compare it to the maximum hidden layers and make sure it is not higher!
+     * @param observable
+     * @param oldValue
+     * @param newValue
+     * @param minhidlayerFormatter
+     */
+    private void validateMinHiddenLayerSizeValue(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter<Number> minhidlayerFormatter) {
+        if(newValue.floatValue() % 1 != 0){ //the value is not a whole number!
+            minhidlayerFormatter.setValue(oldValue);
+            return;
+        }
+        if(newValue.intValue() < 0){ //value cannot be below 0
+            minhidlayerFormatter.setValue(oldValue);
+            return;
+        }
+        //validated
+        minimumHiddenLayers = newValue.intValue(); //assign value
+    }
     /**
      * Validate the user input for the maximum hidden layer size value
      * The value must be over 0 and an integer. (positive integer)
@@ -315,9 +335,11 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
     private void validateMaxHiddenLayerSizeValue(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter<Number> formatter) {
         if(newValue.floatValue() % 1 != 0){ //the value is not a whole number!
             formatter.setValue(oldValue);
+            return;
         }
         if(newValue.intValue() < 0){ //value cannot be below 0
             formatter.setValue(oldValue);
+            return;
         }
         //validated
         maximumHiddenLayerSize = newValue.intValue(); //assign value
@@ -334,9 +356,11 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
     private void validateMaxHiddenLayersValue(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter<Number> formatter) {
         if(newValue.floatValue() % 1 != 0){ //the value is not a whole number!
             formatter.setValue(oldValue);
+            return;
         }
         if(newValue.intValue() < 0){ //value cannot be below 0
             formatter.setValue(oldValue);
+            return;
         }
         //validated
         maximumHiddenLayers = newValue.intValue(); //assign value
@@ -350,8 +374,9 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
                 } else if(newValue.longValue() % 1 != 0){ //the number is not an integer
                     parentFormatter.setValue(oldValue);
                 }
+            } else {
+                inputLayers = newValue.intValue();
             }
-            inputLayers = newValue.intValue();
         } catch (Exception ex){
             ex.printStackTrace();
         }
@@ -365,8 +390,9 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
                 } else if(newValue.longValue() % 1 != 0){ //the number is not an integer
                     parentFormatter.setValue(oldValue);
                 }
+            } else {
+                outputLayers = newValue.intValue();
             }
-            outputLayers = newValue.intValue();
         } catch (Exception ex){
             ex.printStackTrace();
         }
@@ -381,15 +407,17 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
                 if(oldValue == null){
                     //set to default value
                     parentFormatter.setValue(1);
+                    return;
                 } else {
                     parentFormatter.setValue(oldValue);
+                    return;
                 }
             }
             if(newValue.longValue() > 100.0 || newValue.longValue() < 0.000001){
                 parentFormatter.setValue(oldValue); //reset value
+                return;
             }
             desiredPerformance = newValue.floatValue(); //set desired performance
-            System.out.println("desiredPerformance = " + desiredPerformance);
         } catch (Exception ex){
             ex.printStackTrace();
             //cannot perform operation NaN!
@@ -422,9 +450,9 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             checkBoxItems.add(text);
         }
 
-        System.out.println("Printing all checkBoxItems");
+        //System.out.println("Printing all checkBoxItems");
         for(String i : checkBoxItems){
-            System.out.println(i);
+            //System.out.println(i);
         }
     }
 
@@ -452,7 +480,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         ScrollPane scrollPane = new ScrollPane();
         VBox vBox = new VBox();
         for(LearningRule l : LEARNING_RULES){
-            System.out.println(l);
+            //System.out.println(l);
             String name = l.getClass().getName().substring(l.getClass().getName().lastIndexOf('.') + 1, l.getClass().getName().length()); //get the name based on the last index of '.' (last package identifier) + 1 to exclude the .
             CheckBox c = new CheckBox(name);
             learningRuleCheckBoxes.add(c);
@@ -478,6 +506,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             testingPreferences.setLearningRuleNames(selectedLearningRules);
             testingPreferences.setTransferFunctionNames(selectedTransferFunctions);
             testingPreferences.setPerformance(desiredPerformance);
+            testingPreferences.setMinimumHiddenLayerSize(minimumHiddenLayers);
             testingPreferences.setMaximumHiddenLayers(maximumHiddenLayers);
             testingPreferences.setMaximumHiddenLayerSize(maximumHiddenLayerSize);
             testingPreferences.setTestName(testPreferencesName);
@@ -512,6 +541,9 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             testingPreferences = (TestingPreferences) ios.readObject();
             inputLayers = testingPreferences.getInputLayers();
             outputLayers = testingPreferences.getOutputLayers();
+            minimumHiddenLayers = testingPreferences.getMinimumHiddenLayerSize();
+            maximumHiddenLayers = testingPreferences.getMaximumHiddenLayers();
+            maximumHiddenLayerSize = testingPreferences.getMaximumHiddenLayerSize();
             testPreferencesName = testingPreferences.getTestName();
             selectedLearningRules = testingPreferences.getLearningRuleNames();
             selectedTransferFunctions = testingPreferences.getTransferFunctionNames();
@@ -522,6 +554,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
 
             desiredTestName.setText(String.valueOf(testingPreferences.getTestName()));
             desiredPerformanceTextField.setText(String.valueOf(testingPreferences.getPerformance()));
+            desiredMinHidLayerSizeTextField.setText(String.valueOf(testingPreferences.getMinimumHiddenLayerSize()));
             desiredMaxHidLayersTextField.setText(String.valueOf(testingPreferences.getMaximumHiddenLayers()));
             desiredMaxHidLayerSizeTextField.setText(String.valueOf(testingPreferences.getMaximumHiddenLayerSize()));
             desiredInputLayerSizeTextField.setText(String.valueOf(testingPreferences.getInputLayers()));

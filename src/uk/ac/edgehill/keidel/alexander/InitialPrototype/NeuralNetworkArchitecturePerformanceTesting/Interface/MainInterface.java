@@ -172,11 +172,11 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
      */
     private ArrayList<NeuralNetworkSettings> orderAllNetworkSettingsByPerformance(){
         ArrayList<NeuralNetworkSettings> orderedArchitectures = prototype.neuralNetworkArchitectureTester.getNeuralNetworkSettingsList();
-        System.out.println("original arraylist size = " + prototype.neuralNetworkArchitectureTester.getNeuralNetworkSettingsList().size());
-        System.out.println("ordered arraylist size = " + orderedArchitectures.size());
+        //System.out.println("original arraylist size = " + prototype.neuralNetworkArchitectureTester.getNeuralNetworkSettingsList().size());
+        //System.out.println("ordered arraylist size = " + orderedArchitectures.size());
         orderedArchitectures.sort(NetworkPerformanceComparator); //sort the list using the defined comparator
         for(NeuralNetworkSettings settings : orderedArchitectures){
-            System.out.println(settings.getPerformanceScore());
+            //System.out.println(settings.getPerformanceScore());
         }
         return orderedArchitectures;
     }
@@ -237,7 +237,7 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
             s.getData().add(new XYChart.Data<String, Double>(structure, score));
             barChart.getData().add(s);
         }
-        System.out.println("worst standard deviation = " + worstStandardDeviation);
+        //System.out.println("worst standard deviation = " + worstStandardDeviation);
         ((NumberAxis) barChart.getYAxis()).setLowerBound(((1  - worstStandardDeviation) * 99.99)); //set lower bound for the chart
     }
 
@@ -248,7 +248,7 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
         ArrayList<NeuralNetworkSettings> orderedSettings = orderAllNetworkSettingsByPerformance(); //sort the structures by performance
         barChart.getData().clear(); //clear the bar chart in case it is populated
         ((NumberAxis) barChart.getYAxis()).setLowerBound(((1 - orderedSettings.get(4).getPerformanceScore()) * 99.99)); //set lower bound for bar chart based on fifth value
-        System.out.println("prototype = " + prototype.neuralNetworkArchitectureTester.getNeuralNetworkSettingsList());
+        //System.out.println("prototype = " + prototype.neuralNetworkArchitectureTester.getNeuralNetworkSettingsList());
         for(int i = 0; i < 4; i++){
             NeuralNetworkSettings tmp = orderedSettings.get(i);
             XYChart.Series s = new XYChart.Series<String, Double>();

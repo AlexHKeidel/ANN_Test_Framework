@@ -39,8 +39,8 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
         ArrayList<TransferFunctionType> transferFunctionTypes = new ArrayList<>();
         for(String s : transferFunctionNames){ //for each desired transfer function
             for(TransferFunctionType t : TRANSFER_FUNCTION_TYPES){ //for each type in all possible types
-                System.out.println(t.getTypeLabel());
-                System.out.println(s);
+                //System.out.println(t.getTypeLabel());
+                //System.out.println(s);
                 if(t.getTypeLabel().equals(s)){ //match found
                     transferFunctionTypes.add(t); //add the transfer function to the list
                     break;
@@ -48,8 +48,8 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
             }
         }
         if(transferFunctionTypes.size() != transferFunctionNames.size()){
-            System.out.println(transferFunctionTypes.size());
-            System.out.println(transferFunctionNames.size());
+            //System.out.println(transferFunctionTypes.size());
+            //System.out.println(transferFunctionNames.size());
             throw new TransferFunctionNotFoundException("Some transfer function does not exist!");
         }
         return transferFunctionTypes;
@@ -66,8 +66,8 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
         //convert strings into learning rule objects
         for(String s : learningRuleNames){
             for(LearningRule l : LEARNING_RULES){ //for each learning rule in all possible learning rules
-                System.out.println(l.getClass().getSimpleName());
-                System.out.println(s);
+                //System.out.println(l.getClass().getSimpleName());
+                //System.out.println(s);
                 if(l.getClass().getSimpleName().equals(s)){ //match found
                     learningRules.add(l); //add the learning rule to the list
                     break; //we can stop looping
@@ -82,7 +82,7 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
 
     /**
      * Convert the testing preferences into a readable String
-     * @return String in human readable format summarising all testing preferences stored in this object
+     * @return String in human readable format summarising all testing preferences stored in this objectminhidlayerFormatter
      */
     public String getPreferencesInReadableFormat(){
         String readable = "Testing Preferences: " + testName;

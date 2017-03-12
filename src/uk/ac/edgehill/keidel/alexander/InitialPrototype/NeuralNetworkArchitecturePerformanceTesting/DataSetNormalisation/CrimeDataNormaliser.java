@@ -40,7 +40,9 @@ public class CrimeDataNormaliser {
             String currentLine = "";
             String fullNormalisedData = "";
             while((currentLine = br.readLine())  != null){
-                fullNormalisedData += normaliseCrime2015(currentLine);
+                if(currentLine != "ERROR") {
+                    fullNormalisedData += normaliseCrime2015(currentLine);
+                }
                 //System.out.println("fullNormalisedData" + fullNormalisedData);
             }
             FileWriter fileWriter = new FileWriter(System.getProperty("user.dir") + "/Data Sets/Crime Data/crime2015 full supervised set");
@@ -63,22 +65,23 @@ public class CrimeDataNormaliser {
      * This example data set will be trying to prove or disprove that predicting the type of a crime based on this input data is possible
      */
     private String normaliseCrime2015(String currentLine) {
-        String[] values = currentLine.split(","); //split current line into individual values
-        String normalisedString = "";
-        //ignore values[0] as it is the crime ID
-        String[] normalisedValues = new String[9]; //8 inputs and 1 output (starting at 1 going through to 9
-        for(int i = 0; i < normalisedValues.length; i++){
-            byte[] bytes = values[i + 1].getBytes();
-            ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-            int readValue = -2;
-            int totalValue = 0;
-            while((readValue = bais.read()) != -1){
-                totalValue += readValue;
+        try {
+            String[] values = currentLine.split(","); //split current line into individual values
+            String normalisedString = "";
+            //ignore values[0] as it is the crime ID
+            String[] normalisedValues = new String[9]; //8 inputs and 1 output (starting at 1 going through to 9
+            for (int i = 0; i < normalisedValues.length; i++) {
+                byte[] bytes = values[i + 1].getBytes();
+                ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+                int readValue = -2;
+                int totalValue = 0;
+                while ((readValue = bais.read()) != -1) {
+                    totalValue += readValue;
+                }
+                //System.out.println("totalValue = " + totalValue);
+                normalisedValues[i] = String.valueOf(totalValue);
+                normalisedString += normalisedValues[i] + ","; //concat the total string with the calculated value plus a comma delimiter
             }
-            //System.out.println("totalValue = " + totalValue);
-            normalisedValues[i] = String.valueOf(totalValue);
-            normalisedString += normalisedValues[i] + ","; //concat the total string with the calculated value plus a comma delimiter
-        }
 
 
 //        String input1 = String.valueOf(ByteBuffer.wrap(values[1].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
@@ -89,7 +92,11 @@ public class CrimeDataNormaliser {
 //        String input6 = String.valueOf(ByteBuffer.wrap(values[6].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
 //        String input7 = String.valueOf(ByteBuffer.wrap(values[7].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
 //        String input8 = String.valueOf(ByteBuffer.wrap(values[8].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
-        return normalisedString + "\n";
+            return normalisedString + "\n";
+        } catch (Exception ex){
+            ex.printStackTrace();
+            return "ERROR";
+        }
     }
 
     public static void main(String args[]){

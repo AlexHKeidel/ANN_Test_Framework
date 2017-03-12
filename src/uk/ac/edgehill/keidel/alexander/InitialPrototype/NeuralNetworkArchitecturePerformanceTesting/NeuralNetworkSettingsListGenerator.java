@@ -47,7 +47,7 @@ public class NeuralNetworkSettingsListGenerator extends NeuralNetworkSettings{
         allPossibleLearningRules.add(new GeneralizedHebbianLearning());
         allPossibleLearningRules.add(new HopfieldLearning());
         allPossibleLearningRules.add(new InstarLearning());
-        allPossibleLearningRules.add(new AntiHebbianLearning());
+        //allPossibleLearningRules.add(new AntiHebbianLearning());
         allPossibleLearningRules.add(new KohonenLearning());
         allPossibleLearningRules.add(new LMS());
         allPossibleLearningRules.add(new MomentumBackpropagation());
@@ -57,7 +57,7 @@ public class NeuralNetworkSettingsListGenerator extends NeuralNetworkSettings{
         allPossibleLearningRules.add(new RBFLearning());
         allPossibleLearningRules.add(new ResilientPropagation());
         allPossibleLearningRules.add(new SigmoidDeltaRule());
-        allPossibleLearningRules.add(new MomentumBackpropagation());
+        //allPossibleLearningRules.add(new MomentumBackpropagation());
         allPossibleLearningRules.add(new SupervisedHebbianLearning());
         allPossibleLearningRules.add(new MatrixMomentumBackpropagation());
         //END
