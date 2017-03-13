@@ -88,7 +88,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             //for each learning rule and transfer function
             for(LearningRule rule : desiredLearningRules){
                 for(TransferFunctionType transferFunctionType : desiredTransferFunctions){
-                    for(int i = 1; i <= maximumHiddenLayerCount; i++){ //for each hidden layer size
+                    for(int i = 0; i <= maximumHiddenLayerCount; i++){ //for each hidden layer size
                         for(int s = minimumHiddenLayerNeurons; s <= maximumHiddenLayerNeurons; s++){ //from the minimum count to the maximum count of hidden layer sizes
                             ArrayList<Integer> hiddenLayers = new ArrayList<>();
                             //@TODO add variation for hidden layer sizes so not all hidden layers are the same size!

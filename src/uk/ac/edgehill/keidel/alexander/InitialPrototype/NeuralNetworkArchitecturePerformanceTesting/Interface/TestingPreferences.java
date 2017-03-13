@@ -85,7 +85,7 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
      * @return String in human readable format summarising all testing preferences stored in this objectminhidlayerFormatter
      */
     public String getPreferencesInReadableFormat(){
-        String readable = "Testing Preferences: " + testName;
+        String readable = "Testing Preferences: " + testName + "\n";
         readable += "Input neurons: " + inputLayers + "\n";
         readable += "Output neurons: " + outputLayers + "\n";
         readable += "Maximum hidden layers: " + getMaximumHiddenLayers() + "\n";

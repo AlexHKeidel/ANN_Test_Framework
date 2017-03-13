@@ -1,6 +1,9 @@
 package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Interface;
 
+import com.sun.javafx.scene.layout.region.Margins;
 import javafx.beans.value.ObservableValue;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -13,6 +16,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.NumberStringConverter;
 import org.encog.util.file.Directory;
 import org.neuroph.core.learning.LearningRule;
@@ -138,12 +142,16 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         //test preference name HBox
         HBox testNameHBox = new HBox();
         Text testNameText = new Text(PREFERENCES_SCREEN_BOUNDARIES_TEST_NAME);
-        TextField textNameTextField = new TextField();
-        desiredTestName = textNameTextField;
+        TextField testNameTextField = new TextField();
+        TextFormatter<String> testFieldFormatter = new TextFormatter<String>(new DefaultStringConverter());
+        testFieldFormatter.valueProperty().addListener((observable, oldValue, newValue) -> validateTestNameField(observable, oldValue, newValue, testNameTextField));
+        testNameTextField.setTextFormatter(testFieldFormatter);
+        //testNameTextField.onActionProperty().addListener((observable, oldValue, newValue) -> validateTestNameField(observable, oldValue, newValue));
+        desiredTestName = testNameTextField;
         Pane testNameSpacer = new Pane();
         testNameSpacer.setMinWidth(10);
         testNameHBox.setHgrow(testNameSpacer, Priority.ALWAYS);
-        testNameHBox.getChildren().addAll(testNameText, testNameSpacer, textNameTextField);
+        testNameHBox.getChildren().addAll(testNameText, testNameSpacer, testNameTextField);
 
         //input neurons HBox
         HBox inputLayerHBox = new HBox();
@@ -264,8 +272,11 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         return scrollPane;
     }
 
-
-
+    private void validateTestNameField(ObservableValue<? extends String> observable, String oldValue, String newValue, TextField parentTextField) {
+        System.out.println(newValue);
+        parentTextField.setText(newValue);
+        testPreferencesName = newValue;
+    }
 
     /**
      * Open file chooser to select a training set file
@@ -545,6 +556,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             maximumHiddenLayers = testingPreferences.getMaximumHiddenLayers();
             maximumHiddenLayerSize = testingPreferences.getMaximumHiddenLayerSize();
             testPreferencesName = testingPreferences.getTestName();
+            System.out.println(testPreferencesName);
             selectedLearningRules = testingPreferences.getLearningRuleNames();
             selectedTransferFunctions = testingPreferences.getTransferFunctionNames();
             trainingSetFile = testingPreferences.getTrainingDataFile();

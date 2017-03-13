@@ -46,7 +46,7 @@ public class CrimeDataNormaliser {
                     if (!currentLine.equals("ERROR")) {
                         fullNormalisedData += normaliseCrime2015(currentLine);
                         counter++;
-                        System.out.println(normaliseCrime2015(currentLine));
+                        //System.out.println(normaliseCrime2015(currentLine));
                     }
                     //System.out.println("fullNormalisedData" + fullNormalisedData);
                     //trying to improve performance, every 10000 read lines write to file (append)
@@ -54,7 +54,7 @@ public class CrimeDataNormaliser {
                         fileWriter.append(fullNormalisedData);
                         fileWriter.flush();
                         fullNormalisedData = "";
-                        System.out.println("appending file");
+                        //System.out.println("appending file");
                     }
                     System.out.println(counter);
                 }
@@ -88,8 +88,8 @@ public class CrimeDataNormaliser {
             for (int i = 0; i < normalisedValues.length; i++) {
                 byte[] bytes = values[i + 1].getBytes();
                 ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-                int readValue = -2;
-                int totalValue = 0;
+                double readValue = -2;
+                double totalValue = 0;
                 while ((readValue = bais.read()) != -1) {
                     totalValue += readValue;
                 }
