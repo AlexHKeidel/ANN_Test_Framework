@@ -101,7 +101,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
                             executor.execute(t); //add the thread to the executor
                             totalThreadCount++; //increment total thread counter
                             networkCounter++; //increment network counter for base name to number all neural nets
-                            //System.out.println("Thread #" + i + " added to executor");
+                            System.out.println("Thread #" + i + " added to executor");
                         }
                     }
                 }

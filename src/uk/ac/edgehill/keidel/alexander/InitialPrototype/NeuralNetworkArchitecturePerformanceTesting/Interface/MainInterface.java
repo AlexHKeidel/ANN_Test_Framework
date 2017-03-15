@@ -202,8 +202,10 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
-        Thread t = new Thread(prototype);
-        t.run();
+        // see http://stackoverflow.com/questions/33612380/javafx-stage-not-responding-after-action-on-button
+        new Thread(prototype).start();
+        //Thread t = new Thread(prototype);
+        //t.run();
         //startProcedureButton.setDisable(true);
 //        synchronized (prototype.neuralNetworkArchitectureTester.strDump){
 //            try {
