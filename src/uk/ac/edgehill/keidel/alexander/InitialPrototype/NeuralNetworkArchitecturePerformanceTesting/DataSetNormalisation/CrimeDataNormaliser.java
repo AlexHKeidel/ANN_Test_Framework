@@ -86,6 +86,7 @@ public class CrimeDataNormaliser {
             //ignore values[0] as it is the crime ID
             String[] normalisedValues = new String[9]; //8 inputs and 1 output (starting at 1 going through to 9
             for (int i = 0; i < normalisedValues.length; i++) {
+                if(values[i + 1].equals("")) return "ERROR"; //make sure input & output count is correct
                 byte[] bytes = values[i + 1].getBytes();
                 ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
                 double readValue = -2;

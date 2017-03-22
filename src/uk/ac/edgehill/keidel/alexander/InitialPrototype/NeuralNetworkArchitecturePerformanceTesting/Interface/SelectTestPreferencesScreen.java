@@ -51,6 +51,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
     private TextField desiredOutputLayerSizeTextField = new TextField();
     private Text desiredTrainingSetText = new Text();
     private Text desiredTestSetText = new Text();
+    private Text desiredOverfittingSetText = new Text();
 
     private ArrayList<String> selectedTransferFunctions = new ArrayList<>();
     private ArrayList<String> selectedLearningRules = new ArrayList<>();
@@ -65,6 +66,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
     private int maximumHiddenLayerSize = 0;
     private File trainingSetFile;
     private File testSetFile;
+    private File overfittingSetFile;
 
     public SelectTestPreferencesScreen(Stage parentStage){
         myStage = new Stage(); //new stage
@@ -266,16 +268,49 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         testNameHBox.setHgrow(desiredTestSetSpacer, Priority.ALWAYS);
         testSetHBox.getChildren().addAll(testSetPrefix, testSetCurrentFileName, desiredTestSetSpacer, selectTestSetButton);
 
+        //overfitting set HBox
+        HBox overfittingHBox = new HBox();
+        Text overfittingSetPrefix = new Text(PREFERENCES_SCREEN_BOUNDARIES_OVERFITTING_SET_FILE_NAME);
+        Text overfittingSetCurrentFileName = new Text("no file selected");
+        Button selectOverfittingSetButton = new Button();
+        selectOverfittingSetButton.setText(PREFERENCES_SCREEN_BOUNDARIES_SELECT_BUTTON);
+        selectOverfittingSetButton.setOnAction(event -> selectOverfittingSetAction(overfittingSetCurrentFileName));
+        desiredOverfittingSetText = overfittingSetCurrentFileName;
+        Pane desiredOverfittingSetSpacer = new Pane();
+        desiredOverfittingSetSpacer.setMinWidth(10);
+        overfittingHBox.setHgrow(desiredOverfittingSetSpacer, Priority.ALWAYS);
+        overfittingHBox.getChildren().addAll(overfittingSetPrefix, overfittingSetCurrentFileName, desiredOverfittingSetSpacer, selectOverfittingSetButton);
 
-        vBox.getChildren().addAll(networkTestOptionsText, testNameHBox, inputLayerHBox, outputLayerHBox, maximumHiddenLayersHBox, minimumHiddenLayersSizeHBox, maximumHiddenLayerSizeHBox, performanceHBox, trainingSetHBox, testSetHBox); //add items to vbox
+        vBox.getChildren().addAll(networkTestOptionsText, testNameHBox, inputLayerHBox, outputLayerHBox, maximumHiddenLayersHBox, minimumHiddenLayersSizeHBox, maximumHiddenLayerSizeHBox, performanceHBox, trainingSetHBox, testSetHBox, overfittingHBox); //add items to vbox
         scrollPane.setContent(vBox); //add VBox to Scrollpane
         return scrollPane;
     }
+
+
 
     private void validateTestNameField(ObservableValue<? extends String> observable, String oldValue, String newValue, TextField parentTextField) {
         System.out.println(newValue);
         parentTextField.setText(newValue);
         testPreferencesName = newValue;
+    }
+
+    /**
+     * File chooser dialog for selecting an overfitting test set
+     * @param overfittingSetCurrentFileName
+     */
+    private void selectOverfittingSetAction(Text overfittingSetCurrentFileName) {
+        try{
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle(NEURAL_NETWORK_MENU_SELECT_TRAINING_SET);
+            fileChooser.setInitialDirectory(new File (System.getProperty("user.dir")));
+            fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("comma delimited csv files only", ".csv"));
+            //fileChooser.setInitialDirectory(testSetFile);
+            overfittingSetFile = fileChooser.showOpenDialog(this);
+            overfittingSetCurrentFileName.setText(testSetFile.getName());
+
+        } catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -525,6 +560,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             testingPreferences.setOutputLayers(outputLayers);
             testingPreferences.setTrainingDataFile(trainingSetFile);
             testingPreferences.setTestDataFile(testSetFile);
+            testingPreferences.setOverfittingTestDataFile(overfittingSetFile);
             FileOutputStream fos = new FileOutputStream(testingPreferences.getClass().getSimpleName()); //new output stream with the name of the testing preferences class
             ObjectOutputStream oos = new ObjectOutputStream(fos);
             oos.writeObject(testingPreferences);
@@ -561,6 +597,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             selectedTransferFunctions = testingPreferences.getTransferFunctionNames();
             trainingSetFile = testingPreferences.getTrainingDataFile();
             testSetFile = testingPreferences.getTrainingDataFile();
+            overfittingSetFile = testingPreferences.getOverfittingTestDataFile();
 
             //display the correct values inside the UI
 
@@ -573,6 +610,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             desiredOutputLayerSizeTextField.setText(String.valueOf(testingPreferences.getOutputLayers()));
             desiredTrainingSetText.setText(String.valueOf(testingPreferences.getTrainingDataFile().getName()));
             desiredTestSetText.setText(String.valueOf(testingPreferences.getTestDataFile().getName()));
+            desiredOverfittingSetText.setText(String.valueOf(testingPreferences.getOverfittingTestDataFile().getName()));
 
             for(TransferFunctionType t : testingPreferences.getTransferFunctions()){
                 //update selected transfer function to be set as ticked

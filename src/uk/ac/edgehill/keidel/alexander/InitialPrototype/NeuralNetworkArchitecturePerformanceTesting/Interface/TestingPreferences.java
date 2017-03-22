@@ -27,6 +27,7 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
     private int maximumHiddenLayerSize = 0; //default is 0
     private File trainingDataFile;
     private File testDataFile;
+    private File overfittingTestDataFile;
 
     public TestingPreferences(){}
 
@@ -102,6 +103,7 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
         }
         readable += "Training set file name: " + getTrainingDataFile().getName() + "\n";
         readable += "Test set file name: " + getTestDataFile().getName() + "\n";
+        readable += "Overfitting set file name: " + getOverfittingTestDataFile().getName() + "\n";
         readable += "-----End of testing preferences-----";
         return readable;
     }
@@ -192,5 +194,13 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
 
     public void setMinimumHiddenLayerSize(int minimumHiddenLayerSize) {
         this.minimumHiddenLayerSize = minimumHiddenLayerSize;
+    }
+
+    public File getOverfittingTestDataFile() {
+        return overfittingTestDataFile;
+    }
+
+    public void setOverfittingTestDataFile(File overfittingTestDataFile) {
+        this.overfittingTestDataFile = overfittingTestDataFile;
     }
 }

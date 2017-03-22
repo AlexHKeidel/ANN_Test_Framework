@@ -1,14 +1,17 @@
 package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting;
 
+import javafx.util.Pair;
 import org.neuroph.core.NeuralNetwork;
 import org.neuroph.core.learning.LearningRule;
 import org.neuroph.core.learning.SupervisedTrainingElement;
 import org.neuroph.core.learning.TrainingSet;
 import org.neuroph.nnet.MultiLayerPerceptron;
+import org.neuroph.nnet.learning.BackPropagation;
 import org.neuroph.util.TransferFunctionType;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Observer;
 
 /**
  * Created by Alexander Keidel, 22397868 on 15/06/2016.
@@ -28,6 +31,10 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
     private NeuralNetwork neuralNetwork;
     private TrainingSet trainingSet;
     private TrainingSet<SupervisedTrainingElement> testSet;
+    private TrainingSet<SupervisedTrainingElement> overfittingTestSet;
+    private ArrayList<Pair<Integer, Double>> testSetPerformances = new ArrayList<>();
+    private ArrayList<Pair<Integer, Double>> overfittingTestSetPerformances = new ArrayList<>();
+
     private static StringBuffer parentStrDump;
 
     public NeuralNetworkSettings(){}
@@ -42,7 +49,7 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         this.learningRule = learningRule;
     }
 
-    public NeuralNetworkSettings(String name, int inputNeurons, int outputNeurons, ArrayList<Integer> hiddenLayers, TransferFunctionType transferFunctionType, LearningRule learningRule, TrainingSet trainingSet, TrainingSet<SupervisedTrainingElement> testSet, StringBuffer parentBuffer){
+    public NeuralNetworkSettings(String name, int inputNeurons, int outputNeurons, ArrayList<Integer> hiddenLayers, TransferFunctionType transferFunctionType, LearningRule learningRule, TrainingSet trainingSet, TrainingSet<SupervisedTrainingElement> testSet, TrainingSet<SupervisedTrainingElement> overfittingSet, StringBuffer parentBuffer){
         this.setName(name);
         this.setInputNeurons(inputNeurons);
         this.setOutputNeurons(outputNeurons);
@@ -51,6 +58,7 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         this.learningRule = learningRule;
         this.trainingSet = trainingSet;
         this.testSet = testSet;
+        this.overfittingTestSet = overfittingSet;
         this.parentStrDump = parentBuffer;
     }
 
@@ -64,17 +72,53 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         neuronCountInLayers.add(outputNeurons); //add output neurons
         neuralNetwork = new MultiLayerPerceptron(neuronCountInLayers, transferFunctionType); //set up multi-layered perceptron
         neuralNetwork.setLearningRule(learningRule); //set learning rule
-        neuralNetwork.learn(trainingSet); //learn the training set
+        System.out.println(name + " training started");
+        //neuralNetwork.learn(trainingSet); //learn the training set
+        neuralNetwork.learnInNewThread(trainingSet);
+        int iterationCounter = 1;
+        while(iterationCounter < 100){
+            //System.out.println("counter = " + iterationCounter);
+            neuralNetwork.pauseLearning();
+            testNeuralNetworkPerformance(iterationCounter);
+            neuralNetwork.resumeLearning();
+            iterationCounter++;
+        }
+        System.out.println(convertNeuralNetworkSettingsToReadableString());
+        for(int i = 0; i < testSetPerformances.size(); i++){
+            Pair<Integer, Double> testPair = testSetPerformances.get(i);
+            Pair<Integer, Double> overfittingPair = overfittingTestSetPerformances.get(i);
+            System.out.println("test#" + testPair.getKey() + " = " + testPair.getValue());
+            System.out.println("over#" + overfittingPair.getKey() + " = " + overfittingPair.getValue());
+        }
+    }
 
-        ArrayList<Double> outputValues = new ArrayList<>();
+    private void testNeuralNetworkPerformance(final int iteration){
+        //START Test set performance
+        ArrayList<Double> testSetOutputValues = new ArrayList<>();
         for(int i = 0; i < testSet.elements().size(); i++){ //for each element in the test set
             neuralNetwork.setInput(testSet.elementAt(i).getInput()); //set the input up based on the values in the test set
             neuralNetwork.calculate(); //calculate the result based on the test set
-            outputValues.add(neuralNetwork.getOutput()[0]); //get the output
+            testSetOutputValues.add(neuralNetwork.getOutput()[0]); //get the output
         }
-        performanceScore = calculateStandardDeviation(outputValues); //calculate the performance score of this neural network
-        System.out.println(convertNeuralNetworkSettingsToReadableString());
-        parentStrDump.append(convertNeuralNetworkSettingsToReadableString() + "\n");
+        double testsetPerformance = calculateStandardDeviation(testSetOutputValues); //calculate the performance score of this neural network
+        performanceScore = testsetPerformance;
+        testSetPerformances.add(new Pair<Integer, Double> (iteration, testsetPerformance)); //add new pair to performances
+        //System.out.println(convertNeuralNetworkSettingsToReadableString());
+        //parentStrDump.append(convertNeuralNetworkSettingsToReadableString() + "\n");
+        //END Test set performance
+
+        //START Overfitting set performance
+        ArrayList<Double> overfittingOutputValues = new ArrayList<>();
+        for(int i = 0; i < overfittingTestSet.elements().size(); i++){ //for each element in the test set
+            neuralNetwork.setInput(overfittingTestSet.elementAt(i).getInput()); //set the input up based on the values in the test set
+            neuralNetwork.calculate(); //calculate the result based on the test set
+            overfittingOutputValues.add(neuralNetwork.getOutput()[0]); //get the output
+        }
+        double overfittingsetPerformance = calculateStandardDeviation(overfittingOutputValues); //calculate the performance score of this neural network
+        overfittingTestSetPerformances.add(new Pair(iteration, overfittingsetPerformance));
+        //System.out.println(convertNeuralNetworkSettingsToReadableString());
+        //parentStrDump.append(convertNeuralNetworkSettingsToReadableString() + "\n");
+        //END Overfitting set performance
     }
 
     /**

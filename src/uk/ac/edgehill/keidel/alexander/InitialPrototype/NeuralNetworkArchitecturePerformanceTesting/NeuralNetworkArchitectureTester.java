@@ -7,6 +7,7 @@ import com.sun.corba.se.spi.orbutil.threadpool.Work;
 import com.sun.corba.se.spi.orbutil.threadpool.WorkQueue;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
+import org.codehaus.groovy.util.ArrayIterator;
 import org.neuroph.core.NeuralNetwork;
 import org.neuroph.core.learning.LearningRule;
 import org.neuroph.core.learning.SupervisedTrainingElement;
@@ -19,10 +20,7 @@ import org.omg.CORBA.TIMEOUT;
 
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -64,13 +62,13 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
      * @param progressBar Progress bar for the interface, updated when the training and testing of a single neural network architecture has finished.
      * @return True if successful, false if some error occurred
      */
-    public boolean trainAndTestNeuralNetworkStructures(File trainingSetFile, File testSetFile, String baseName, int inputNeuronCount, int outputNeuronCount, int maximumHiddenLayerCount, int minimumHiddenLayerNeurons, int maximumHiddenLayerNeurons, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit, ProgressBar progressBar, TextArea textArea){
+    public boolean trainAndTestNeuralNetworkStructures(File trainingSetFile, File testSetFile, File overfittingFile, String baseName, int inputNeuronCount, int outputNeuronCount, int maximumHiddenLayerCount, int minimumHiddenLayerNeurons, int maximumHiddenLayerNeurons, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit, ProgressBar progressBar, TextArea textArea){
         try{
             //create test set and training set
             TrainingSet trainingSet = TrainingSet.createFromFile(trainingSetFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
             TrainingSet<SupervisedTrainingElement> testSet = TrainingSet.createFromFile(testSetFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
+            TrainingSet<SupervisedTrainingElement> overfittingSet = TrainingSet.createFromFile(overfittingFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
             int networkCounter = 1;
-
 
             //thread pool requirements
             /**
@@ -92,16 +90,17 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
                         for(int s = minimumHiddenLayerNeurons; s <= maximumHiddenLayerNeurons; s++){ //from the minimum count to the maximum count of hidden layer sizes
                             ArrayList<Integer> hiddenLayers = new ArrayList<>();
                             //@TODO add variation for hidden layer sizes so not all hidden layers are the same size!
+
                             for(int h = 0; h < i; h++){ //add amount of hidden layers
                                 hiddenLayers.add(s);
                             }
-                            NeuralNetworkSettings network = new NeuralNetworkSettings(baseName + " #" + networkCounter, inputNeuronCount, outputNeuronCount, hiddenLayers, transferFunctionType, rule, trainingSet, testSet, strDump);
+                            NeuralNetworkSettings network = new NeuralNetworkSettings(baseName + " #" + networkCounter, inputNeuronCount, outputNeuronCount, hiddenLayers, transferFunctionType, rule, trainingSet, testSet, overfittingSet, strDump);
                             neuralNetworkSettingsList.add(network); //add the network settings to the array list of all neural network settings
                             Thread t = new Thread(network); //assign new thread to the network
                             executor.execute(t); //add the thread to the executor
                             totalThreadCount++; //increment total thread counter
                             networkCounter++; //increment network counter for base name to number all neural nets
-                            System.out.println("Thread #" + i + " added to executor");
+                            System.out.println("Thread added to executor");
                         }
                     }
                 }
@@ -124,6 +123,73 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
         }
     }
 
+    /**
+     * @deprecated
+     * @param numbers
+     * @param index
+     * @return
+     */
+    public ArrayList<ArrayList<Integer>> getAllPossibleHiddenLayers(ArrayList<Integer> numbers, int index){
+        ArrayList<ArrayList<Integer>> allCombinations = new ArrayList<>();
+        if(index == numbers.size() - 1){ //end condition
+            return new ArrayList<ArrayList<Integer>>();
+        }
+
+        //numbers.stream().
+        return allCombinations;
+    }
+
+    /**
+     * @deprecated
+     * Convert the given two integer values into an arraylist of all the number between fromNum and toNum, passing it to {@link NeuralNetworkArchitectureTester#getAllPossiblePermutations(ArrayList)}
+     * @param fromNum integer value of the first  value in the list (lowest, inclusive)
+     * @param toNum integer value of the last value in the list (highest, inclusive)
+     * @return
+     */
+    public ArrayList<ArrayList<Integer>> getAllPossiblePermutations(int fromNum, int toNum){
+        if(fromNum > toNum){ //error
+            return new ArrayList<>();
+        }
+        ArrayList<Integer> numbers = new ArrayList<>();
+        for(int i = fromNum; i <= toNum; i++){
+            numbers.add(i);
+        }
+        return getAllPossiblePermutations(numbers);
+    }
+
+    /**
+     * @deprecated
+     * See http://stackoverflow.com/questions/4640034/calculating-all-of-the-subsets-of-a-set-of-numbers
+     *
+     * @param numbers
+     * @return
+     */
+    public ArrayList<ArrayList<Integer>> getAllPossiblePermutations(ArrayList<Integer> numbers){
+        ArrayList<ArrayList<Integer>> allPermutations = new ArrayList<>();
+        if(numbers.isEmpty()){
+            allPermutations.add(new ArrayList<Integer>());
+            return allPermutations;
+        }
+        ArrayList<Integer> list = new ArrayList<>(numbers);
+        int head = list.get(0); //head of list
+        ArrayList<Integer> tail = new ArrayList<>(list.subList(1, list.size())); //tail of list
+        for(ArrayList<Integer> set : getAllPossiblePermutations(tail)){ //recursive call
+            ArrayList<Integer> newSet = new ArrayList<>();
+            newSet.add(head);
+            newSet.addAll(set);
+            allPermutations.add(newSet);
+            allPermutations.add(set);
+        }
+        System.out.println("allPermutations.size() = " + allPermutations.size());
+        return allPermutations;
+    }
+
+//    private Map<String, ArrayList<Integer>> getAllPossiblePermutations(int fromNum, int toNum, int layers){
+//        Map<String, ArrayList<Integer>> allPermutations = new HashMap<>();
+//
+//
+//        return allPermutations;
+//    }
 
     /**
      * Creates and tests different structures of multilayered Perceptrons against one another, with the specified training and testing sets.
