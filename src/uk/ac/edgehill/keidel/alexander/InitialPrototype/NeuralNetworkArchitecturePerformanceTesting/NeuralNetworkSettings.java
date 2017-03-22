@@ -141,18 +141,17 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
     /**
      * Calculate the standard deviation of the  array of doubles
      * see http://libweb.surrey.ac.uk/library/skills/Number%20Skills%20Leicester/page_19.htm
-     * and
      * @param v
      * @return
      */
     private double calculateStandardDeviation(double [] v) {
         double mean = calculateAverage(v);
         double sum = 0.0f;
-        for(double d : v) { //adding the sum of all values minues the mean squared, as in (x - m)^2 where x = the value and m = the mean / average
+        for(double d : v) { //adding the sum of all values minus the mean squared, as in (x - m)^2 where x = the value and m = the mean / average
             sum += Math.pow(d - mean, 2);
         }
-        sum /= (v.length - 1); //divide the sum by the number of values minus one
-        return  Math.sqrt(sum); //retreive the square root of the sum which is known as standard deviation and return it
+        sum /= (v.length); //divide the sum by the number of values
+        return  Math.sqrt(sum); //retrieve the square root of the sum which is known as standard deviation and return it
     }
     /**
      * See #calculateAverage(double [] v)

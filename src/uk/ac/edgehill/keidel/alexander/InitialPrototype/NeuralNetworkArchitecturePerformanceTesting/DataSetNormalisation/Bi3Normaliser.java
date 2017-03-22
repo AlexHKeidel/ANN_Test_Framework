@@ -129,7 +129,7 @@ public class Bi3Normaliser implements GlobalVariablesInterface {
          * (attendanceTime + (attentionTime * 2)) / age;
          * We take the attendance time, add the attentionTime times two (this means that attention time is regarded as
          * twice as valuable as attendance time) and divide by age. This means a higher age leads to a smaller value,
-         * thus valuing younger people more. Gender is not in this equation. (At this stage the date was not part of the input neurons!)
+         * thus valuing younger people more. Gender is not in this equation. (At this stage the date is not part of the input neurons!)
          */
         double supervisedLearningOutcome = (attendanceTime + (attentionTime * 2)) / age;
 
