@@ -79,10 +79,9 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
              */
             RejectedExecutionHandler reh = new ThreadPoolExecutor.DiscardPolicy(); //rejection handler
             ThreadFactory threadFactory = Executors.defaultThreadFactory(); //default thread factory
-            BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(2);
-            //ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 1000, 10, TimeUnit.DAYS, blockingQueue, threadFactory, reh);
+            BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(1000);
             ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 1000, 10, TimeUnit.SECONDS, blockingQueue, threadFactory, reh);
-
+            //ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 1000, 10, TimeUnit.DAYS, blockingQueue, threadFactory, reh);
             //for each learning rule and transfer function
             for(LearningRule rule : desiredLearningRules){
                 for(TransferFunctionType transferFunctionType : desiredTransferFunctions){
@@ -123,21 +122,21 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
         }
     }
 
-    /**
-     * @deprecated
-     * @param numbers
-     * @param index
-     * @return
-     */
-    public ArrayList<ArrayList<Integer>> getAllPossibleHiddenLayers(ArrayList<Integer> numbers, int index){
-        ArrayList<ArrayList<Integer>> allCombinations = new ArrayList<>();
-        if(index == numbers.size() - 1){ //end condition
-            return new ArrayList<ArrayList<Integer>>();
-        }
-
-        //numbers.stream().
-        return allCombinations;
-    }
+//    /**
+//     * @deprecated
+//     * @param numbers
+//     * @param index
+//     * @return
+//     */
+//    public ArrayList<ArrayList<Integer>> getAllPossibleHiddenLayers(ArrayList<Integer> numbers, int index){
+//        ArrayList<ArrayList<Integer>> allCombinations = new ArrayList<>();
+//        if(index == numbers.size() - 1){ //end condition
+//            return new ArrayList<ArrayList<Integer>>();
+//        }
+//
+//        //numbers.stream().
+//        return allCombinations;
+//    }
 
     /**
      * @deprecated

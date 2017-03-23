@@ -11,7 +11,7 @@
   <component name="ChangeListManager">
     <list default="true" id="0ba99b57-2e3e-4256-adc2-fc045c76f686" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/NeuralNetworkSettings.java" afterPath="$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/NeuralNetworkSettings.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/NeuralNetworkArchitectureTester.java" afterPath="$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/NeuralNetworkArchitectureTester.java" />
     </list>
     <ignored path="NeurophPrototypes.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -32,11 +32,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="375">
-      <file leaf-file-name="NeuralNetworkSettings.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="NeuralNetworkSettings.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/NeuralNetworkSettings.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-242">
-              <caret line="82" column="91" lean-forward="false" selection-start-line="82" selection-start-column="91" selection-end-line="82" selection-end-column="91" />
+            <state relative-caret-position="458">
+              <caret line="112" column="83" lean-forward="false" selection-start-line="112" selection-start-column="83" selection-end-line="112" selection-end-column="83" />
               <folding />
             </state>
           </provider>
@@ -47,7 +47,9 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1496">
               <caret line="72" column="94" lean-forward="false" selection-start-line="72" selection-start-column="94" selection-end-line="72" selection-end-column="94" />
-              <folding />
+              <folding>
+                <element signature="imports" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -72,12 +74,14 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="NeuralNetworkArchitectureTester.java" pinned="false" current-in-tab="false">
+      <file leaf-file-name="NeuralNetworkArchitectureTester.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/NeuralNetworkArchitectureTester.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1650">
-              <caret line="96" column="236" lean-forward="false" selection-start-line="96" selection-start-column="236" selection-end-line="96" selection-end-column="236" />
-              <folding />
+            <state relative-caret-position="62">
+              <caret line="86" column="77" lean-forward="true" selection-start-line="86" selection-start-column="77" selection-end-line="86" selection-end-column="77" />
+              <folding>
+                <element signature="e#5540#5550#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -87,7 +91,11 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="1980">
               <caret line="92" column="38" lean-forward="false" selection-start-line="92" selection-start-column="38" selection-end-line="92" selection-end-column="38" />
-              <folding />
+              <folding>
+                <element signature="imports" expanded="false" />
+                <element signature="e#7048#7049#0" expanded="false" />
+                <element signature="e#7115#7116#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -118,8 +126,8 @@
       <file leaf-file-name="TrainingAndTestSetCreator.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/TrainingAndTestSetCreator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="446">
-              <caret line="53" column="21" lean-forward="true" selection-start-line="53" selection-start-column="21" selection-end-line="53" selection-end-column="21" />
+            <state relative-caret-position="160">
+              <caret line="31" column="36" lean-forward="true" selection-start-line="31" selection-start-column="8" selection-end-line="31" selection-end-column="36" />
               <folding />
             </state>
           </provider>
@@ -131,8 +139,43 @@
             <state relative-caret-position="462">
               <caret line="29" column="41" lean-forward="false" selection-start-line="29" selection-start-column="41" selection-end-line="29" selection-end-column="41" />
               <folding>
-                <element signature="e#7695#7696#0" expanded="true" />
-                <element signature="e#7741#7742#0" expanded="true" />
+                <element signature="imports" expanded="false" />
+                <element signature="e#5510#5511#0" expanded="false" />
+                <element signature="e#5554#5555#0" expanded="false" />
+                <element signature="e#5760#5761#0" expanded="false" />
+                <element signature="e#5800#5801#0" expanded="false" />
+                <element signature="e#5972#5973#0" expanded="false" />
+                <element signature="e#6006#6007#0" expanded="false" />
+                <element signature="e#6059#6060#0" expanded="false" />
+                <element signature="e#6105#6106#0" expanded="false" />
+                <element signature="e#6148#6149#0" expanded="false" />
+                <element signature="e#6190#6191#0" expanded="false" />
+                <element signature="e#6257#6258#0" expanded="false" />
+                <element signature="e#6319#6320#0" expanded="false" />
+                <element signature="e#6365#6366#0" expanded="false" />
+                <element signature="e#6410#6411#0" expanded="false" />
+                <element signature="e#6592#6593#0" expanded="false" />
+                <element signature="e#6631#6632#0" expanded="false" />
+                <element signature="e#6693#6694#0" expanded="false" />
+                <element signature="e#6749#6750#0" expanded="false" />
+                <element signature="e#6786#6787#0" expanded="false" />
+                <element signature="e#6821#6822#0" expanded="false" />
+                <element signature="e#6875#6876#0" expanded="false" />
+                <element signature="e#6923#6924#0" expanded="false" />
+                <element signature="e#6958#6959#0" expanded="false" />
+                <element signature="e#6992#6993#0" expanded="false" />
+                <element signature="e#7043#7044#0" expanded="false" />
+                <element signature="e#7089#7090#0" expanded="false" />
+                <element signature="e#7125#7126#0" expanded="false" />
+                <element signature="e#7160#7161#0" expanded="false" />
+                <element signature="e#7213#7214#0" expanded="false" />
+                <element signature="e#7261#7262#0" expanded="false" />
+                <element signature="e#7296#7297#0" expanded="false" />
+                <element signature="e#7327#7328#0" expanded="false" />
+                <element signature="e#7375#7376#0" expanded="false" />
+                <element signature="e#7415#7416#0" expanded="false" />
+                <element signature="e#7461#7462#0" expanded="false" />
+                <element signature="e#7506#7507#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -228,9 +271,9 @@
         <option value="$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/Interface/GUIValues.java" />
         <option value="$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/Interface/SelectTestPreferencesScreen.java" />
         <option value="$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/InitialPrototype.java" />
-        <option value="$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/NeuralNetworkArchitectureTester.java" />
         <option value="$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/DataSetNormalisation/Bi3Normaliser.java" />
         <option value="$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/NeuralNetworkSettings.java" />
+        <option value="$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/NeuralNetworkArchitectureTester.java" />
       </list>
     </option>
   </component>
@@ -1046,8 +1089,43 @@
         <state relative-caret-position="462">
           <caret line="29" column="41" lean-forward="false" selection-start-line="29" selection-start-column="41" selection-end-line="29" selection-end-column="41" />
           <folding>
-            <element signature="e#7695#7696#0" expanded="true" />
-            <element signature="e#7741#7742#0" expanded="true" />
+            <element signature="imports" expanded="false" />
+            <element signature="e#5510#5511#0" expanded="false" />
+            <element signature="e#5554#5555#0" expanded="false" />
+            <element signature="e#5760#5761#0" expanded="false" />
+            <element signature="e#5800#5801#0" expanded="false" />
+            <element signature="e#5972#5973#0" expanded="false" />
+            <element signature="e#6006#6007#0" expanded="false" />
+            <element signature="e#6059#6060#0" expanded="false" />
+            <element signature="e#6105#6106#0" expanded="false" />
+            <element signature="e#6148#6149#0" expanded="false" />
+            <element signature="e#6190#6191#0" expanded="false" />
+            <element signature="e#6257#6258#0" expanded="false" />
+            <element signature="e#6319#6320#0" expanded="false" />
+            <element signature="e#6365#6366#0" expanded="false" />
+            <element signature="e#6410#6411#0" expanded="false" />
+            <element signature="e#6592#6593#0" expanded="false" />
+            <element signature="e#6631#6632#0" expanded="false" />
+            <element signature="e#6693#6694#0" expanded="false" />
+            <element signature="e#6749#6750#0" expanded="false" />
+            <element signature="e#6786#6787#0" expanded="false" />
+            <element signature="e#6821#6822#0" expanded="false" />
+            <element signature="e#6875#6876#0" expanded="false" />
+            <element signature="e#6923#6924#0" expanded="false" />
+            <element signature="e#6958#6959#0" expanded="false" />
+            <element signature="e#6992#6993#0" expanded="false" />
+            <element signature="e#7043#7044#0" expanded="false" />
+            <element signature="e#7089#7090#0" expanded="false" />
+            <element signature="e#7125#7126#0" expanded="false" />
+            <element signature="e#7160#7161#0" expanded="false" />
+            <element signature="e#7213#7214#0" expanded="false" />
+            <element signature="e#7261#7262#0" expanded="false" />
+            <element signature="e#7296#7297#0" expanded="false" />
+            <element signature="e#7327#7328#0" expanded="false" />
+            <element signature="e#7375#7376#0" expanded="false" />
+            <element signature="e#7415#7416#0" expanded="false" />
+            <element signature="e#7461#7462#0" expanded="false" />
+            <element signature="e#7506#7507#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -1056,7 +1134,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1496">
           <caret line="72" column="94" lean-forward="false" selection-start-line="72" selection-start-column="94" selection-end-line="72" selection-end-column="94" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1064,14 +1144,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1254">
           <caret line="69" column="117" lean-forward="false" selection-start-line="69" selection-start-column="117" selection-end-line="69" selection-end-column="117" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/NeuralNetworkArchitectureTester.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1650">
-          <caret line="96" column="236" lean-forward="false" selection-start-line="96" selection-start-column="236" selection-end-line="96" selection-end-column="236" />
           <folding />
         </state>
       </provider>
@@ -1088,7 +1160,11 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1980">
           <caret line="92" column="38" lean-forward="false" selection-start-line="92" selection-start-column="38" selection-end-line="92" selection-end-column="38" />
-          <folding />
+          <folding>
+            <element signature="imports" expanded="false" />
+            <element signature="e#7048#7049#0" expanded="false" />
+            <element signature="e#7115#7116#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1096,14 +1172,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="376">
           <caret line="337" column="25" lean-forward="false" selection-start-line="337" selection-start-column="25" selection-end-line="337" selection-end-column="25" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/TrainingAndTestSetCreator.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="446">
-          <caret line="53" column="21" lean-forward="true" selection-start-line="53" selection-start-column="21" selection-end-line="53" selection-end-column="21" />
           <folding />
         </state>
       </provider>
@@ -1129,9 +1197,27 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/NeuralNetworkSettings.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-242">
-          <caret line="82" column="91" lean-forward="false" selection-start-line="82" selection-start-column="91" selection-end-line="82" selection-end-column="91" />
+        <state relative-caret-position="458">
+          <caret line="112" column="83" lean-forward="false" selection-start-line="112" selection-start-column="83" selection-end-line="112" selection-end-column="83" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/TrainingAndTestSetCreator.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="160">
+          <caret line="31" column="36" lean-forward="true" selection-start-line="31" selection-start-column="8" selection-end-line="31" selection-end-column="36" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/uk/ac/edgehill/keidel/alexander/InitialPrototype/NeuralNetworkArchitecturePerformanceTesting/NeuralNetworkArchitectureTester.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="62">
+          <caret line="86" column="77" lean-forward="true" selection-start-line="86" selection-start-column="77" selection-end-line="86" selection-end-column="77" />
+          <folding>
+            <element signature="e#5540#5550#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
