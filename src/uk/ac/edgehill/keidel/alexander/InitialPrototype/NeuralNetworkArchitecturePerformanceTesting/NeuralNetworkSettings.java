@@ -18,6 +18,8 @@ import java.util.Observer;
  * Representing the architecture of a neural network based on multi-layered Perceptrons.
  * This includes the number of input, output and hidden layer neurons, transfer function, learning rule as well as
  * a performance score measured in standard deviation.
+ * Further variables include the Neuroph neural network itself, a training set, a test set, an overfitting test set or
+ * secondary / development test set, and arraylists of pairs representing the performances on both the test set and overfitting set.
  * Also contains a neural network object which will be trained by the {@link NeuralNetworkArchitectureTester}.
  */
 public class NeuralNetworkSettings implements Serializable, Runnable {
@@ -62,6 +64,11 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         this.parentStrDump = parentBuffer;
     }
 
+    /**
+     * Main feature of this class.
+     * Set up the neural network based on the given parameters for neuron counts, tranfer function, learning rule, training and test sets etc.
+     * Trains the neural network, providing insight into performance along the way.
+     */
     private void trainNeuralNetworkWithSettings(){
         //init neural network
         ArrayList<Integer> neuronCountInLayers = new ArrayList<>();
@@ -73,7 +80,7 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         neuralNetwork = new MultiLayerPerceptron(neuronCountInLayers, transferFunctionType); //set up multi-layered perceptron
         neuralNetwork.setLearningRule(learningRule); //set learning rule
         System.out.println(name + " training started");
-        //neuralNetwork.learn(trainingSet); //learn the training set
+        //neuralNetwork.learn(trainingSet); //learn the training set (without a new thread)
         neuralNetwork.learnInNewThread(trainingSet);
         int iterationCounter = 1;
         while(iterationCounter < 100){
@@ -92,6 +99,11 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         }
     }
 
+    /**
+     * Test the neural network performance on both the test set, as well as the overfitting set, adding the respective
+     * values to the correct array list.
+     * @param iteration Iteration counter used in storing the test performances as the key (in the key-value pairs).
+     *     */
     private void testNeuralNetworkPerformance(final int iteration){
         //START Test set performance
         ArrayList<Double> testSetOutputValues = new ArrayList<>();
@@ -124,8 +136,8 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
     /**
      * Create a human readable string from the information contained in this object. This can be printed to the console
      * or some GUI.
-     * @param
-     * @return
+     * @return a human readable string format representing the architecture of the neural network contained in this class.
+     * This can be used to print to console or an interface supporting rich text format (rtf) or similar styles
      */
     public String convertNeuralNetworkSettingsToReadableString(){
         String s = "";
