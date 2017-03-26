@@ -16,7 +16,6 @@
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="library" name="neuroph-2" level="project" />
     <orderEntry type="library" name="encog-core-2.5.3" level="project" />
     <orderEntry type="module-library">
       <library>
@@ -57,5 +56,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="neuroph 2.92" level="project" />
+    <orderEntry type="library" name="apidocs" level="project" />
   </component>
 </module>

@@ -31,7 +31,7 @@ public interface GUIValues {
     String FILE_MENU_SAVE_AS = "Save as...";
     String FILE_MENU_LOAD_PROJECT = "Load Project";
     String FILE_MENU_LOAD_PROJECT_FILECHOOSER_TITLE = "Select a project file to load";
-    String FILE_MENU_GENERATE_CHART = "Generate Chart";
+    String FILE_MENU_GENERATE_CHART = "Generate Charts";
 
 
     String NEURAL_NETWORK_MENU = "Neural Network";
@@ -80,5 +80,4 @@ public interface GUIValues {
 
     //note that the default background colour is Color.web("#F4F4F4")
     Background PREFERENCES_SCREEN_BACKGROUND = new Background(new BackgroundFill(Color.web("#AAA"), CornerRadii.EMPTY, Insets.EMPTY));
-
 }

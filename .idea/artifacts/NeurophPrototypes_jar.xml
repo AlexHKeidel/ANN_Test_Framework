@@ -12,7 +12,6 @@
       <element id="extracted-dir" path="$PROJECT_DIR$/neuroph-2.92/neuroph-adapters-2.92.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$PROJECT_DIR$/libs/neuroph-2.6.jar" path-in-jar="/" />
       <element id="file-copy" path="$PROJECT_DIR$/libs/neuroph-2.6.jar" />
-      <element id="library" level="project" name="neuroph-2" />
       <element id="library" level="project" name="encog-core-2.5.3" />
     </root>
   </artifact>

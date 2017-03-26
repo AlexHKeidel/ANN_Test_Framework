@@ -19,22 +19,39 @@ public class NeuralNetworkTestScreen extends Stage implements GUIValues {
     XYChart.Series testSetSeries;
     XYChart.Series overfittingSetSeries;
     Stage myStage;
+    NeuralNetworkSettings mySettings;
 
-    public NeuralNetworkTestScreen(String name){
+    public NeuralNetworkTestScreen(NeuralNetworkSettings mySettings){
+        this.mySettings = mySettings;
         myStage = new Stage();
-        myStage.setTitle(name);
+        myStage.setTitle(mySettings.getName());
         xAxis = new NumberAxis(); //setup axis
         yAxis = new NumberAxis(); //setup axis
         performanceLineChart = new LineChart<Number, Number>(xAxis, yAxis); // new line chart
         performanceLineChart.setTitle("Performance (1 - SD)");
+        performanceLineChart.setCreateSymbols(false); //remove the circles from the graphs so just lines are left
         testSetSeries = new XYChart.Series();
         testSetSeries.setName("Test set");
         overfittingSetSeries = new XYChart.Series();
         overfittingSetSeries.setName("Overfitting set");
         performanceLineChart.getData().addAll(testSetSeries, overfittingSetSeries);
         Scene scene = new Scene(performanceLineChart, 800, 400);
+        generateGraphFromData();
         myStage.setScene(scene);
         myStage.show();
+    }
+
+    private void generateGraphFromData(){
+        testSetSeries.getData().clear(); //clear data
+        for(Pair<Integer, Double> pair : mySettings.getTestSetPerformances()){ //add all data
+            //System.out.println("key = " + pair.getKey() + " value = " + pair.getValue());
+            testSetSeries.getData().add(new XYChart.Data<>(pair.getKey(), pair.getValue()));
+        }
+        overfittingSetSeries.getData().clear(); //clear data
+        for(Pair<Integer, Double> pair : mySettings.getOverfittingTestSetPerformances()){ //add all data
+            overfittingSetSeries.getData().add(new XYChart.Data<>(pair.getKey(), pair.getValue()));
+        }
+        performanceLineChart.getData().addAll(testSetSeries, overfittingSetSeries);
     }
 
     public void updateTestSeries(Pair<Integer, Double> vals){

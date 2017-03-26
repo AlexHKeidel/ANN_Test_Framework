@@ -11,8 +11,6 @@ import javafx.stage.Stage;
 import org.codehaus.groovy.util.ArrayIterator;
 import org.neuroph.core.NeuralNetwork;
 import org.neuroph.core.learning.LearningRule;
-import org.neuroph.core.learning.SupervisedTrainingElement;
-import org.neuroph.core.learning.TrainingSet;
 import org.neuroph.nnet.MultiLayerPerceptron;
 import org.neuroph.util.TransferFunctionType;
 import org.neuroph.util.io.FileInputAdapter;
@@ -66,9 +64,9 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
     public boolean trainAndTestNeuralNetworkStructures(File trainingSetFile, File testSetFile, File overfittingFile, String baseName, int inputNeuronCount, int outputNeuronCount, ArrayList<ArrayList<Integer>> hiddenLayerVariants, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit, ProgressBar progressBar, TextArea textArea){
         try{
             //create test set and training set
-            TrainingSet trainingSet = TrainingSet.createFromFile(trainingSetFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
-            TrainingSet<SupervisedTrainingElement> testSet = TrainingSet.createFromFile(testSetFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
-            TrainingSet<SupervisedTrainingElement> overfittingSet = TrainingSet.createFromFile(overfittingFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
+            //TrainingSet trainingSet = TrainingSet.createFromFile(trainingSetFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
+            //TrainingSet<SupervisedTrainingElement> testSet = TrainingSet.createFromFile(testSetFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
+            //TrainingSet<SupervisedTrainingElement> overfittingSet = TrainingSet.createFromFile(overfittingFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
             int networkCounter = 1;
 
             //thread pool requirements
@@ -81,14 +79,15 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             RejectedExecutionHandler reh = new ThreadPoolExecutor.DiscardPolicy(); //rejection handler
             ThreadFactory threadFactory = Executors.defaultThreadFactory(); //default thread factory
             BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(1000);
-            ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 1000, 10, TimeUnit.SECONDS, blockingQueue, threadFactory, reh);
+            BlockingQueue<Runnable> queue = new SynchronousQueue<>(true);
+            ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 1000, 10, TimeUnit.SECONDS, queue, threadFactory, reh);
             //ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 1000, 10, TimeUnit.DAYS, blockingQueue, threadFactory, reh);
             //for each learning rule and transfer function
             for(LearningRule rule : desiredLearningRules){
                 for(TransferFunctionType transferFunctionType : desiredTransferFunctions) {
                     for (int i = 0; i < hiddenLayerVariants.size(); i++) { //for each hidden layer siz
                         //@TODO add variation for hidden layer sizes so not all hidden layers are the same size!
-                        NeuralNetworkSettings network = new NeuralNetworkSettings(baseName + " #" + networkCounter, inputNeuronCount, outputNeuronCount, hiddenLayerVariants.get(i), transferFunctionType, rule, trainingSet, testSet, overfittingSet, strDump);
+                        NeuralNetworkSettings network = new NeuralNetworkSettings(baseName + " #" + networkCounter, inputNeuronCount, outputNeuronCount, hiddenLayerVariants.get(i), transferFunctionType, rule, trainingSetFile, testSetFile, overfittingFile, strDump);
                         neuralNetworkSettingsList.add(network); //add the network settings to the array list of all neural network settings
                         Thread t = new Thread(network); //assign new thread to the network
                         executor.execute(t); //add the thread to the executor
@@ -188,112 +187,113 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
 //        return allPermutations;
 //    }
 
-    /**
-     * Creates and tests different structures of multilayered Perceptrons against one another, with the specified training and testing sets.
-     * The best result will be returned by the method.
-     * @deprecated  new version up above!!!
-     * @param inputNeuronCount Integer amount of input nodes
-     * @param outputNeuronCount Integer amount of output nodes
-     * @param trainingSetName Name of the training set name
-     * @param performanceLimit Decimal value for the performance limit. Based on the desired standard deviation {@link GlobalVariablesInterface#DEFAULT_PERFORMANCE_REQUIERD_MINIMUM}
-     * @return
-     */
-    public NeuralNetworkSettings createAndTestNeuralNetworkStructures(File trainingSet, File testSet, String testSetName, String trainingSetName, int inputNeuronCount, int outputNeuronCount, int maximumHiddenLayerCount, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit){
-        /**
-        //BEGIN "Setting initial Testing values"
-        ArrayList<Integer> hiddenLayers = new ArrayList<>();
-        hiddenLayers.add(0,inputNeuronCount); //initial hidden layers
-        TransferFunctionType tft = TransferFunctionType.GAUSSIAN;
-        LearningRule lrnRule = new BackPropagation();
-        currentNetworkSettings = new NeuralNetworkSettings("Initial Settings", inputNeuronCount, outputNeuronCount, hiddenLayers, tft, lrnRule); //
-        TrainingSet currentTrainingSet = TrainingSet.createFromFile(DEFAULT_FILE_PATH + DEFAULT_TRAINING_SET_NAME, inputNeuronCount, outputNeuronCount, ","); //setting training set location
-        TrainingSet<SupervisedTrainingElement> currentTestSet = TrainingSet.createFromFile(DEFAULT_FILE_PATH + DEFAULT_TEST_SET_NAME, inputNeuronCount, outputNeuronCount, ","); //setting testing set with file location
-        performanceLimit = DEFAULT_PERFORMANCE_REQUIERD_MINIMUM;
-        //END
-         */
-        neuralNetworkSettingsListGenerator = new NeuralNetworkSettingsListGenerator(testSetName, inputNeuronCount, outputNeuronCount, maximumHiddenLayerCount, desiredTransferFunctions, desiredLearningRules); //a new settings generator with the specified values
-        ArrayList<NeuralNetworkSettings> allPossibleNetworkSettings = neuralNetworkSettingsListGenerator.getNeuralNetworkList();
-
-        int networkCounter = 0;
-        ArrayList<Integer> hiddenLayers = new ArrayList<>();
-        TransferFunctionType tft;
-        LearningRule lrnRule;
-
-//        TrainingSet currentTrainingSet = TrainingSet.createFromFile(DEFAULT_FILE_PATH + DEFAULT_TRAINING_SET_NAME, inputNeuronCount, outputNeuronCount, DEFAULT_SEPARATOR); //setting training set location
+//    /**
+//     * Creates and tests different structures of multilayered Perceptrons against one another, with the specified training and testing sets.
+//     * The best result will be returned by the method.
+//     * @deprecated  new version up above!!!
+//     * @param inputNeuronCount Integer amount of input nodes
+//     * @param outputNeuronCount Integer amount of output nodes
+//     * @param trainingSetName Name of the training set name
+//     * @param performanceLimit Decimal value for the performance limit. Based on the desired standard deviation {@link GlobalVariablesInterface#DEFAULT_PERFORMANCE_REQUIERD_MINIMUM}
+//     * @return
+//     */
+//
+//    public NeuralNetworkSettings createAndTestNeuralNetworkStructures(File trainingSet, File testSet, String testSetName, String trainingSetName, int inputNeuronCount, int outputNeuronCount, int maximumHiddenLayerCount, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit){
+//        /**
+//        //BEGIN "Setting initial Testing values"
+//        ArrayList<Integer> hiddenLayers = new ArrayList<>();
+//        hiddenLayers.add(0,inputNeuronCount); //initial hidden layers
+//        TransferFunctionType tft = TransferFunctionType.GAUSSIAN;
+//        LearningRule lrnRule = new BackPropagation();
+//        currentNetworkSettings = new NeuralNetworkSettings("Initial Settings", inputNeuronCount, outputNeuronCount, hiddenLayers, tft, lrnRule); //
+//        TrainingSet currentTrainingSet = TrainingSet.createFromFile(DEFAULT_FILE_PATH + DEFAULT_TRAINING_SET_NAME, inputNeuronCount, outputNeuronCount, ","); //setting training set location
 //        TrainingSet<SupervisedTrainingElement> currentTestSet = TrainingSet.createFromFile(DEFAULT_FILE_PATH + DEFAULT_TEST_SET_NAME, inputNeuronCount, outputNeuronCount, ","); //setting testing set with file location
-        TrainingSet currentTrainingSet = TrainingSet.createFromFile(trainingSet.getPath(), inputNeuronCount, outputNeuronCount, ",");
-        TrainingSet<SupervisedTrainingElement> currentTestSet = TrainingSet.createFromFile(testSet.getPath(), inputNeuronCount, outputNeuronCount, ",");
-        do{
-            try{
-                System.out.println("In try catch block iteration " + networkCounter);
-                hiddenLayers = allPossibleNetworkSettings.get(networkCounter).getHiddenLayers();
-                tft = allPossibleNetworkSettings.get(networkCounter).getTransferFunctionType();
-                lrnRule = allPossibleNetworkSettings.get(networkCounter).getLearningRule();
-                currentNetworkSettings = new NeuralNetworkSettings(testSetName + " #" + networkCounter, inputNeuronCount, outputNeuronCount, hiddenLayers, tft, lrnRule);
-                networkSettingsList.add(currentNetworkSettings); //append the list of the settings with the next item
-
-            } catch (Exception e){
-                e.printStackTrace();
-                System.out.println("No more possible settings to test.");
-                strDump.append("No more possible settings to test.\n");
-                try{
-                    System.out.print("\nFinished training and testing network.\n\nFinal result:\nBest found neural network settings provide a correctness level of " + bestNetworkSettings.getPerformanceScore() +"%.");
-                    strDump.append("\nFinished training and testing network.\n\nFinal result:\nBest found neural network settings provide a correctness level of " + bestNetworkSettings.getPerformanceScore() +"%.\n");
-                    if(bestNetworkSettings.getPerformanceScore() == 0.0f){
-                        System.out.println("No network was tested. Please report this error.");
-                        strDump.append("No network was tested. Please report this error.\n");
-                        return null;
-                    }
-                    return bestNetworkSettings;
-                } catch (Exception innerE){
-                    innerE.printStackTrace();
-                }
-            }
-            //adding the integer values defining the layers of the perceptron into an arraylist
-            ArrayList<Integer> neuronCountInLayers = new ArrayList<>();
-            neuronCountInLayers.add(inputNeuronCount);
-            for(int layer : hiddenLayers){ //adding hidden layers (same count as input layers)
-                neuronCountInLayers.add(layer);
-            }
-            neuronCountInLayers.add(outputNeuronCount); //adding output layers
-            customPerceptron = new MultiLayerPerceptron(neuronCountInLayers, currentNetworkSettings.getTransferFunctionType()); //create a custom multi layered perceptron with the given input, hidden and output layers, as well as transfer function
-            customPerceptron.setLearningRule(currentNetworkSettings.getLearningRule()); //setting learning rule
-            System.out.println("Training neural network.");
-            customPerceptron.learnInNewThread(currentTrainingSet);
-            /**
-             * @TODO fix multi threading!
-             * This is done with a sepearte function. This is now deprecated
-             * start array list of threads to train all perceptrons
-             * each thread first trains the network structure, and then tests it
-             * create ranking of all network structures (charts?)
-             * rank the array list with a sort function
-             */
-            //customPerceptron.learn(currentTrainingSet); //training network with the training set
-            System.out.println("Finished training neural network");
-            ArrayList<Double> tmpvalues = new ArrayList<Double>();
-            for(int i = 0; i < currentTestSet.elements().size(); i ++){
-                customPerceptron.setInput(currentTestSet.elementAt(i).getInput()); //set input values
-                customPerceptron.calculate(); //calculate result
-                tmpvalues.add(customPerceptron.getOutput()[0]); //add the result to the list of doubles
-            }
-            currentNetworkSettings.setPerformanceScore(calculateStandardDeviation(tmpvalues));
-            System.out.println("Required Standard Deviation = " + performanceLimit + "\n" + convertNeuralNetworkSettingsToReadableString(currentNetworkSettings));
-            strDump.append("Required Standard Deviation = " + performanceLimit + "\n" + convertNeuralNetworkSettingsToReadableString(currentNetworkSettings) + "\n");
-            if(currentNetworkSettings.getPerformanceScore() < bestNetworkSettings.getPerformanceScore())bestNetworkSettings = currentNetworkSettings; //replace the best network settings
-            networkCounter++; //incrementing the network counter
-        }
-        while(bestNetworkSettings.getPerformanceScore() > performanceLimit); //while the best performance is under the specified limit (default at 97%) keep testing network structures
-        //System.out.print("\nFinished training and testing network.\n\nFinal result:\nBest found neural network settings provide a correctness level of " + bestNetworkSettings.getPerformanceScore() +"%.");
-        System.out.println("\nFinished training and testing networks. Best result is the following architecture:\n");
-        System.out.print(convertNeuralNetworkSettingsToReadableString(bestNetworkSettings));
-        strDump.append("\nFinished training and testing networks. Best result is the following architecture:\n" + convertNeuralNetworkSettingsToReadableString(bestNetworkSettings) + "\n");
-
-        synchronized (strDump){
-            strDump.notify();
-        }
-
-        return bestNetworkSettings; //return the best found network settings.
-    }
+//        performanceLimit = DEFAULT_PERFORMANCE_REQUIERD_MINIMUM;
+//        //END
+//         */
+//        neuralNetworkSettingsListGenerator = new NeuralNetworkSettingsListGenerator(testSetName, inputNeuronCount, outputNeuronCount, maximumHiddenLayerCount, desiredTransferFunctions, desiredLearningRules); //a new settings generator with the specified values
+//        ArrayList<NeuralNetworkSettings> allPossibleNetworkSettings = neuralNetworkSettingsListGenerator.getNeuralNetworkList();
+//
+//        int networkCounter = 0;
+//        ArrayList<Integer> hiddenLayers = new ArrayList<>();
+//        TransferFunctionType tft;
+//        LearningRule lrnRule;
+//
+////        TrainingSet currentTrainingSet = TrainingSet.createFromFile(DEFAULT_FILE_PATH + DEFAULT_TRAINING_SET_NAME, inputNeuronCount, outputNeuronCount, DEFAULT_SEPARATOR); //setting training set location
+////        TrainingSet<SupervisedTrainingElement> currentTestSet = TrainingSet.createFromFile(DEFAULT_FILE_PATH + DEFAULT_TEST_SET_NAME, inputNeuronCount, outputNeuronCount, ","); //setting testing set with file location
+//        //TrainingSet currentTrainingSet = TrainingSet.createFromFile(trainingSet.getPath(), inputNeuronCount, outputNeuronCount, ",");
+//        //TrainingSet<SupervisedTrainingElement> currentTestSet = TrainingSet.createFromFile(testSet.getPath(), inputNeuronCount, outputNeuronCount, ",");
+//        do{
+//            try{
+//                System.out.println("In try catch block iteration " + networkCounter);
+//                hiddenLayers = allPossibleNetworkSettings.get(networkCounter).getHiddenLayers();
+//                tft = allPossibleNetworkSettings.get(networkCounter).getTransferFunctionType();
+//                lrnRule = allPossibleNetworkSettings.get(networkCounter).getLearningRule();
+//                currentNetworkSettings = new NeuralNetworkSettings(testSetName + " #" + networkCounter, inputNeuronCount, outputNeuronCount, hiddenLayers, tft, lrnRule);
+//                networkSettingsList.add(currentNetworkSettings); //append the list of the settings with the next item
+//
+//            } catch (Exception e){
+//                e.printStackTrace();
+//                System.out.println("No more possible settings to test.");
+//                strDump.append("No more possible settings to test.\n");
+//                try{
+//                    System.out.print("\nFinished training and testing network.\n\nFinal result:\nBest found neural network settings provide a correctness level of " + bestNetworkSettings.getPerformanceScore() +"%.");
+//                    strDump.append("\nFinished training and testing network.\n\nFinal result:\nBest found neural network settings provide a correctness level of " + bestNetworkSettings.getPerformanceScore() +"%.\n");
+//                    if(bestNetworkSettings.getPerformanceScore() == 0.0f){
+//                        System.out.println("No network was tested. Please report this error.");
+//                        strDump.append("No network was tested. Please report this error.\n");
+//                        return null;
+//                    }
+//                    return bestNetworkSettings;
+//                } catch (Exception innerE){
+//                    innerE.printStackTrace();
+//                }
+//            }
+//            //adding the integer values defining the layers of the perceptron into an arraylist
+//            ArrayList<Integer> neuronCountInLayers = new ArrayList<>();
+//            neuronCountInLayers.add(inputNeuronCount);
+//            for(int layer : hiddenLayers){ //adding hidden layers (same count as input layers)
+//                neuronCountInLayers.add(layer);
+//            }
+//            neuronCountInLayers.add(outputNeuronCount); //adding output layers
+//            customPerceptron = new MultiLayerPerceptron(neuronCountInLayers, currentNetworkSettings.getTransferFunctionType()); //create a custom multi layered perceptron with the given input, hidden and output layers, as well as transfer function
+//            customPerceptron.setLearningRule(currentNetworkSettings.getLearningRule()); //setting learning rule
+//            System.out.println("Training neural network.");
+//            //customPerceptron.learnInNewThread(currentTrainingSet);
+//            /**
+//             * @TODO fix multi threading!
+//             * This is done with a sepearte function. This is now deprecated
+//             * start array list of threads to train all perceptrons
+//             * each thread first trains the network structure, and then tests it
+//             * create ranking of all network structures (charts?)
+//             * rank the array list with a sort function
+//             */
+//            //customPerceptron.learn(currentTrainingSet); //training network with the training set
+//            System.out.println("Finished training neural network");
+//            ArrayList<Double> tmpvalues = new ArrayList<Double>();
+//            for(int i = 0; i < currentTestSet.elements().size(); i ++){
+//                customPerceptron.setInput(currentTestSet.elementAt(i).getInput()); //set input values
+//                customPerceptron.calculate(); //calculate result
+//                tmpvalues.add(customPerceptron.getOutput()[0]); //add the result to the list of doubles
+//            }
+//            currentNetworkSettings.setPerformanceScore(calculateStandardDeviation(tmpvalues));
+//            System.out.println("Required Standard Deviation = " + performanceLimit + "\n" + convertNeuralNetworkSettingsToReadableString(currentNetworkSettings));
+//            strDump.append("Required Standard Deviation = " + performanceLimit + "\n" + convertNeuralNetworkSettingsToReadableString(currentNetworkSettings) + "\n");
+//            if(currentNetworkSettings.getPerformanceScore() < bestNetworkSettings.getPerformanceScore())bestNetworkSettings = currentNetworkSettings; //replace the best network settings
+//            networkCounter++; //incrementing the network counter
+//        }
+//        while(bestNetworkSettings.getPerformanceScore() > performanceLimit); //while the best performance is under the specified limit (default at 97%) keep testing network structures
+//        //System.out.print("\nFinished training and testing network.\n\nFinal result:\nBest found neural network settings provide a correctness level of " + bestNetworkSettings.getPerformanceScore() +"%.");
+//        System.out.println("\nFinished training and testing networks. Best result is the following architecture:\n");
+//        System.out.print(convertNeuralNetworkSettingsToReadableString(bestNetworkSettings));
+//        strDump.append("\nFinished training and testing networks. Best result is the following architecture:\n" + convertNeuralNetworkSettingsToReadableString(bestNetworkSettings) + "\n");
+//
+//        synchronized (strDump){
+//            strDump.notify();
+//        }
+//
+//        return bestNetworkSettings; //return the best found network settings.
+////    }
 
     private String convertNeuralNetworkSettingsToReadableString(NeuralNetworkSettings settings){
         String s = "";

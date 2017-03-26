@@ -56,6 +56,7 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
     private static InitialPrototype prototype;
     public static Stage primaryStage;
     private TestingPreferences testingPreferences = new TestingPreferences(); //testing preferences file
+    private TabPane graphsPane = new TabPane();
 
     public static void main(String[] args) {
         launch(args);
@@ -112,6 +113,9 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
             barChart.setTitle("Best Performing ANN Structures");
             xAxis.setLabel("ANN Structure");
             yAxis.setLabel("Performance Score (Standard Deviation)");
+
+            //setup graphsPane (TabbedPane)
+//            graphsPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
             //See http://docs.oracle.com/javafx/2/layout/builtin_layouts.htm
             BorderPane borderPane = new BorderPane(); //new border pane
@@ -245,14 +249,18 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
     }
 
     /**
-     * Populate the barchart with the top 5 performing network structures
+     * Populate the barchart with the top 5 performing network structures or less if there are less than 5
      */
     private void populateTopFiveBarChart() {
         ArrayList<NeuralNetworkSettings> orderedSettings = orderAllNetworkSettingsByPerformance(); //sort the structures by performance
+        int lowest = 4;
+        if(orderedSettings.size() < 5){ //there is less than 5 items in the list
+            lowest = orderedSettings.size() - 1;
+        }
         barChart.getData().clear(); //clear the bar chart in case it is populated
-        ((NumberAxis) barChart.getYAxis()).setLowerBound(((1 - orderedSettings.get(4).getPerformanceScore()) * 99.99)); //set lower bound for bar chart based on fifth value
+        ((NumberAxis) barChart.getYAxis()).setLowerBound(((1 - orderedSettings.get(lowest).getPerformanceScore()) * 99.99999)); //set lower bound for bar chart based on fifth value
         //System.out.println("prototype = " + prototype.neuralNetworkArchitectureTester.getNeuralNetworkSettingsList());
-        for(int i = 0; i < 4; i++){
+        for(int i = 0; i <= lowest; i++){
             NeuralNetworkSettings tmp = orderedSettings.get(i);
             XYChart.Series s = new XYChart.Series<String, Double>();
             s.setName(tmp.getName() + " (" + tmp.getLearningRule().getClass().getSimpleName() + " " + tmp.getTransferFunctionType().getTypeLabel() + ")");
@@ -282,7 +290,8 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
         final MenuItem fileSaveAs = new MenuItem(FILE_MENU_SAVE_AS);
         fileSaveAs.setOnAction(e -> saveProjectAs());
         final MenuItem fileGenerateChart = new MenuItem(FILE_MENU_GENERATE_CHART);
-        fileGenerateChart.setOnAction(e -> populateTopFiveBarChart());
+        //fileGenerateChart.setOnAction(e -> populateTopFiveBarChart());
+        fileGenerateChart.setOnAction(e -> startNeuralNetworkTestScreens());
         fileMenu.getItems().addAll(fileLoadProject, fileSaveProject, fileSaveAs, fileGenerateChart); //register sub menu items
 
 
@@ -462,8 +471,13 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
         }
     };
 
-    public NeuralNetworkTestScreen startNeuralNetworkTestScreen(String name){
-        NeuralNetworkTestScreen nnts = new NeuralNetworkTestScreen(name);
-        return nnts;
+    private void startNeuralNetworkTestScreens(){
+        //System.out.println("starting NN test screens");
+        ArrayList<NeuralNetworkSettings> allSettings = prototype.neuralNetworkArchitectureTester.getNeuralNetworkSettingsList();
+        //System.out.println("allSettings length = " +allSettings.size());
+        for(NeuralNetworkSettings settings : allSettings){
+            new NeuralNetworkTestScreen(settings);
+        }
+        populateTopFiveBarChart(); //populate the top 5 bar chart too!
     }
 }
