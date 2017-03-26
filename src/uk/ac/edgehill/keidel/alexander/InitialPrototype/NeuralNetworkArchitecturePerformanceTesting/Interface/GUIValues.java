@@ -66,6 +66,7 @@ public interface GUIValues {
     String PREFERENCES_SCREEN_BOUNDARIES_INPUT_LAYER_SIZE = "Input Neurons: ";
     String PREFERENCES_SCREEN_BOUNDARIES_OUTPUT_LAYER_SIZE = "Output Neurons: ";
     String PREFERENCES_SCREEN_BOUNDARIES_NETWORK_TESTING_PERFORMANCE_SCORE = "Performance Limit (Standard Deviation): ";
+    String PREFERENCES_SCREEN_BOUDNARIES_HIDDEN_LAYER_VARIATIONS = "Hidden layer variations: ";
     String PREFERENCES_SCREEN_BOUNDARIES_MAXIMUM_HIDDEN_LAYERS_TEXT = "Maximum hidden layers: ";
     String PREFERENCES_SCREEN_BOUNDARIES_MINIMUM_HIDDEN_LAYER_SIZE_TEXT = "Minimum size of each hidden layer: ";
     String PREFERENCES_SCREEN_BOUNDARIES_MAXIMUM_HIDDEN_LAYER_SIZE_TEXT = "Maximum size of each hidden layer: ";

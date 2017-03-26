@@ -1,9 +1,6 @@
 package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Interface;
 
-import com.sun.javafx.scene.layout.region.Margins;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -11,14 +8,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import javafx.util.converter.DefaultStringConverter;
 import javafx.util.converter.NumberStringConverter;
-import org.encog.util.file.Directory;
 import org.neuroph.core.learning.LearningRule;
 import org.neuroph.util.TransferFunctionType;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Exceptions.LearningRuleNotFoundException;
@@ -44,9 +39,10 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
     private ArrayList<CheckBox> learningRuleCheckBoxes = new ArrayList<>();
     private TextField desiredTestName = new TextField();
     private TextField desiredPerformanceTextField = new TextField();
-    private TextField desiredMaxHidLayersTextField = new TextField();
-    private TextField desiredMinHidLayerSizeTextField = new TextField();
-    private TextField desiredMaxHidLayerSizeTextField = new TextField();
+    private TextArea desiredHiddenLayerStructuresTextArea = new TextArea();
+//    private TextField desiredMaxHidLayersTextField = new TextField();
+//    private TextField desiredMinHidLayerSizeTextField = new TextField();
+//    private TextField desiredMaxHidLayerSizeTextField = new TextField();
     private TextField desiredInputLayerSizeTextField = new TextField();
     private TextField desiredOutputLayerSizeTextField = new TextField();
     private Text desiredTrainingSetText = new Text();
@@ -61,9 +57,10 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
     private String testPreferencesName = "Default";
     private int inputLayers = 0;
     private int outputLayers = 0;
-    private int minimumHiddenLayers = 0;
-    private int maximumHiddenLayers = 0;
-    private int maximumHiddenLayerSize = 0;
+    private ArrayList<ArrayList<Integer>> hiddenLayers = new ArrayList<>();
+//    private int minimumHiddenLayers = 0;
+//    private int maximumHiddenLayers = 0;
+//    private int maximumHiddenLayerSize = 0;
     private File trainingSetFile;
     private File testSetFile;
     private File overfittingSetFile;
@@ -197,50 +194,61 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         performanceHBox.setHgrow(performanceSpacer, Priority.ALWAYS);
         performanceHBox.getChildren().addAll(performanceText, performanceSpacer, performanceNumberField); //add items to hbox
 
-        //see above for comments (same structure) @TODO really this means that this should be separate methods
-        HBox maximumHiddenLayersHBox = new HBox();
-        Text maxHidLayText = new Text(PREFERENCES_SCREEN_BOUNDARIES_MAXIMUM_HIDDEN_LAYERS_TEXT);
-        TextField maxHidLayTextField = new TextField();
-        NumberStringConverter n2 = new NumberStringConverter();
-        TextFormatter<Number> formatter2 = new TextFormatter<Number>(n2);
-        maxHidLayTextField.setTextFormatter(formatter2);
-        formatter2.valueProperty().addListener((observable, oldValue, newValue) -> validateMaxHiddenLayersValue(observable, oldValue, newValue, formatter2));
-        desiredMaxHidLayersTextField = maxHidLayTextField;
-        Pane maxHidLaySpacer = new Pane();
-        maxHidLaySpacer.setMinWidth(10);
-        maximumHiddenLayersHBox.setHgrow(maxHidLaySpacer, Priority.ALWAYS);
-        maximumHiddenLayersHBox.getChildren().addAll(maxHidLayText, maxHidLaySpacer, maxHidLayTextField);
+        //hidden layers HBox
+        HBox hiddenLayersHBox = new HBox();
+        Text hiddenLayersText = new Text(PREFERENCES_SCREEN_BOUDNARIES_HIDDEN_LAYER_VARIATIONS);
+        TextArea hiddenLayersTextArea = new TextArea();
+        hiddenLayersTextArea.textProperty().addListener((observable, oldValue, newValue) -> validateHiddenLayers(observable, oldValue, newValue, hiddenLayersTextArea));
+        Pane hiddenLayersSpacer = new Pane();
+        hiddenLayersSpacer.setMinWidth(10);
+        hiddenLayersHBox.setHgrow(hiddenLayersSpacer, Priority.ALWAYS);
+        desiredHiddenLayerStructuresTextArea = hiddenLayersTextArea;
+        hiddenLayersHBox.getChildren().addAll(hiddenLayersText, hiddenLayersSpacer, hiddenLayersTextArea);
 
-        //see above for comments (same structure)
-        //minimum hidden layers
-        HBox minimumHiddenLayersSizeHBox = new HBox();
-        Text minimumHiddenLayersSizeText = new Text(PREFERENCES_SCREEN_BOUNDARIES_MINIMUM_HIDDEN_LAYER_SIZE_TEXT);
-        TextField minimumHiddenLayersSizeTextField = new TextField();
-        NumberStringConverter minhidlayerConverter = new NumberStringConverter();
-        TextFormatter<Number> minhidlayerFormatter = new TextFormatter<Number>(minhidlayerConverter);
-        minimumHiddenLayersSizeTextField.setTextFormatter(minhidlayerFormatter);
-        minhidlayerFormatter.valueProperty().addListener((observable, oldValue, newValue) -> validateMinHiddenLayerSizeValue(observable, oldValue, newValue, minhidlayerFormatter));
-        //desiredMinHidLayerSizeTextField.setAlignment(Pos.BASELINE_RIGHT);
-        Pane minimumHiddenLayersSpacer = new Pane();
-        minimumHiddenLayersSpacer.setMinWidth(10);
-        minimumHiddenLayersSizeHBox.setHgrow(minimumHiddenLayersSpacer, Priority.ALWAYS);
-        desiredMinHidLayerSizeTextField = minimumHiddenLayersSizeTextField;
-        minimumHiddenLayersSizeHBox.getChildren().addAll(minimumHiddenLayersSizeText, minimumHiddenLayersSpacer, minimumHiddenLayersSizeTextField);
-
-        //see above for comments (same structure)
-        //maximum hidden layers
-        HBox maximumHiddenLayerSizeHBox = new HBox();
-        Text maxHidLaySizeText = new Text(PREFERENCES_SCREEN_BOUNDARIES_MAXIMUM_HIDDEN_LAYER_SIZE_TEXT);
-        TextField maxHidLaySizeTextField = new TextField();
-        NumberStringConverter n3 = new NumberStringConverter();
-        TextFormatter<Number> formatter3 = new TextFormatter<Number>(n3);
-        maxHidLaySizeTextField.setTextFormatter(formatter3);
-        formatter3.valueProperty().addListener((observable, oldValue, newValue) -> validateMaxHiddenLayerSizeValue(observable, oldValue, newValue, formatter3));
-        desiredMaxHidLayerSizeTextField = maxHidLaySizeTextField;
-        Pane maxHidLaySizeSpacer = new Pane();
-        maxHidLaySizeSpacer.setMinWidth(10);
-        maximumHiddenLayersHBox.setHgrow(maxHidLaySizeSpacer, Priority.ALWAYS);
-        maximumHiddenLayerSizeHBox.getChildren().addAll(maxHidLaySizeText, maxHidLaySizeSpacer, maxHidLaySizeTextField);
+//        //see above for comments (same structure) @TODO really this means that this should be separate methods
+//        HBox maximumHiddenLayersHBox = new HBox();
+//        Text maxHidLayText = new Text(PREFERENCES_SCREEN_BOUNDARIES_MAXIMUM_HIDDEN_LAYERS_TEXT);
+//        TextField maxHidLayTextField = new TextField();
+//        NumberStringConverter n2 = new NumberStringConverter();
+//        TextFormatter<Number> formatter2 = new TextFormatter<Number>(n2);
+//        maxHidLayTextField.setTextFormatter(formatter2);
+//        formatter2.valueProperty().addListener((observable, oldValue, newValue) -> validateMaxHiddenLayersValue(observable, oldValue, newValue, formatter2));
+//        desiredMaxHidLayersTextField = maxHidLayTextField;
+//        Pane maxHidLaySpacer = new Pane();
+//        maxHidLaySpacer.setMinWidth(10);
+//        maximumHiddenLayersHBox.setHgrow(maxHidLaySpacer, Priority.ALWAYS);
+//        maximumHiddenLayersHBox.getChildren().addAll(maxHidLayText, maxHidLaySpacer, maxHidLayTextField);
+//
+//        //see above for comments (same structure)
+//        //minimum hidden layers
+//        HBox minimumHiddenLayersSizeHBox = new HBox();
+//        Text minimumHiddenLayersSizeText = new Text(PREFERENCES_SCREEN_BOUNDARIES_MINIMUM_HIDDEN_LAYER_SIZE_TEXT);
+//        TextField minimumHiddenLayersSizeTextField = new TextField();
+//        NumberStringConverter minhidlayerConverter = new NumberStringConverter();
+//        TextFormatter<Number> minhidlayerFormatter = new TextFormatter<Number>(minhidlayerConverter);
+//        minimumHiddenLayersSizeTextField.setTextFormatter(minhidlayerFormatter);
+//        minhidlayerFormatter.valueProperty().addListener((observable, oldValue, newValue) -> validateMinHiddenLayerSizeValue(observable, oldValue, newValue, minhidlayerFormatter));
+//        //desiredMinHidLayerSizeTextField.setAlignment(Pos.BASELINE_RIGHT);
+//        Pane minimumHiddenLayersSpacer = new Pane();
+//        minimumHiddenLayersSpacer.setMinWidth(10);
+//        minimumHiddenLayersSizeHBox.setHgrow(minimumHiddenLayersSpacer, Priority.ALWAYS);
+//        desiredMinHidLayerSizeTextField = minimumHiddenLayersSizeTextField;
+//        minimumHiddenLayersSizeHBox.getChildren().addAll(minimumHiddenLayersSizeText, minimumHiddenLayersSpacer, minimumHiddenLayersSizeTextField);
+//
+//        //see above for comments (same structure)
+//        //maximum hidden layers
+//        HBox maximumHiddenLayerSizeHBox = new HBox();
+//        Text maxHidLaySizeText = new Text(PREFERENCES_SCREEN_BOUNDARIES_MAXIMUM_HIDDEN_LAYER_SIZE_TEXT);
+//        TextField maxHidLaySizeTextField = new TextField();
+//        NumberStringConverter n3 = new NumberStringConverter();
+//        TextFormatter<Number> formatter3 = new TextFormatter<Number>(n3);
+//        maxHidLaySizeTextField.setTextFormatter(formatter3);
+//        formatter3.valueProperty().addListener((observable, oldValue, newValue) -> validateMaxHiddenLayerSizeValue(observable, oldValue, newValue, formatter3));
+//        desiredMaxHidLayerSizeTextField = maxHidLaySizeTextField;
+//        Pane maxHidLaySizeSpacer = new Pane();
+//        maxHidLaySizeSpacer.setMinWidth(10);
+//        maximumHiddenLayersHBox.setHgrow(maxHidLaySizeSpacer, Priority.ALWAYS);
+//        maximumHiddenLayerSizeHBox.getChildren().addAll(maxHidLaySizeText, maxHidLaySizeSpacer, maxHidLaySizeTextField);
 
         //training set HBox
         HBox trainingSetHBox = new HBox();
@@ -281,15 +289,51 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         overfittingHBox.setHgrow(desiredOverfittingSetSpacer, Priority.ALWAYS);
         overfittingHBox.getChildren().addAll(overfittingSetPrefix, overfittingSetCurrentFileName, desiredOverfittingSetSpacer, selectOverfittingSetButton);
 
-        vBox.getChildren().addAll(networkTestOptionsText, testNameHBox, inputLayerHBox, outputLayerHBox, maximumHiddenLayersHBox, minimumHiddenLayersSizeHBox, maximumHiddenLayerSizeHBox, performanceHBox, trainingSetHBox, testSetHBox, overfittingHBox); //add items to vbox
+        vBox.getChildren().addAll(networkTestOptionsText, testNameHBox, inputLayerHBox, outputLayerHBox, hiddenLayersHBox, performanceHBox, trainingSetHBox, testSetHBox, overfittingHBox); //add items to vbox
         scrollPane.setContent(vBox); //add VBox to Scrollpane
         return scrollPane;
     }
 
+    /**
+     * Regular expression (regex) for digits, commas and semicolons "^[0-9,;]+$" is used here to validate the user input
+     * @param observable
+     * @param oldValue
+     * @param newValue
+     * @param parentTextArea
+     */
+    private void validateHiddenLayers(ObservableValue<? extends String> observable, String oldValue, String newValue, TextArea parentTextArea) {
+        if(newValue == null){
+            if(oldValue == null){
+                parentTextArea.setText("");
+                return;
+            } else {
+                parentTextArea.setText(oldValue);
+                return;
+            }
+        }
+        if(newValue.equals("")){
+            parentTextArea.setText("");
+            return;
+        }
+        if(!newValue.matches("^[0-9,;]+$")){
+            parentTextArea.setText(oldValue);
+        } else { //found a suitable format
+            hiddenLayers.clear(); //clear hidden layers array list
+            String[] lines = newValue.split(";"); //split at new lines
+            for(String l : lines){ // for each line
+                String[] hls = l.split(","); //split at commas
+                ArrayList tmp = new ArrayList(); //new temporary array list
+                for(String n : hls){ //for each digit
+                    tmp.add(Integer.parseInt(n)); //add to tmp
+                }
+                hiddenLayers.add(tmp); //add to hidden layers
+            }
+        }
+    }
 
 
     private void validateTestNameField(ObservableValue<? extends String> observable, String oldValue, String newValue, TextField parentTextField) {
-        System.out.println(newValue);
+        //System.out.println(newValue);
         parentTextField.setText(newValue);
         testPreferencesName = newValue;
     }
@@ -350,67 +394,68 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
         }
     }
 
-    /**
-     * Validate the minimum hidden layer size input field
-     * @TODO Compare it to the maximum hidden layers and make sure it is not higher!
-     * @param observable
-     * @param oldValue
-     * @param newValue
-     * @param minhidlayerFormatter
-     */
-    private void validateMinHiddenLayerSizeValue(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter<Number> minhidlayerFormatter) {
-        if(newValue.floatValue() % 1 != 0){ //the value is not a whole number!
-            minhidlayerFormatter.setValue(oldValue);
-            return;
-        }
-        if(newValue.intValue() < 0){ //value cannot be below 0
-            minhidlayerFormatter.setValue(oldValue);
-            return;
-        }
-        //validated
-        minimumHiddenLayers = newValue.intValue(); //assign value
-    }
-    /**
-     * Validate the user input for the maximum hidden layer size value
-     * The value must be over 0 and an integer. (positive integer)
-     * @param observable
-     * @param oldValue
-     * @param newValue
-     * @param formatter
-     */
-    private void validateMaxHiddenLayerSizeValue(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter<Number> formatter) {
-        if(newValue.floatValue() % 1 != 0){ //the value is not a whole number!
-            formatter.setValue(oldValue);
-            return;
-        }
-        if(newValue.intValue() < 0){ //value cannot be below 0
-            formatter.setValue(oldValue);
-            return;
-        }
-        //validated
-        maximumHiddenLayerSize = newValue.intValue(); //assign value
-    }
+//    /**
+//     * Validate the minimum hidden layer size input field
+//     * @TODO Compare it to the maximum hidden layers and make sure it is not higher!
+//     * @param observable
+//     * @param oldValue
+//     * @param newValue
+//     * @param minhidlayerFormatter
+//     */
+//    private void validateMinHiddenLayerSizeValue(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter<Number> minhidlayerFormatter) {
+//        if(newValue.floatValue() % 1 != 0){ //the value is not a whole number!
+//            minhidlayerFormatter.setValue(oldValue);
+//            return;
+//        }
+//        if(newValue.intValue() < 0){ //value cannot be below 0
+//            minhidlayerFormatter.setValue(oldValue);
+//            return;
+//        }
+//        //validated
+//        minimumHiddenLayers = newValue.intValue(); //assign value
+//    }
 
-    /**
-     * Validate the user input for the maximum hidden layers value.
-     * This value can not be under 0 and must be an integer.
-     * @param observable
-     * @param oldValue
-     * @param newValue
-     * @param formatter
-     */
-    private void validateMaxHiddenLayersValue(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter<Number> formatter) {
-        if(newValue.floatValue() % 1 != 0){ //the value is not a whole number!
-            formatter.setValue(oldValue);
-            return;
-        }
-        if(newValue.intValue() < 0){ //value cannot be below 0
-            formatter.setValue(oldValue);
-            return;
-        }
-        //validated
-        maximumHiddenLayers = newValue.intValue(); //assign value
-    }
+//    /**
+//     * Validate the user input for the maximum hidden layer size value
+//     * The value must be over 0 and an integer. (positive integer)
+//     * @param observable
+//     * @param oldValue
+//     * @param newValue
+//     * @param formatter
+//     */
+//    private void validateMaxHiddenLayerSizeValue(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter<Number> formatter) {
+//        if(newValue.floatValue() % 1 != 0){ //the value is not a whole number!
+//            formatter.setValue(oldValue);
+//            return;
+//        }
+//        if(newValue.intValue() < 0){ //value cannot be below 0
+//            formatter.setValue(oldValue);
+//            return;
+//        }
+//        //validated
+//        maximumHiddenLayerSize = newValue.intValue(); //assign value
+//    }
+
+//    /**
+//     * Validate the user input for the maximum hidden layers value.
+//     * This value can not be under 0 and must be an integer.
+//     * @param observable
+//     * @param oldValue
+//     * @param newValue
+//     * @param formatter
+//     */
+//    private void validateMaxHiddenLayersValue(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter<Number> formatter) {
+//        if(newValue.floatValue() % 1 != 0){ //the value is not a whole number!
+//            formatter.setValue(oldValue);
+//            return;
+//        }
+//        if(newValue.intValue() < 0){ //value cannot be below 0
+//            formatter.setValue(oldValue);
+//            return;
+//        }
+//        //validated
+//        maximumHiddenLayers = newValue.intValue(); //assign value
+//    }
 
     private void validateInputLayers(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter parentFormatter){
         try{
@@ -552,9 +597,10 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             testingPreferences.setLearningRuleNames(selectedLearningRules);
             testingPreferences.setTransferFunctionNames(selectedTransferFunctions);
             testingPreferences.setPerformance(desiredPerformance);
-            testingPreferences.setMinimumHiddenLayerSize(minimumHiddenLayers);
-            testingPreferences.setMaximumHiddenLayers(maximumHiddenLayers);
-            testingPreferences.setMaximumHiddenLayerSize(maximumHiddenLayerSize);
+            testingPreferences.setHiddenLayerVariants(hiddenLayers);
+//            testingPreferences.setMinimumHiddenLayerSize(minimumHiddenLayers);
+//            testingPreferences.setMaximumHiddenLayers(maximumHiddenLayers);
+//            testingPreferences.setMaximumHiddenLayerSize(maximumHiddenLayerSize);
             testingPreferences.setTestName(testPreferencesName);
             testingPreferences.setInputLayers(inputLayers);
             testingPreferences.setOutputLayers(outputLayers);
@@ -588,11 +634,11 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             testingPreferences = (TestingPreferences) ios.readObject();
             inputLayers = testingPreferences.getInputLayers();
             outputLayers = testingPreferences.getOutputLayers();
-            minimumHiddenLayers = testingPreferences.getMinimumHiddenLayerSize();
-            maximumHiddenLayers = testingPreferences.getMaximumHiddenLayers();
-            maximumHiddenLayerSize = testingPreferences.getMaximumHiddenLayerSize();
+            hiddenLayers = testingPreferences.getHiddenLayerVariants();
+//            minimumHiddenLayers = testingPreferences.getMinimumHiddenLayerSize();
+//            maximumHiddenLayers = testingPreferences.getMaximumHiddenLayers();
+//            maximumHiddenLayerSize = testingPreferences.getMaximumHiddenLayerSize();
             testPreferencesName = testingPreferences.getTestName();
-            System.out.println(testPreferencesName);
             selectedLearningRules = testingPreferences.getLearningRuleNames();
             selectedTransferFunctions = testingPreferences.getTransferFunctionNames();
             trainingSetFile = testingPreferences.getTrainingDataFile();
@@ -603,9 +649,11 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
 
             desiredTestName.setText(String.valueOf(testingPreferences.getTestName()));
             desiredPerformanceTextField.setText(String.valueOf(testingPreferences.getPerformance()));
-            desiredMinHidLayerSizeTextField.setText(String.valueOf(testingPreferences.getMinimumHiddenLayerSize()));
-            desiredMaxHidLayersTextField.setText(String.valueOf(testingPreferences.getMaximumHiddenLayers()));
-            desiredMaxHidLayerSizeTextField.setText(String.valueOf(testingPreferences.getMaximumHiddenLayerSize()));
+            desiredHiddenLayerStructuresTextArea.setText(testingPreferences.getHiddenLayerVariantsAsString());
+            //System.out.println(testingPreferences.getHiddenLayerVariantsAsString());
+//            desiredMinHidLayerSizeTextField.setText(String.valueOf(testingPreferences.getMinimumHiddenLayerSize()));
+//            desiredMaxHidLayersTextField.setText(String.valueOf(testingPreferences.getMaximumHiddenLayers()));
+//            desiredMaxHidLayerSizeTextField.setText(String.valueOf(testingPreferences.getMaximumHiddenLayerSize()));
             desiredInputLayerSizeTextField.setText(String.valueOf(testingPreferences.getInputLayers()));
             desiredOutputLayerSizeTextField.setText(String.valueOf(testingPreferences.getOutputLayers()));
             desiredTrainingSetText.setText(String.valueOf(testingPreferences.getTrainingDataFile().getName()));

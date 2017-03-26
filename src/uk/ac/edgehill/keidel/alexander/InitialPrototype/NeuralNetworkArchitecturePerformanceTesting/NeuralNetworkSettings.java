@@ -8,6 +8,7 @@ import org.neuroph.core.learning.TrainingSet;
 import org.neuroph.nnet.MultiLayerPerceptron;
 import org.neuroph.nnet.learning.BackPropagation;
 import org.neuroph.util.TransferFunctionType;
+import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Interface.NeuralNetworkTestScreen;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -91,6 +92,7 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
             iterationCounter++;
         }
         System.out.println(convertNeuralNetworkSettingsToReadableString());
+        parentStrDump.append(convertNeuralNetworkSettingsToReadableString() + "\n");
         for(int i = 0; i < testSetPerformances.size(); i++){
             Pair<Integer, Double> testPair = testSetPerformances.get(i);
             Pair<Integer, Double> overfittingPair = overfittingTestSetPerformances.get(i);
@@ -115,6 +117,8 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         double testsetPerformance = calculateStandardDeviation(testSetOutputValues); //calculate the performance score of this neural network
         performanceScore = testsetPerformance;
         testSetPerformances.add(new Pair<Integer, Double> (iteration, testsetPerformance)); //add new pair to performances
+        //myscreen.updateTestSeries(testSetPerformances.get(iteration));
+        //myscreen.updateTestSeries(new Pair<Integer, Double> (iteration, testsetPerformance));
         //System.out.println(convertNeuralNetworkSettingsToReadableString());
         //parentStrDump.append(convertNeuralNetworkSettingsToReadableString() + "\n");
         //END Test set performance
@@ -128,6 +132,8 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         }
         double overfittingsetPerformance = calculateStandardDeviation(overfittingOutputValues); //calculate the performance score of this neural network
         overfittingTestSetPerformances.add(new Pair(iteration, overfittingsetPerformance));
+        //myscreen.updateOverfittingSeries(new Pair(iteration, overfittingsetPerformance));
+
         //System.out.println(convertNeuralNetworkSettingsToReadableString());
         //parentStrDump.append(convertNeuralNetworkSettingsToReadableString() + "\n");
         //END Overfitting set performance

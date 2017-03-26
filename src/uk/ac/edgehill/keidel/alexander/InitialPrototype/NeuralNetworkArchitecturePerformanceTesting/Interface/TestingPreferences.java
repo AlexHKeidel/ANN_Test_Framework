@@ -22,12 +22,14 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
     private String testName = "Default";
     private int inputLayers = 0;
     private int outputLayers = 0;
-    private int maximumHiddenLayers = 0; //default is 0
-    private int minimumHiddenLayerSize = 0; //default is 0
-    private int maximumHiddenLayerSize = 0; //default is 0
+//    private int maximumHiddenLayers = 0; //default is 0
+//    private int minimumHiddenLayerSize = 0; //default is 0
+//    private int maximumHiddenLayerSize = 0; //default is 0
+    private ArrayList<ArrayList<Integer>> hiddenLayerVariants = new ArrayList<>();
     private File trainingDataFile;
     private File testDataFile;
     private File overfittingTestDataFile;
+    private char datasetDelimiter = ','; //standard delimiter
 
     public TestingPreferences(){}
 
@@ -89,9 +91,17 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
         String readable = "Testing Preferences: " + testName + "\n";
         readable += "Input neurons: " + inputLayers + "\n";
         readable += "Output neurons: " + outputLayers + "\n";
-        readable += "Maximum hidden layers: " + getMaximumHiddenLayers() + "\n";
-        readable += "Minimum hidden layer size: " + getMinimumHiddenLayerSize() + "\n";
-        readable += "Maximum hidden layer size: " + getMaximumHiddenLayerSize() + "\n";
+        String tmphdlyrs = "";
+        for(ArrayList<Integer> arrs : hiddenLayerVariants) {
+            for(int h : arrs) {
+                tmphdlyrs += "(" + h + ") ";
+            }
+            tmphdlyrs += "\n";
+        }
+        readable += "Hidden layers variations:\n" + tmphdlyrs + "\n";
+//        readable += "Maximum hidden layers: " + getMaximumHiddenLayers() + "\n";
+//        readable += "Minimum hidden layer size: " + getMinimumHiddenLayerSize() + "\n";
+//        readable += "Maximum hidden layer size: " + getMaximumHiddenLayerSize() + "\n";
         readable += "Performance score (SD): " + getPerformance() + "\n";
         readable += "Transfer functions:\n";
         for(String s : getTransferFunctionNames()){
@@ -104,7 +114,8 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
         readable += "Training set file name: " + getTrainingDataFile().getName() + "\n";
         readable += "Test set file name: " + getTestDataFile().getName() + "\n";
         readable += "Overfitting set file name: " + getOverfittingTestDataFile().getName() + "\n";
-        readable += "-----End of testing preferences-----";
+        readable += "Data set delimiter: \'" + getDatasetDelimiter() + "\'\n";
+        readable += "-----End of testing preferences-----\n\n";
         return readable;
     }
 
@@ -132,21 +143,21 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
         this.performance = performance;
     }
 
-    public int getMaximumHiddenLayers() {
-        return maximumHiddenLayers;
-    }
-
-    public void setMaximumHiddenLayers(int maximumHiddenLayers) {
-        this.maximumHiddenLayers = maximumHiddenLayers;
-    }
-
-    public int getMaximumHiddenLayerSize() {
-        return maximumHiddenLayerSize;
-    }
-
-    public void setMaximumHiddenLayerSize(int maximumHiddenLayerSize) {
-        this.maximumHiddenLayerSize = maximumHiddenLayerSize;
-    }
+//    public int getMaximumHiddenLayers() {
+//        return maximumHiddenLayers;
+//    }
+//
+//    public void setMaximumHiddenLayers(int maximumHiddenLayers) {
+//        this.maximumHiddenLayers = maximumHiddenLayers;
+//    }
+//
+//    public int getMaximumHiddenLayerSize() {
+//        return maximumHiddenLayerSize;
+//    }
+//
+//    public void setMaximumHiddenLayerSize(int maximumHiddenLayerSize) {
+//        this.maximumHiddenLayerSize = maximumHiddenLayerSize;
+//    }
 
     public File getTrainingDataFile() {
         return trainingDataFile;
@@ -188,13 +199,13 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
         this.testName = testName;
     }
 
-    public int getMinimumHiddenLayerSize() {
-        return minimumHiddenLayerSize;
-    }
-
-    public void setMinimumHiddenLayerSize(int minimumHiddenLayerSize) {
-        this.minimumHiddenLayerSize = minimumHiddenLayerSize;
-    }
+//    public int getMinimumHiddenLayerSize() {
+//        return minimumHiddenLayerSize;
+//    }
+//
+//    public void setMinimumHiddenLayerSize(int minimumHiddenLayerSize) {
+//        this.minimumHiddenLayerSize = minimumHiddenLayerSize;
+//    }
 
     public File getOverfittingTestDataFile() {
         return overfittingTestDataFile;
@@ -202,5 +213,34 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
 
     public void setOverfittingTestDataFile(File overfittingTestDataFile) {
         this.overfittingTestDataFile = overfittingTestDataFile;
+    }
+
+    public ArrayList<ArrayList<Integer>> getHiddenLayerVariants() {
+        return hiddenLayerVariants;
+    }
+
+    public String getHiddenLayerVariantsAsString(){
+        String variants = "";
+        for(ArrayList<Integer> structure : hiddenLayerVariants){
+            String tmp = "";
+            for(int neurons : structure){
+                tmp += neurons + ",";
+            }
+            tmp = tmp.substring(0, tmp.length() - 1) + ";";
+            variants += tmp;
+        }
+        return variants;
+    }
+
+    public void setHiddenLayerVariants(ArrayList<ArrayList<Integer>> hiddenLayerVariants) {
+        this.hiddenLayerVariants = hiddenLayerVariants;
+    }
+
+    public char getDatasetDelimiter() {
+        return datasetDelimiter;
+    }
+
+    public void setDatasetDelimiter(char datasetDelimiter) {
+        this.datasetDelimiter = datasetDelimiter;
     }
 }

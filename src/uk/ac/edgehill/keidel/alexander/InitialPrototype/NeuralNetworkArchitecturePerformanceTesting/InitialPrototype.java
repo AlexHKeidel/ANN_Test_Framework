@@ -3,11 +3,13 @@ package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitectu
 import com.sun.org.apache.xml.internal.security.Init;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
 import org.neuroph.core.learning.LearningRule;
 import org.neuroph.nnet.learning.BackPropagation;
 import org.neuroph.util.TransferFunctionType;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Exceptions.LearningRuleNotFoundException;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Exceptions.TransferFunctionNotFoundException;
+import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Interface.MainInterface;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Interface.TestingPreferences;
 
 import java.io.*;
@@ -25,8 +27,10 @@ public class InitialPrototype implements GlobalVariablesInterface, Runnable {
     public static TestingPreferences testingPreferences = new TestingPreferences();
     private TextArea parentTextArea;
     private ProgressBar parentProgressBar;
+    private Stage parentStage;
+    private MainInterface mainInterface;
 
-    public InitialPrototype(TextArea parentTextArea, ProgressBar progressBar){
+    public InitialPrototype(TextArea parentTextArea, ProgressBar progressBar, MainInterface mainInterface){
         this.parentTextArea = parentTextArea;
         this.parentProgressBar = progressBar;
     }
@@ -59,15 +63,16 @@ public class InitialPrototype implements GlobalVariablesInterface, Runnable {
         File overfittingSet = testingPreferences.getOverfittingTestDataFile();
         int inputNeuronCount = testingPreferences.getInputLayers();
         int outputNeuronCount = testingPreferences.getOutputLayers();
-        int minHiddenLayerCount = testingPreferences.getMinimumHiddenLayerSize();
-        int maxHiddenLayerCount = testingPreferences.getMaximumHiddenLayers();
-        int maxHiddenLayerSize = testingPreferences.getMaximumHiddenLayerSize();
+        ArrayList<ArrayList<Integer>> hiddenLayers = testingPreferences.getHiddenLayerVariants();
+//        int minHiddenLayerCount = testingPreferences.getMinimumHiddenLayerSize();
+//        int maxHiddenLayerCount = testingPreferences.getMaximumHiddenLayers();
+//        int maxHiddenLayerSize = testingPreferences.getMaximumHiddenLayerSize();
         //int minHiddenLayerSize = 0;
         String baseName = testingPreferences.getTestName();
         //neuralNetworkArchitectureTester.createAndTestNeuralNetworkStructures(trainingSet, testSet,"Test Set Not Yet Generated!", "Supervised Demographics Data", 4, 1, 5, generator.getAllPossibleTransferFunctions(), generator.getAllPossibleLearningRules(), DEFAULT_PERFORMANCE_REQUIERD_MINIMUM);
 
         try {
-            neuralNetworkArchitectureTester.trainAndTestNeuralNetworkStructures(trainingSet, testSet, overfittingSet, baseName, inputNeuronCount, outputNeuronCount, maxHiddenLayerCount, minHiddenLayerCount, maxHiddenLayerSize, testingPreferences.getTransferFunctions(), testingPreferences.getLearningRules(), testingPreferences.getPerformance(), parentProgressBar, parentTextArea);
+            neuralNetworkArchitectureTester.trainAndTestNeuralNetworkStructures(trainingSet, testSet, overfittingSet, baseName, inputNeuronCount, outputNeuronCount, hiddenLayers, testingPreferences.getTransferFunctions(), testingPreferences.getLearningRules(), testingPreferences.getPerformance(), parentProgressBar, parentTextArea);
 
         } catch (LearningRuleNotFoundException le){
             le.printStackTrace();

@@ -10,6 +10,7 @@ package uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitectu
 
 import com.sun.scenario.effect.impl.sw.sse.SSEBlend_SRC_OUTPeer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -64,7 +65,7 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         initialiseResources(primaryStage); //init all the resources for the GUI
-        prototype = new InitialPrototype(ANNInfoTextArea, progressBar);
+        prototype = new InitialPrototype(ANNInfoTextArea, progressBar, this);
     }
 
     private boolean initialiseResources(Stage primaryStage){
@@ -460,4 +461,9 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
             }
         }
     };
+
+    public NeuralNetworkTestScreen startNeuralNetworkTestScreen(String name){
+        NeuralNetworkTestScreen nnts = new NeuralNetworkTestScreen(name);
+        return nnts;
+    }
 }

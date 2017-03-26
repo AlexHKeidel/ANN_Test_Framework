@@ -7,6 +7,7 @@ import com.sun.corba.se.spi.orbutil.threadpool.Work;
 import com.sun.corba.se.spi.orbutil.threadpool.WorkQueue;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextArea;
+import javafx.stage.Stage;
 import org.codehaus.groovy.util.ArrayIterator;
 import org.neuroph.core.NeuralNetwork;
 import org.neuroph.core.learning.LearningRule;
@@ -17,6 +18,8 @@ import org.neuroph.util.TransferFunctionType;
 import org.neuroph.util.io.FileInputAdapter;
 import org.neuroph.util.io.FileOutputAdapter;
 import org.omg.CORBA.TIMEOUT;
+import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Interface.MainInterface;
+import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Interface.NeuralNetworkTestScreen;
 
 import java.io.*;
 import java.net.URL;
@@ -53,16 +56,14 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
      * @param baseName Base name for all neural networks (for human readability)
      * @param inputNeuronCount Number of input neurons. Must be in accordance with the training and test set files
      * @param outputNeuronCount Number of output neurons. Must be in accordance with the training and test set files
-     * @param maximumHiddenLayerCount Maximum amount of hidden layers
-     * @param minimumHiddenLayerNeurons Minimum size of each hidden layer
-     * @param maximumHiddenLayerNeurons Maximum size of each hidden layer
+     * @param hiddenLayerVariants hidden layer variations to be tested
      * @param desiredTransferFunctions ArrayList of all desired transfer functions for this test
      * @param desiredLearningRules ArrayList of all desired learning rules for this test
      * @param performanceLimit Performance limit based on standard deviation between the output of a trained set against the actual output from the test set
      * @param progressBar Progress bar for the interface, updated when the training and testing of a single neural network architecture has finished.
      * @return True if successful, false if some error occurred
      */
-    public boolean trainAndTestNeuralNetworkStructures(File trainingSetFile, File testSetFile, File overfittingFile, String baseName, int inputNeuronCount, int outputNeuronCount, int maximumHiddenLayerCount, int minimumHiddenLayerNeurons, int maximumHiddenLayerNeurons, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit, ProgressBar progressBar, TextArea textArea){
+    public boolean trainAndTestNeuralNetworkStructures(File trainingSetFile, File testSetFile, File overfittingFile, String baseName, int inputNeuronCount, int outputNeuronCount, ArrayList<ArrayList<Integer>> hiddenLayerVariants, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit, ProgressBar progressBar, TextArea textArea){
         try{
             //create test set and training set
             TrainingSet trainingSet = TrainingSet.createFromFile(trainingSetFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
@@ -84,23 +85,16 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             //ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 1000, 10, TimeUnit.DAYS, blockingQueue, threadFactory, reh);
             //for each learning rule and transfer function
             for(LearningRule rule : desiredLearningRules){
-                for(TransferFunctionType transferFunctionType : desiredTransferFunctions){
-                    for(int i = 0; i <= maximumHiddenLayerCount; i++){ //for each hidden layer size
-                        for(int s = minimumHiddenLayerNeurons; s <= maximumHiddenLayerNeurons; s++){ //from the minimum count to the maximum count of hidden layer sizes
-                            ArrayList<Integer> hiddenLayers = new ArrayList<>();
-                            //@TODO add variation for hidden layer sizes so not all hidden layers are the same size!
-
-                            for(int h = 0; h < i; h++){ //add amount of hidden layers
-                                hiddenLayers.add(s);
-                            }
-                            NeuralNetworkSettings network = new NeuralNetworkSettings(baseName + " #" + networkCounter, inputNeuronCount, outputNeuronCount, hiddenLayers, transferFunctionType, rule, trainingSet, testSet, overfittingSet, strDump);
-                            neuralNetworkSettingsList.add(network); //add the network settings to the array list of all neural network settings
-                            Thread t = new Thread(network); //assign new thread to the network
-                            executor.execute(t); //add the thread to the executor
-                            totalThreadCount++; //increment total thread counter
-                            networkCounter++; //increment network counter for base name to number all neural nets
-                            System.out.println("Thread added to executor");
-                        }
+                for(TransferFunctionType transferFunctionType : desiredTransferFunctions) {
+                    for (int i = 0; i < hiddenLayerVariants.size(); i++) { //for each hidden layer siz
+                        //@TODO add variation for hidden layer sizes so not all hidden layers are the same size!
+                        NeuralNetworkSettings network = new NeuralNetworkSettings(baseName + " #" + networkCounter, inputNeuronCount, outputNeuronCount, hiddenLayerVariants.get(i), transferFunctionType, rule, trainingSet, testSet, overfittingSet, strDump);
+                        neuralNetworkSettingsList.add(network); //add the network settings to the array list of all neural network settings
+                        Thread t = new Thread(network); //assign new thread to the network
+                        executor.execute(t); //add the thread to the executor
+                        totalThreadCount++; //increment total thread counter
+                        networkCounter++; //increment network counter for base name to number all neural nets
+                        System.out.println("Thread added to executor");
                     }
                 }
             }
@@ -109,9 +103,13 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
                 if(completedThreadCount == totalThreadCount) break; //break loop
                 if(completedThreadCount != (int) executor.getCompletedTaskCount()){
                     completedThreadCount = (int) executor.getCompletedTaskCount();
-                    System.out.println("completed " + completedThreadCount + "/" + totalThreadCount);
+                    //System.out.println("completed " + completedThreadCount + "/" + totalThreadCount);
+                    textArea.appendText("" + strDump); //append main text area
+                    strDump.setLength(0); //reset dump
                     //StextArea.setText("strDump = " + strDump);
-                    progressBar.setProgress(totalThreadCount / completedThreadCount); //update progress bar
+                    float progress = ((float) completedThreadCount / (float) totalThreadCount); //calculate the overall progress
+                    //System.out.println("progress = " + progress + "%");
+                    progressBar.setProgress(progress); //update progress bar
                 }
             }
             return true; //success
