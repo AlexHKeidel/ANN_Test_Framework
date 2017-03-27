@@ -271,4 +271,20 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
     public void run() {
         trainNeuralNetworkWithSettings();
     }
+
+    public ArrayList<Pair<Integer, Double>> getTestSetPerformances() {
+        return testSetPerformances;
+    }
+
+    public void setTestSetPerformances(ArrayList<Pair<Integer, Double>> testSetPerformances) {
+        this.testSetPerformances = testSetPerformances;
+    }
+
+    public ArrayList<Pair<Integer, Double>> getOverfittingTestSetPerformances() {
+        return overfittingTestSetPerformances;
+    }
+
+    public void setOverfittingTestSetPerformances(ArrayList<Pair<Integer, Double>> overfittingTestSetPerformances) {
+        this.overfittingTestSetPerformances = overfittingTestSetPerformances;
+    }
 }
