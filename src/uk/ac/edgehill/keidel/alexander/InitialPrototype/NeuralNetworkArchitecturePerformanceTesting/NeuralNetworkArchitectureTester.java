@@ -66,13 +66,30 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
      */
     public boolean trainAndTestNeuralNetworkStructures(File trainingSetFile, File testSetFile, File overfittingFile, String baseName, int inputNeuronCount, int outputNeuronCount, ArrayList<ArrayList<Integer>> hiddenLayerVariants, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit, ProgressBar progressBar, TextArea textArea){
         try{
-            CustomMaxNormaliser trainingSetNormaliser = new CustomMaxNormaliser(trainingSetFile, ",");
-            trainingSetNormaliser.saveNormalisedValuesToFile(testSetFile.getAbsolutePath(), " normalised", ",", "\n");
-            
-            //create test set and training set
-            TrainingSet trainingSet = TrainingSet.createFromFile(trainingSetFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
-            TrainingSet<SupervisedTrainingElement> testSet = TrainingSet.createFromFile(testSetFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
-            TrainingSet<SupervisedTrainingElement> overfittingSet = TrainingSet.createFromFile(overfittingFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
+            TrainingSet trainingSet;
+            TrainingSet<SupervisedTrainingElement> testSet;
+            TrainingSet<SupervisedTrainingElement> overfittingSet;
+
+            boolean createNormalisedSets = true; //@TODO make this a testing parameter, currently default true
+            if(createNormalisedSets){
+                //normalise training set
+                //CustomMaxNormaliser trainingSetNormaliser = new CustomMaxNormaliser(trainingSetFile, ",");
+                //trainingSetNormaliser.saveNormalisedValuesToFile(trainingSetFile.getAbsolutePath(), " normalised", ",", "\n");
+                trainingSet = TrainingSet.createFromFile(trainingSetFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
+                //normalise test set
+                //CustomMaxNormaliser testSetNormaliser = new CustomMaxNormaliser(testSetFile, ",");
+                //testSetNormaliser.saveNormalisedValuesToFile(testSetFile.getAbsolutePath(), " normalised", ",", "\n");
+                testSet = TrainingSet.createFromFile(testSetFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
+                //normalise overfitting set
+                //CustomMaxNormaliser overfittingSetNormaliser = new CustomMaxNormaliser(overfittingFile, ",");
+                //overfittingSetNormaliser.saveNormalisedValuesToFile(overfittingFile.getAbsolutePath(), " normalised", ",", "\n");
+                overfittingSet = TrainingSet.createFromFile(overfittingFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
+            } else {
+                //create test set and training set
+                trainingSet = TrainingSet.createFromFile(trainingSetFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
+                testSet = TrainingSet.createFromFile(testSetFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
+                overfittingSet = TrainingSet.createFromFile(overfittingFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
+            }
             int networkCounter = 1;
 
             //thread pool requirements
@@ -85,13 +102,13 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             RejectedExecutionHandler reh = new ThreadPoolExecutor.DiscardPolicy(); //rejection handler
             ThreadFactory threadFactory = Executors.defaultThreadFactory(); //default thread factory
             BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<Runnable>(1000);
-            ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 1000, 10, TimeUnit.SECONDS, blockingQueue, threadFactory, reh);
+            SynchronousQueue<Runnable> synchronousQueue = new SynchronousQueue<>(true); //alternative queue
+            ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 1000, 10, TimeUnit.SECONDS, synchronousQueue, threadFactory, reh);
             //ThreadPoolExecutor executor = new ThreadPoolExecutor(0, 1000, 10, TimeUnit.DAYS, blockingQueue, threadFactory, reh);
             //for each learning rule and transfer function
             for(LearningRule rule : desiredLearningRules){
                 for(TransferFunctionType transferFunctionType : desiredTransferFunctions) {
-                    for (int i = 0; i < hiddenLayerVariants.size(); i++) { //for each hidden layer siz
-                        //@TODO add variation for hidden layer sizes so not all hidden layers are the same size!
+                    for (int i = 0; i < hiddenLayerVariants.size(); i++) { //for each hidden layer size
                         NeuralNetworkSettings network = new NeuralNetworkSettings(baseName + " #" + networkCounter, inputNeuronCount, outputNeuronCount, hiddenLayerVariants.get(i), transferFunctionType, rule, trainingSet, testSet, overfittingSet, strDump);
                         neuralNetworkSettingsList.add(network); //add the network settings to the array list of all neural network settings
                         Thread t = new Thread(network); //assign new thread to the network
@@ -104,7 +121,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             }
             while(true){
                 //System.out.println(executor.getActiveCount());
-                if(completedThreadCount == totalThreadCount) break; //break loop
+                if(completedThreadCount == totalThreadCount) break; //break loop if all training has finished
                 if(completedThreadCount != (int) executor.getCompletedTaskCount()){
                     completedThreadCount = (int) executor.getCompletedTaskCount();
                     //System.out.println("completed " + completedThreadCount + "/" + totalThreadCount);

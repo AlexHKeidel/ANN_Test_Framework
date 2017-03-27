@@ -102,7 +102,7 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
 //        readable += "Maximum hidden layers: " + getMaximumHiddenLayers() + "\n";
 //        readable += "Minimum hidden layer size: " + getMinimumHiddenLayerSize() + "\n";
 //        readable += "Maximum hidden layer size: " + getMaximumHiddenLayerSize() + "\n";
-        readable += "Performance score (SD): " + getPerformance() + "\n";
+        readable += "Performance score (total MSE): " + getPerformance() + "\n";
         readable += "Transfer functions:\n";
         for(String s : getTransferFunctionNames()){
             readable += s + "\n";
@@ -118,6 +118,7 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
         readable += "-----End of testing preferences-----\n\n";
         return readable;
     }
+
 
     public ArrayList<String> getTransferFunctionNames() {
         return transferFunctionNames;

@@ -37,18 +37,18 @@ public class InitialPrototype implements GlobalVariablesInterface, Runnable {
 
     private void startPrototype(){
         //TEST START
-        int[] numbers = {1, 2, 3, 4};
-        System.out.println("test start");
-        ArrayList<ArrayList<Integer>> tmp = neuralNetworkArchitectureTester.getAllPossiblePermutations(1, 4);
-        System.out.println("tmp.size() = " + tmp.size());
-        for(ArrayList<Integer> nums : tmp){
-            String out = "{";
-            for(int n : nums){
-                out+= n + " ";
-            }
-            System.out.println(out + "}");
-        }
-        System.out.println("test end");
+//        int[] numbers = {1, 2, 3, 4};
+//        System.out.println("test start");
+//        ArrayList<ArrayList<Integer>> tmp = neuralNetworkArchitectureTester.getAllPossiblePermutations(1, 4);
+//        System.out.println("tmp.size() = " + tmp.size());
+//        for(ArrayList<Integer> nums : tmp){
+//            String out = "{";
+//            for(int n : nums){
+//                out+= n + " ";
+//            }
+//            System.out.println(out + "}");
+//        }
+//        System.out.println("test end");
         //TEST END
         String workingDirectory = System.getProperty("user.dir");
         workingDirectory = workingDirectory.replace("\\", "/"); //replace all backward slashes with forward slashes to be used for file paths. See http://stackoverflow.com/questions/1701839/string-replaceall-single-backslashes-with-double-backslashes and http://stackoverflow.com/questions/4871051/getting-the-current-working-directory-in-java

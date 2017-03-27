@@ -82,8 +82,9 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         neuralNetwork.setLearningRule(learningRule); //set learning rule
         //System.out.println(name + " training started");
         //neuralNetwork.learn(trainingSet); //learn the training set (without a new thread)
-        neuralNetwork.learnInNewThread(trainingSet);
         int iterationCounter = 1;
+        neuralNetwork.randomizeWeights(); //randomise all weights
+        neuralNetwork.learnInNewThread(trainingSet);
         while(iterationCounter < 100){
             //System.out.println("counter = " + iterationCounter);
             neuralNetwork.pauseLearning();
@@ -108,14 +109,23 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
      *     */
     private void testNeuralNetworkPerformance(final int iteration){
         //START Test set performance
-        ArrayList<Double> testSetOutputValues = new ArrayList<>();
+        ArrayList<ArrayList<Double>> testSetOutputValues = new ArrayList<>();
+        ArrayList<ArrayList<Double>> testSetActualOutputs = new ArrayList<>();
         for(int i = 0; i < testSet.elements().size(); i++){ //for each element in the test set
             neuralNetwork.setInput(testSet.elementAt(i).getInput()); //set the input up based on the values in the test set
             neuralNetwork.calculate(); //calculate the result based on the test set
-            testSetOutputValues.add(neuralNetwork.getOutput()[0]); //get the output
+            ArrayList<Double> outputs = new ArrayList<>();
+            ArrayList<Double> actualOutputs = new ArrayList<>();
+            for(int j = 0; j < neuralNetwork.getOutputNeurons().size(); j++){ //for every output neuron
+                outputs.add(neuralNetwork.getOutput()[j]); //get neural network output
+                actualOutputs.add(testSet.elements().get(i).getDesiredOutput()[j]); //get actual output from test set
+            }
+            testSetOutputValues.add(outputs);
+            testSetActualOutputs.add(actualOutputs);
         }
-        double testsetPerformance = calculateStandardDeviation(testSetOutputValues); //calculate the performance score of this neural network
-        performanceScore = testsetPerformance;
+        double testsetPerformance = calculateMeanSquareError(testSetOutputValues, testSetActualOutputs); //calculate the performance score of this neural network
+        //System.out.println(name + " testsetPerformance = " + testsetPerformance);
+        performanceScore = testsetPerformance; //assign performance score
         testSetPerformances.add(new Pair<Integer, Double> (iteration, testsetPerformance)); //add new pair to performances
         //myscreen.updateTestSeries(testSetPerformances.get(iteration));
         //myscreen.updateTestSeries(new Pair<Integer, Double> (iteration, testsetPerformance));
@@ -124,16 +134,25 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         //END Test set performance
 
         //START Overfitting set performance
-        ArrayList<Double> overfittingOutputValues = new ArrayList<>();
+        ArrayList<ArrayList<Double>> overfittingTestSetOutputValues = new ArrayList<>();
+        ArrayList<ArrayList<Double>> overfittingTestSetActualOutputs = new ArrayList<>();
         for(int i = 0; i < overfittingTestSet.elements().size(); i++){ //for each element in the test set
             neuralNetwork.setInput(overfittingTestSet.elementAt(i).getInput()); //set the input up based on the values in the test set
             neuralNetwork.calculate(); //calculate the result based on the test set
-            overfittingOutputValues.add(neuralNetwork.getOutput()[0]); //get the output
+            ArrayList<Double> outputs = new ArrayList<>();
+            ArrayList<Double> actualOutputs = new ArrayList<>();
+            for(int j = 0; j < neuralNetwork.getOutputNeurons().size(); j++){ //for every output neuron
+                outputs.add(neuralNetwork.getOutput()[j]); //get neural network output
+                actualOutputs.add(overfittingTestSet.elements().get(i).getDesiredOutput()[j]); //get actual output from test set
+            }
+            overfittingTestSetOutputValues.add(outputs);
+            overfittingTestSetActualOutputs.add(actualOutputs);
         }
-        double overfittingsetPerformance = calculateStandardDeviation(overfittingOutputValues); //calculate the performance score of this neural network
-        overfittingTestSetPerformances.add(new Pair(iteration, overfittingsetPerformance));
-        //myscreen.updateOverfittingSeries(new Pair(iteration, overfittingsetPerformance));
-
+        double overfittingTestSetPerformance = calculateMeanSquareError(overfittingTestSetOutputValues, overfittingTestSetActualOutputs);
+        //System.out.println(name + " overfittingTestSetPerformance = " + overfittingTestSetPerformance);
+        overfittingTestSetPerformances.add(new Pair<Integer, Double> (iteration, overfittingTestSetPerformance)); //add new pair to performances
+        //myscreen.updateTestSeries(testSetPerformances.get(iteration));
+        //myscreen.updateTestSeries(new Pair<Integer, Double> (iteration, testsetPerformance));
         //System.out.println(convertNeuralNetworkSettingsToReadableString());
         //parentStrDump.append(convertNeuralNetworkSettingsToReadableString() + "\n");
         //END Overfitting set performance
@@ -210,6 +229,39 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         return calculateStandardDeviation(s);
     }
 
+    private double calculateMeanSquareError(ArrayList<ArrayList<Double>> outputs, ArrayList<ArrayList<Double>> actualOutputs){
+        try{
+            //if(outputs.size() != actualOutputs.size() || outputs.get(0).size() != actualOutputs.get(0).size()) return -100.0; //error
+            double mse = 0.0;
+            for(int i = 0; i < outputs.size(); i++){ //for each output
+                double errorAverage = 0.0;
+                for(int j = 0; j < outputs.get(i).size(); j++){ //for each value (output neurons)
+                    double error = actualOutputs.get(i).get(j) - outputs.get(i).get(j);
+                    //System.out.println("error = " + error);
+                    errorAverage += error*error;
+                }
+                errorAverage = errorAverage / (outputs.get(i).size() /* * actualOutputs.get(i).size() */);
+                //System.out.println("errorAverage = " + errorAverage);
+                mse += errorAverage;
+            }
+            mse = mse / (outputs.size() /* * actualOutputs.size()*/);
+            //System.out.println("mse = " + mse);
+            return mse;
+        }
+        catch(Exception ex){
+            ex.printStackTrace();
+        }
+        return -1.0; //error
+    }
+
+    public String getReadibleShortName(){
+        String readible = getName() + " " + getInputNeurons();
+        for(int h : hiddenLayers){
+            readible += "(" + h +")";
+        }
+        readible += outputNeurons + " " + getTransferFunctionType().getTypeLabel() + " " + getLearningRule().getClass().getSimpleName();
+        return readible;
+    }
 
     public int getInputNeurons() {
         return inputNeurons;

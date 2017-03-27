@@ -28,7 +28,7 @@ public class NeuralNetworkTestScreen extends Stage implements GUIValues {
         xAxis = new NumberAxis(); //setup axis
         yAxis = new NumberAxis(); //setup axis
         performanceLineChart = new LineChart<Number, Number>(xAxis, yAxis); // new line chart
-        performanceLineChart.setTitle("Performance (1 - SD)");
+        performanceLineChart.setTitle("Performance (MSE): " + mySettings.getReadibleShortName());
         testSetSeries = new XYChart.Series();
         testSetSeries.setName("Test set");
         overfittingSetSeries = new XYChart.Series();
@@ -47,16 +47,15 @@ public class NeuralNetworkTestScreen extends Stage implements GUIValues {
     private void generateGraphFromData(){
         testSetSeries.getData().clear(); //clear data
         for(Pair<Integer, Double> pair : mySettings.getTestSetPerformances()){ //add all data
-        //System.out.println("key = " + pair.getKey() + " value = " + pair.getValue());
-         testSetSeries.getData().add(new XYChart.Data<>(pair.getKey(), pair.getValue()));
-         }
+            testSetSeries.getData().add(new XYChart.Data<>(pair.getKey(), pair.getValue()));
+        }
         overfittingSetSeries.getData().clear(); //clear data
         for(Pair<Integer, Double> pair : mySettings.getOverfittingTestSetPerformances()){ //add all data
-        overfittingSetSeries.getData().add(new XYChart.Data<>(pair.getKey(), pair.getValue()));
+            overfittingSetSeries.getData().add(new XYChart.Data<>(pair.getKey(), pair.getValue()));
         }
-        performanceLineChart.getData().clear(); //clear data from chart
-        performanceLineChart.getData().addAll(testSetSeries, overfittingSetSeries);
-        }
+        //performanceLineChart.getData().clear(); //clear data from chart
+        //performanceLineChart.getData().addAll(testSetSeries, overfittingSetSeries);
+    }
 
     public void updateTestSeries(Pair<Integer, Double> vals){
         testSetSeries.getData().add(new XYChart.Data(vals.getKey(), vals.getValue())); //add the values to the series
