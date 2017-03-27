@@ -41,6 +41,9 @@ public class NeuralNetworkTestScreen extends Stage implements GUIValues {
         myStage.show();
     }
 
+    /**
+     * Populate the line graph with the values present in the sets.
+     */
     private void generateGraphFromData(){
         testSetSeries.getData().clear(); //clear data
         for(Pair<Integer, Double> pair : mySettings.getTestSetPerformances()){ //add all data
@@ -51,6 +54,7 @@ public class NeuralNetworkTestScreen extends Stage implements GUIValues {
         for(Pair<Integer, Double> pair : mySettings.getOverfittingTestSetPerformances()){ //add all data
         overfittingSetSeries.getData().add(new XYChart.Data<>(pair.getKey(), pair.getValue()));
         }
+        performanceLineChart.getData().clear(); //clear data from chart
         performanceLineChart.getData().addAll(testSetSeries, overfittingSetSeries);
         }
 

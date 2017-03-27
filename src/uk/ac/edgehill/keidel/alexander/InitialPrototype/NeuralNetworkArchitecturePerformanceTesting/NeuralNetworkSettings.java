@@ -80,7 +80,7 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         neuronCountInLayers.add(outputNeurons); //add output neurons
         neuralNetwork = new MultiLayerPerceptron(neuronCountInLayers, transferFunctionType); //set up multi-layered perceptron
         neuralNetwork.setLearningRule(learningRule); //set learning rule
-        System.out.println(name + " training started");
+        //System.out.println(name + " training started");
         //neuralNetwork.learn(trainingSet); //learn the training set (without a new thread)
         neuralNetwork.learnInNewThread(trainingSet);
         int iterationCounter = 1;
@@ -91,13 +91,13 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
             neuralNetwork.resumeLearning();
             iterationCounter++;
         }
-        System.out.println(convertNeuralNetworkSettingsToReadableString());
+        //System.out.println(convertNeuralNetworkSettingsToReadableString());
         parentStrDump.append(convertNeuralNetworkSettingsToReadableString() + "\n");
         for(int i = 0; i < testSetPerformances.size(); i++){
             Pair<Integer, Double> testPair = testSetPerformances.get(i);
             Pair<Integer, Double> overfittingPair = overfittingTestSetPerformances.get(i);
-            System.out.println("test#" + testPair.getKey() + " = " + testPair.getValue());
-            System.out.println("over#" + overfittingPair.getKey() + " = " + overfittingPair.getValue());
+            //System.out.println("test#" + testPair.getKey() + " = " + testPair.getValue());
+            //System.out.println("over#" + overfittingPair.getKey() + " = " + overfittingPair.getValue());
         }
     }
 

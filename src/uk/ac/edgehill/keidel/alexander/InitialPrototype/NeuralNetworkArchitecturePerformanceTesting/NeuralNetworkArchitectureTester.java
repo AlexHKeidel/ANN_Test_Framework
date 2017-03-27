@@ -18,6 +18,7 @@ import org.neuroph.util.TransferFunctionType;
 import org.neuroph.util.io.FileInputAdapter;
 import org.neuroph.util.io.FileOutputAdapter;
 import org.omg.CORBA.TIMEOUT;
+import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.DataSetNormalisation.CustomMaxNormaliser;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Interface.MainInterface;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Interface.NeuralNetworkTestScreen;
 
@@ -65,6 +66,9 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
      */
     public boolean trainAndTestNeuralNetworkStructures(File trainingSetFile, File testSetFile, File overfittingFile, String baseName, int inputNeuronCount, int outputNeuronCount, ArrayList<ArrayList<Integer>> hiddenLayerVariants, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit, ProgressBar progressBar, TextArea textArea){
         try{
+            CustomMaxNormaliser trainingSetNormaliser = new CustomMaxNormaliser(trainingSetFile, ",");
+            trainingSetNormaliser.saveNormalisedValuesToFile(testSetFile.getAbsolutePath(), " normalised", ",", "\n");
+            
             //create test set and training set
             TrainingSet trainingSet = TrainingSet.createFromFile(trainingSetFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
             TrainingSet<SupervisedTrainingElement> testSet = TrainingSet.createFromFile(testSetFile.getPath(), inputNeuronCount, outputNeuronCount, ",");
@@ -94,7 +98,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
                         executor.execute(t); //add the thread to the executor
                         totalThreadCount++; //increment total thread counter
                         networkCounter++; //increment network counter for base name to number all neural nets
-                        System.out.println("Thread added to executor");
+                        //System.out.println("Thread added to executor");
                     }
                 }
             }
@@ -177,7 +181,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             allPermutations.add(newSet);
             allPermutations.add(set);
         }
-        System.out.println("allPermutations.size() = " + allPermutations.size());
+        //System.out.println("allPermutations.size() = " + allPermutations.size());
         return allPermutations;
     }
 
@@ -225,7 +229,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
         TrainingSet<SupervisedTrainingElement> currentTestSet = TrainingSet.createFromFile(testSet.getPath(), inputNeuronCount, outputNeuronCount, ",");
         do{
             try{
-                System.out.println("In try catch block iteration " + networkCounter);
+                //System.out.println("In try catch block iteration " + networkCounter);
                 hiddenLayers = allPossibleNetworkSettings.get(networkCounter).getHiddenLayers();
                 tft = allPossibleNetworkSettings.get(networkCounter).getTransferFunctionType();
                 lrnRule = allPossibleNetworkSettings.get(networkCounter).getLearningRule();
@@ -380,7 +384,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
      * @deprecated
      */
     public boolean loadCurrentNetworkSettingsFromFile() throws IOException{
-        System.out.println("(currentNetworkSettings).getName() = " + (currentNetworkSettings).getName());
+        //System.out.println("(currentNetworkSettings).getName() = " + (currentNetworkSettings).getName());
         FileInputStream fis = new FileInputStream((currentNetworkSettings).getName());
         ObjectInputStream ois = new ObjectInputStream(fis);
         try {
