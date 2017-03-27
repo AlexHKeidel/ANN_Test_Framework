@@ -107,10 +107,12 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
         for(String s : getTransferFunctionNames()){
             readable += s + "\n";
         }
+        readable += "\n";
         readable += "Learning rules: \n";
         for(String s : getLearningRuleNames()){
             readable += s + "\n";
         }
+        readable += "\n";
         readable += "Training set file name: " + getTrainingDataFile().getName() + "\n";
         readable += "Test set file name: " + getTestDataFile().getName() + "\n";
         readable += "Overfitting set file name: " + getOverfittingTestDataFile().getName() + "\n";

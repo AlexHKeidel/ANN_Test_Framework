@@ -77,6 +77,7 @@ public class CrimeDataNormaliser {
      * Format: Crime ID,Month,Reported by,Falls within,Longitude,Latitude,Location,LSOA code,LSOA name,Crime type,Last outcome category,Context
      * The input values are: Month, Reported by, Falls within, Longitude, Latitude, Location, LSOA code, LSOA name
      * The output values are: Crime type
+     * This may be arbitrarily changed to suit any neural network structure where input neurons + output neurons = 9
      * This example data set will be trying to prove or disprove that predicting the type of a crime based on this input data is possible
      */
     private String normaliseCrime2015(String currentLine) {
