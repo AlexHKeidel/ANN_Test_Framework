@@ -6,13 +6,10 @@ import org.neuroph.core.learning.LearningRule;
 import org.neuroph.core.learning.SupervisedTrainingElement;
 import org.neuroph.core.learning.TrainingSet;
 import org.neuroph.nnet.MultiLayerPerceptron;
-import org.neuroph.nnet.learning.BackPropagation;
 import org.neuroph.util.TransferFunctionType;
-import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Interface.NeuralNetworkTestScreen;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Observer;
 
 /**
  * Created by Alexander Keidel, 22397868 on 15/06/2016.
@@ -85,6 +82,7 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         int iterationCounter = 0;
         neuralNetwork.randomizeWeights(); //randomise all weights
         neuralNetwork.learnInNewThread(trainingSet);
+        //neuralNetwork.pauseLearning();
         int localMaximumCounter = 0;
         while(iterationCounter < 10000){
             if(localMaximumCounter > 100) break; //break loop after the performance has not changed a certain amount of times
@@ -105,8 +103,8 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
     }
 
     /**
-     * Test the neural network performance on both the test set, as well as the overfitting set, adding the respective
-     * values to the correct array list.
+     * Test the neural network performance on both the test set and the overfitting set, adding the respective
+     * performance values to the correct array lists {@link #testSetPerformances} and {@link #overfittingTestSetPerformances}.
      * @param iteration Iteration counter used in storing the test performances as the key (in the key-value pairs).
      *     */
     private int testNeuralNetworkPerformance(final int iteration){
@@ -126,7 +124,7 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
             testSetOutputValues.add(outputs);
             testSetActualOutputs.add(actualOutputs);
         }
-        double testsetPerformance = calculateMeanSquareError(testSetOutputValues, testSetActualOutputs); //calculate the performance score of this neural network
+        double testsetPerformance = calculateTotalMeanSquareError(testSetOutputValues, testSetActualOutputs); //calculate the performance score of this neural network
         //System.out.println(name + " testsetPerformance = " + testsetPerformance);
         if(performanceScore == testsetPerformance){
             localMaximum++; //local maximum detected
@@ -156,7 +154,7 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
             overfittingTestSetOutputValues.add(outputs);
             overfittingTestSetActualOutputs.add(actualOutputs);
         }
-        double overfittingTestSetPerformance = calculateMeanSquareError(overfittingTestSetOutputValues, overfittingTestSetActualOutputs);
+        double overfittingTestSetPerformance = calculateTotalMeanSquareError(overfittingTestSetOutputValues, overfittingTestSetActualOutputs);
         //System.out.println(name + " overfittingTestSetPerformance = " + overfittingTestSetPerformance);
         overfittingTestSetPerformances.add(new Pair<Integer, Double> (iteration, overfittingTestSetPerformance)); //add new pair to performances
         //myscreen.updateTestSeries(testSetPerformances.get(iteration));
@@ -238,7 +236,13 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         return calculateStandardDeviation(s);
     }
 
-    private double calculateMeanSquareError(ArrayList<ArrayList<Double>> outputs, ArrayList<ArrayList<Double>> actualOutputs){
+    /**
+     * Calculate the average total mean square error of a total set of outputs from a neural network against the desired outputs from the test set.
+     * @param outputs Output values of the trained neural network when applied to a test set
+     * @param actualOutputs Output values from the test set
+     * @return Total mean squared error rate across the dataset
+     */
+    private double calculateTotalMeanSquareError(ArrayList<ArrayList<Double>> outputs, ArrayList<ArrayList<Double>> actualOutputs){
         try{
             //if(outputs.size() != actualOutputs.size() || outputs.get(0).size() != actualOutputs.get(0).size()) return -100.0; //error
             double mse = 0.0;
@@ -247,15 +251,15 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
                 for(int j = 0; j < outputs.get(i).size(); j++){ //for each value (output neurons)
                     //System.out.println("actualOutputs.get(i).get(j) = " + actualOutputs.get(i).get(j));
                     //System.out.println("outputs.get(i).get(j) = " + outputs.get(i).get(j));
-                    double error = actualOutputs.get(i).get(j) - outputs.get(i).get(j);
+                    double error = actualOutputs.get(i).get(j) - outputs.get(i).get(j); //get the error
                     //System.out.println("error = " + error);
-                    errorAverage += error*error;
+                    errorAverage += Math.pow(error, 2); //square the error
                 }
-                errorAverage = errorAverage / (outputs.get(i).size() /* * actualOutputs.get(i).size() */);
+                errorAverage = errorAverage / (outputs.get(i).size()); //divide by the number of output neurons
                 //System.out.println("errorAverage = " + errorAverage);
-                mse += errorAverage;
+                mse += errorAverage; //add up to the total mean squared error
             }
-            mse = mse / (outputs.size() /* * actualOutputs.size()*/);
+            mse = mse / (outputs.size()); //divide by the number of rows to get the mean of all mean errors squared
             //System.out.println("mse = " + mse);
             return mse;
         }
@@ -265,13 +269,17 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         return -1.0; //error
     }
 
-    public String getReadibleShortName(){
-        String readible = getName() + " " + getInputNeurons();
+    /**
+     * Generates a short-hand readable summary of the {@link NeuralNetworkSettings} object.
+     * @return Human-readable summary of the neural network structure to print to console or GUI.
+     */
+    public String getReadableShortName(){
+        String readable = getName() + " " + getInputNeurons();
         for(int h : hiddenLayers){
-            readible += "(" + h +")";
+            readable += "(" + h +")";
         }
-        readible += outputNeurons + " " + getTransferFunctionType().getTypeLabel() + " " + getLearningRule().getClass().getSimpleName();
-        return readible;
+        readable += outputNeurons + " " + getTransferFunctionType().getTypeLabel() + " " + getLearningRule().getClass().getSimpleName();
+        return readable;
     }
 
     public int getInputNeurons() {

@@ -28,7 +28,7 @@ public class NeuralNetworkTestScreen extends Stage implements GUIValues {
         xAxis = new NumberAxis(); //setup axis
         yAxis = new NumberAxis(); //setup axis
         performanceLineChart = new LineChart<Number, Number>(xAxis, yAxis); // new line chart
-        performanceLineChart.setTitle("Performance (MSE): " + mySettings.getReadibleShortName());
+        performanceLineChart.setTitle("Performance (MSE): " + mySettings.getReadableShortName());
         testSetSeries = new XYChart.Series();
         testSetSeries.setName("Test set");
         overfittingSetSeries = new XYChart.Series();
@@ -44,15 +44,21 @@ public class NeuralNetworkTestScreen extends Stage implements GUIValues {
     /**
      * Populate the line graph with the values present in the sets.
      */
-    private void generateGraphFromData(){
+    private void generateGraphFromData() {
+        try {
+
         testSetSeries.getData().clear(); //clear data
-        for(Pair<Integer, Double> pair : mySettings.getTestSetPerformances()){ //add all data
+        for (Pair<Integer, Double> pair : mySettings.getTestSetPerformances()) { //add all data
             testSetSeries.getData().add(new XYChart.Data<>(pair.getKey(), pair.getValue()));
         }
         overfittingSetSeries.getData().clear(); //clear data
-        for(Pair<Integer, Double> pair : mySettings.getOverfittingTestSetPerformances()){ //add all data
+        for (Pair<Integer, Double> pair : mySettings.getOverfittingTestSetPerformances()) { //add all data
             overfittingSetSeries.getData().add(new XYChart.Data<>(pair.getKey(), pair.getValue()));
         }
+        } catch (Exception ex)
+    {
+        ex.printStackTrace();
+    }
         //performanceLineChart.getData().clear(); //clear data from chart
         //performanceLineChart.getData().addAll(testSetSeries, overfittingSetSeries);
     }
