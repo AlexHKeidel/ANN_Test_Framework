@@ -87,7 +87,7 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         //neuralNetwork.pauseLearning();
         int localMaximumCounter = 0;
         while(iterationCounter < 10000){
-            if(localMaximumCounter > 100) break; //break loop after the performance has not changed a certain amount of times
+            if(localMaximumCounter > 50) break; //break loop after the performance has not changed a certain amount of times
             //System.out.println("counter = " + iterationCounter);
             neuralNetwork.pauseLearning();
             localMaximumCounter += testNeuralNetworkPerformance(iterationCounter);

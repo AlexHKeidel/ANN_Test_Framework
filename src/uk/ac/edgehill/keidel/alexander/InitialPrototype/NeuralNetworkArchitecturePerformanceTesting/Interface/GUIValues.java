@@ -57,7 +57,7 @@ public interface GUIValues {
 
 
     //Preference screen values
-    String PREFERENCES_SCREEN_INSTRUCTIONS = "Select items to test";
+    String PREFERENCES_SCREEN_INSTRUCTIONS = "Architecture Test Preferences";
     String PREFERENCES_SCREEN_LEARNING_RULES_TAB = "Learning rules";
     String PREFERENCES_SCREEN_TRANSFER_FUNCTIONS_TAB = "Transfer functions";
     String PREFERENCES_SCREEN_BOUNDARIES_TAB = "Test Boundaries";

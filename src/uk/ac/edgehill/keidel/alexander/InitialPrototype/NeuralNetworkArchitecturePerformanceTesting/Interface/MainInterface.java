@@ -57,6 +57,10 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
     public static Stage primaryStage;
     private TestingPreferences testingPreferences = new TestingPreferences(); //testing preferences file
 
+    /**
+     * Main function used by the application, initialises the application.
+     * @param args
+     */
     public static void main(String[] args) {
         launch(args);
     }
@@ -68,6 +72,11 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
         prototype = new InitialPrototype(ANNInfoTextArea, progressBar, this);
     }
 
+    /**
+     * Initialise all the resources required for this interface, such as layouts, buttons, menu bar, etc.
+     * @param primaryStage Primary stage of the application
+     * @return true if successful, false if failed (critical error)
+     */
     private boolean initialiseResources(Stage primaryStage){
         try {
             primaryStage.setTitle(TITLE); //set the title
@@ -152,7 +161,7 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
 //            Scene myScene = new Scene(groot, 1024, 860); //new scene with specified size
 //            ((GridPane) myScene.getRoot()).getChildren().addAll(menuBar); //add the menu bar to the scene
             //primaryStage.setScene(myScene); //Set the scene with width and height
-            primaryStage.setScene(new Scene(borderPane, 1024, 860));
+            primaryStage.setScene(new Scene(borderPane, 1200, 800));
             primaryStage.show(); //show the scene
             //loadOnStartup(); //load the dataset if it exists
             return true; //all went well
@@ -195,6 +204,7 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
             FileInputStream fis = new FileInputStream(testingPreferences.getClass().getSimpleName());
             ObjectInputStream ois = new ObjectInputStream(fis);
             testingPreferences = (TestingPreferences) ois.readObject(); //read object from file
+            progressBar.setProgress(0); //reset progress bar
             prototype.testingPreferences = testingPreferences; //set testing preferences inside prototype class
         } catch (FileNotFoundException e){
             e.printStackTrace();
@@ -204,7 +214,8 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
             e.printStackTrace();
         }
         // see http://stackoverflow.com/questions/33612380/javafx-stage-not-responding-after-action-on-button
-        new Thread(prototype).start();
+        //The link above explains that creating a new thread as done in the comments below does not work in JavaFX context.
+        new Thread(prototype).start(); //start prototype in a new thread
         //Thread t = new Thread(prototype);
         //t.run();
         //startProcedureButton.setDisable(true);
@@ -256,7 +267,7 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
         lowest = orderedSettings.size() - 1;
         }
         barChart.getData().clear(); //clear the bar chart in case it is populated
-        ((NumberAxis) barChart.getYAxis()).setLowerBound(((1 - orderedSettings.get(lowest).getPerformanceScore()) * 99.99999)); //set lower bound for bar chart based on fifth value
+        ((NumberAxis) barChart.getYAxis()).setLowerBound(((1 - orderedSettings.get(lowest).getPerformanceScore()) * 100) - 1); //set lower bound for bar chart based on the lowest value
         //System.out.println("prototype = " + prototype.neuralNetworkArchitectureTester.getNeuralNetworkSettingsList());
         for(int i = 0; i <= lowest; i++){
             NeuralNetworkSettings tmp = orderedSettings.get(i);
@@ -352,6 +363,11 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
     private boolean saveProject(File file){
         try{
             prototype.saveNeuralNetworkTesterToFile(file);
+            FileOutputStream fos = new FileOutputStream(testingPreferences.getClass().getSimpleName()); //new output stream with the name of the testing preferences class
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(testingPreferences);
+            oos.flush();
+            oos.close();
             return true;
         } catch (Exception ex){
             ex.printStackTrace();
@@ -420,6 +436,10 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
             FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("NNAT Project Files", ".nnatprj"); //set up filter for custom project files
             fileChooser.getExtensionFilters().addAll(filter); //add filter
             File projectFile = fileChooser.showOpenDialog(stage); //open dialog and assign file to user selected file
+            FileInputStream fis = new FileInputStream(testingPreferences.getClass().getSimpleName());
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            testingPreferences = (TestingPreferences) ois.readObject(); //read object from file
+            prototype.testingPreferences = testingPreferences; //set testing preferences inside prototype class
             prototype.loadNeuralNetworkTesterFromFile(projectFile); //load project fail
             ANNInfoTextArea.clear(); //clear text area
             barChart.getData().clear(); //clear bar chart

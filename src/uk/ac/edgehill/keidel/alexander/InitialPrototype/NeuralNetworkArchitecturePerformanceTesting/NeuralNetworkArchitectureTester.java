@@ -70,23 +70,24 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             TrainingSet<SupervisedTrainingElement> testSet;
             TrainingSet<SupervisedTrainingElement> overfittingSet;
 
-            boolean createNormalisedSets = false; //@TODO make this a testing parameter, currently default true
+            //@TODO make these flags testing parameters (Part of TestingPreferencesScreen)
+            boolean createNormalisedSets = true;
             boolean useNormalisedSets = true;
             try {
                 if (createNormalisedSets) {
                     //normalise training set
                     CustomMaxNormaliser trainingSetNormaliser = new CustomMaxNormaliser(trainingSetFile, ",");
                     trainingSetNormaliser.saveNormalisedValuesToFile(trainingSetFile.getAbsolutePath(), " normalised", ",", "\n");
-                    trainingSet = TrainingSet.createFromFile(trainingSetFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
+                    //trainingSet = TrainingSet.createFromFile(trainingSetFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
                     //normalise test set
                     CustomMaxNormaliser testSetNormaliser = new CustomMaxNormaliser(testSetFile, ",");
                     testSetNormaliser.saveNormalisedValuesToFile(testSetFile.getAbsolutePath(), " normalised", ",", "\n");
-                    testSet = TrainingSet.createFromFile(testSetFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
+                    //testSet = TrainingSet.createFromFile(testSetFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
                     //normalise overfitting set
                     CustomMaxNormaliser overfittingSetNormaliser = new CustomMaxNormaliser(overfittingFile, ",");
                     overfittingSetNormaliser.saveNormalisedValuesToFile(overfittingFile.getAbsolutePath(), " normalised", ",", "\n");
-                    overfittingSet = TrainingSet.createFromFile(overfittingFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
-                } else if (useNormalisedSets) {
+                    //overfittingSet = TrainingSet.createFromFile(overfittingFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
+                } if (useNormalisedSets) {
                     trainingSet = TrainingSet.createFromFile(trainingSetFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
                     testSet = TrainingSet.createFromFile(testSetFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
                     overfittingSet = TrainingSet.createFromFile(overfittingFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
@@ -144,6 +145,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
                     progressBar.setProgress(progress); //update progress bar
                 }
             }
+            textArea.appendText("\n---Test successfully finished---");
             return true; //success
         }
         catch(Exception ex){

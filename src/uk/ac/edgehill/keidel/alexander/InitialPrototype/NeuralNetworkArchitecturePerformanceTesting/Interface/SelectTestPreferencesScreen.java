@@ -350,8 +350,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("comma delimited csv files only", ".csv"));
             //fileChooser.setInitialDirectory(testSetFile);
             overfittingSetFile = fileChooser.showOpenDialog(this);
-            overfittingSetCurrentFileName.setText(testSetFile.getName());
-
+            overfittingSetCurrentFileName.setText(overfittingSetFile.getName());
         } catch (Exception ex){
             ex.printStackTrace();
         }
@@ -504,7 +503,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
                     return;
                 }
             }
-            if(newValue.longValue() > 100.0 || newValue.longValue() < 0.000001){
+            if(newValue.doubleValue() > 100.0 || newValue.doubleValue() < 0.000001){
                 parentFormatter.setValue(oldValue); //reset value
                 return;
             }
@@ -612,7 +611,6 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             oos.writeObject(testingPreferences);
             oos.flush();
             oos.close();
-            //@TODO notify the main screen of changes
             return true;
         }
         catch(Exception ex){
@@ -642,7 +640,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             selectedLearningRules = testingPreferences.getLearningRuleNames();
             selectedTransferFunctions = testingPreferences.getTransferFunctionNames();
             trainingSetFile = testingPreferences.getTrainingDataFile();
-            testSetFile = testingPreferences.getTrainingDataFile();
+            testSetFile = testingPreferences.getTestDataFile();
             overfittingSetFile = testingPreferences.getOverfittingTestDataFile();
 
             //display the correct values inside the UI
