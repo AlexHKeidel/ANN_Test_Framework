@@ -244,23 +244,17 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
      */
     private double calculateTotalMeanSquareError(ArrayList<ArrayList<Double>> outputs, ArrayList<ArrayList<Double>> actualOutputs){
         try{
-            //if(outputs.size() != actualOutputs.size() || outputs.get(0).size() != actualOutputs.get(0).size()) return -100.0; //error
             double mse = 0.0;
             for(int i = 0; i < outputs.size(); i++){ //for each output
                 double errorAverage = 0.0;
                 for(int j = 0; j < outputs.get(i).size(); j++){ //for each value (output neurons)
-                    //System.out.println("actualOutputs.get(i).get(j) = " + actualOutputs.get(i).get(j));
-                    //System.out.println("outputs.get(i).get(j) = " + outputs.get(i).get(j));
                     double error = actualOutputs.get(i).get(j) - outputs.get(i).get(j); //get the error
-                    //System.out.println("error = " + error);
                     errorAverage += Math.pow(error, 2); //square the error
                 }
                 errorAverage = errorAverage / (outputs.get(i).size()); //divide by the number of output neurons
-                //System.out.println("errorAverage = " + errorAverage);
                 mse += errorAverage; //add up to the total mean squared error
             }
             mse = mse / (outputs.size()); //divide by the number of rows to get the mean of all mean errors squared
-            //System.out.println("mse = " + mse);
             return mse;
         }
         catch(Exception ex){
