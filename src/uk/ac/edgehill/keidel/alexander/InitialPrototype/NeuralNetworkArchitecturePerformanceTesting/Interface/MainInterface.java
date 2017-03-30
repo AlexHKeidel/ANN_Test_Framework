@@ -111,7 +111,7 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
             barChart.setAnimated(false);
             barChart.setTitle("Best Performing ANN Structures");
             xAxis.setLabel("ANN Structure");
-            yAxis.setLabel("Performance Score (Standard Deviation)");
+            yAxis.setLabel("Performance Score (100 - MSE)");
 
             //See http://docs.oracle.com/javafx/2/layout/builtin_layouts.htm
             BorderPane borderPane = new BorderPane(); //new border pane
@@ -222,6 +222,7 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
 
     /**
      * Populate the bar chart with the neural network performance data
+     * @deprecated use {@link #populateTopFiveBarChart()} due to size of the GUI
      */
     private void populateBarChart(){
         double worstStandardDeviation = 100;

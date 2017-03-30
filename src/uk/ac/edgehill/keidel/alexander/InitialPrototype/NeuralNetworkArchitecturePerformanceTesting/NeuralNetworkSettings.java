@@ -81,6 +81,8 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
         //neuralNetwork.learn(trainingSet); //learn the training set (without a new thread)
         int iterationCounter = 0;
         neuralNetwork.randomizeWeights(); //randomise all weights
+        testNeuralNetworkPerformance(iterationCounter); //initial test before training
+        iterationCounter++;
         neuralNetwork.learnInNewThread(trainingSet);
         //neuralNetwork.pauseLearning();
         int localMaximumCounter = 0;

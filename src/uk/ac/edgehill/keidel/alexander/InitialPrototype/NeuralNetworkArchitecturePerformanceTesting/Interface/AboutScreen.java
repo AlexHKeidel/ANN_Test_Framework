@@ -33,7 +33,7 @@ public class AboutScreen implements GUIValues {
         aboutTextArea.setText(ABOUT_MENU_TEXT); //set the text
         borderPane.setCenter(aboutTextArea); //make it center of the border layout
         Button closeButton = new Button("Close");
-        closeButton.setOnAction(e -> closeStage());
+        closeButton.setOnAction(e -> closeStage()); //set on action to close the window
         borderPane.setBottom(closeButton); //add close button to pane
         borderPane.setAlignment(closeButton, Pos.BOTTOM_CENTER); //align button bottom centered
         Scene myScene = new Scene(borderPane, 400, 350); //400 by 350

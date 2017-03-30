@@ -97,11 +97,11 @@ public class CrimeDataNormaliser {
                 }
                 //System.out.println("totalValue = " + totalValue);
                 normalisedValues[i] = String.valueOf(totalValue);
-                normalisedString += normalisedValues[i] + ","; //concat the total string with the calculated value plus a comma delimiter
+                normalisedString += normalisedValues[i] + ","; //concatenate the total string with the calculated value plus a comma delimiter
             }
-
             normalisedString = normalisedString.substring(0, normalisedString.length() - 1);
 
+            //old version, does not work: the values overflow outside the 8 bits as doubles are 64 bits
 //        String input1 = String.valueOf(ByteBuffer.wrap(values[1].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
 //        String input2 = String.valueOf(ByteBuffer.wrap(values[2].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
 //        String input3 = String.valueOf(ByteBuffer.wrap(values[3].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string

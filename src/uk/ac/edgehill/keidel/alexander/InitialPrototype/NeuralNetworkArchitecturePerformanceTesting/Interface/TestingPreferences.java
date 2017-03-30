@@ -85,7 +85,7 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
 
     /**
      * Convert the testing preferences into a readable String
-     * @return String in human readable format summarising all testing preferences stored in this objectminhidlayerFormatter
+     * @return String in human readable format summarising all testing preferences stored in this object
      */
     public String getPreferencesInReadableFormat(){
         String readable = "Testing Preferences: " + testName + "\n";
@@ -117,6 +117,8 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
         readable += "Test set file name: " + getTestDataFile().getName() + "\n";
         readable += "Overfitting set file name: " + getOverfittingTestDataFile().getName() + "\n";
         readable += "Data set delimiter: \'" + getDatasetDelimiter() + "\'\n";
+        int totalTest = hiddenLayerVariants.size() * getTransferFunctionNames().size() * getLearningRuleNames().size(); //caclulate total amount of tests
+        readable += "\nTotal number of tests: " + totalTest + "\n";
         readable += "-----End of testing preferences-----\n\n";
         return readable;
     }
