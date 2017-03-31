@@ -110,13 +110,17 @@ public class CrimeDataNormaliser {
 //        String input6 = String.valueOf(ByteBuffer.wrap(values[6].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
 //        String input7 = String.valueOf(ByteBuffer.wrap(values[7].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
 //        String input8 = String.valueOf(ByteBuffer.wrap(values[8].getBytes()).getDouble()); //convert the input value into a byte array, this into a double value, which is then saved "literally" into a string
-            return normalisedString + System.lineSeparator();
+            return normalisedString + System.lineSeparator(); //system line separator is equal to "\n" or "\r" to make sure there is a new line
         } catch (Exception ex){
             ex.printStackTrace();
             return "ERROR";
         }
     }
 
+    /**
+     * Main to run this class
+     * @param args
+     */
     public static void main(String args[]){
         CrimeDataNormaliser cdn = new CrimeDataNormaliser();
     }

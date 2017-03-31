@@ -340,7 +340,7 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
     private void saveProjectAs() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(DEFAULT_DIRECTORY_FILE);
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("NNAT Project Files", ".nnatprj");
+        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("NNAT Project Files", "*.nnatprj");
         fileChooser.getExtensionFilters().addAll(filter);
         fileChooser.setTitle(FILE_MENU_SAVE_AS);
         saveProject(fileChooser.showSaveDialog(primaryStage)); //save the project file as the selected file
@@ -433,14 +433,14 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle(FILE_MENU_LOAD_PROJECT_FILECHOOSER_TITLE);
             fileChooser.setInitialDirectory(DEFAULT_DIRECTORY_FILE);
-            FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("NNAT Project Files", ".nnatprj"); //set up filter for custom project files
+            FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("NNAT Project Files", "*.nnatprj"); //set up filter for custom project files
             fileChooser.getExtensionFilters().addAll(filter); //add filter
             File projectFile = fileChooser.showOpenDialog(stage); //open dialog and assign file to user selected file
             FileInputStream fis = new FileInputStream(testingPreferences.getClass().getSimpleName());
             ObjectInputStream ois = new ObjectInputStream(fis);
             testingPreferences = (TestingPreferences) ois.readObject(); //read object from file
+            prototype.loadNeuralNetworkTesterFromFile(projectFile); //load project file
             prototype.testingPreferences = testingPreferences; //set testing preferences inside prototype class
-            prototype.loadNeuralNetworkTesterFromFile(projectFile); //load project fail
             ANNInfoTextArea.clear(); //clear text area
             barChart.getData().clear(); //clear bar chart
             ANNInfoTextArea.setText("Loaded project: " + projectFile.getName() + "\n"); //update text area
@@ -456,6 +456,8 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
     /**
      * Open a file selector for the application to load a neural network file
      * See http://docs.oracle.com/javafx/2/ui_controls/file-chooser.htm
+     * This is not used in this version of the prototype, as individual neural network settings are kept
+     * inside the testing preferences file
      * @return
      */
     private boolean openFileSelectorToNeuralNetworkFile(Stage stage){
@@ -489,6 +491,11 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
     };
 
 
+    /**
+     * Start a new {@link NeuralNetworkTestScreen} for each {@link NeuralNetworkSettings} in
+     * the {@link uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.NeuralNetworkArchitectureTester}
+     * contained within the {@link InitialPrototype}.
+     */
     private void startNeuralNetworkTestScreens(){
         //System.out.println("starting NN test screens");
         ArrayList<NeuralNetworkSettings> allSettings = prototype.neuralNetworkArchitectureTester.getNeuralNetworkSettingsList();
