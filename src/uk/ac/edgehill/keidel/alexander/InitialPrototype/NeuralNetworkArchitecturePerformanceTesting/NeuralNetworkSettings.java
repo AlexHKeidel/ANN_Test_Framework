@@ -75,6 +75,8 @@ public class NeuralNetworkSettings implements Serializable, Runnable {
             neuronCountInLayers.add(layer); //add hidden layers
         }
         neuronCountInLayers.add(outputNeurons); //add output neurons
+        //neuralNetwork = new NeuralNetwork();
+        //neuralNetwork.setLearningRule();
         neuralNetwork = new MultiLayerPerceptron(neuronCountInLayers, transferFunctionType); //set up multi-layered perceptron
         neuralNetwork.setLearningRule(learningRule); //set learning rule
         //System.out.println(name + " training started");
