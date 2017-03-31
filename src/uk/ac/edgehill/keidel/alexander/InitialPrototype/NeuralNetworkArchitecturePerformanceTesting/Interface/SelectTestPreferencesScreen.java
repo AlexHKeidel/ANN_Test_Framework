@@ -315,7 +315,8 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             parentTextArea.setText("");
             return;
         }
-        if(!newValue.matches("^[0-9,;]+$")){
+        //Only digits, commas, and semicolons are allowed.
+        if(!newValue.matches("^[0-9,;]+$")){ //check the content of the text area using a regular expression
             parentTextArea.setText(oldValue);
         } else { //found a suitable format
             hiddenLayers.clear(); //clear hidden layers array list
@@ -326,6 +327,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
                 for(String n : hls){ //for each digit
                     tmp.add(Integer.parseInt(n)); //add to tmp
                 }
+                if(hiddenLayers.contains(tmp)) continue; //do not add duplicates
                 hiddenLayers.add(tmp); //add to hidden layers
             }
         }
@@ -364,7 +366,7 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle(NEURAL_NETWORK_MENU_SELECT_TRAINING_SET);
             fileChooser.setInitialDirectory(new File (System.getProperty("user.dir")));
-            fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("comma delimited csv files only", ".csv"));
+            fileChooser.setSelectedExtensionFilter(new FileChooser.ExtensionFilter("comma delimited files only", "*.*"));
             //@TODO set initial directory to base directory of the program
             // /fileChooser.setInitialDirectory(trainingSetFile);
             trainingSetFile = fileChooser.showOpenDialog(this);
@@ -650,6 +652,9 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
             FileInputStream fis = new FileInputStream(testingPreferences.getClass().getSimpleName());
             ObjectInputStream ios = new ObjectInputStream(fis);
             testingPreferences = (TestingPreferences) ios.readObject();
+            if(testingPreferences == null){
+                System.out.println("testingPreferences == null");
+            }
             inputLayers = testingPreferences.getInputLayers();
             outputLayers = testingPreferences.getOutputLayers();
             hiddenLayers = testingPreferences.getHiddenLayerVariants();

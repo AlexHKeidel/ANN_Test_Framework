@@ -69,7 +69,7 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
         initialiseResources(primaryStage); //init all the resources for the GUI
-        prototype = new InitialPrototype(ANNInfoTextArea, progressBar, this);
+        prototype = new InitialPrototype(ANNInfoTextArea, progressBar, this, testingPreferences);
     }
 
     /**
@@ -205,6 +205,7 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
             ObjectInputStream ois = new ObjectInputStream(fis);
             testingPreferences = (TestingPreferences) ois.readObject(); //read object from file
             progressBar.setProgress(0); //reset progress bar
+            prototype = new InitialPrototype(ANNInfoTextArea, progressBar, this, testingPreferences);
             prototype.testingPreferences = testingPreferences; //set testing preferences inside prototype class
         } catch (FileNotFoundException e){
             e.printStackTrace();
@@ -339,12 +340,18 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
     }
 
     private void saveProjectAs() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(DEFAULT_DIRECTORY_FILE);
-        FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("NNAT Project Files", "*.nnatprj");
-        fileChooser.getExtensionFilters().addAll(filter);
-        fileChooser.setTitle(FILE_MENU_SAVE_AS);
-        saveProject(fileChooser.showSaveDialog(primaryStage)); //save the project file as the selected file
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setInitialDirectory(DEFAULT_DIRECTORY_FILE);
+            FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("NNAT Project Files", "*.nnatprj");
+            fileChooser.getExtensionFilters().addAll(filter);
+            fileChooser.setTitle(FILE_MENU_SAVE_AS);
+            saveProject(fileChooser.showSaveDialog(primaryStage)); //save the project file as the selected file
+            ANNInfoTextArea.appendText("\nSaving successful.\n");
+        } catch (Exception ex){
+            ex.printStackTrace();
+            ANNInfoTextArea.appendText("\nSaving cancelled.\n");
+        }
     }
 
 
@@ -363,6 +370,10 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
      */
     private boolean saveProject(File file){
         try{
+            FileInputStream fis = new FileInputStream(testingPreferences.getClass().getSimpleName());
+            ObjectInputStream ois = new ObjectInputStream(fis);
+            testingPreferences = (TestingPreferences) ois.readObject(); //read object from file
+            prototype = new InitialPrototype(ANNInfoTextArea, progressBar, this, testingPreferences);
             prototype.saveNeuralNetworkTesterToFile(file);
             FileOutputStream fos = new FileOutputStream(testingPreferences.getClass().getSimpleName()); //new output stream with the name of the testing preferences class
             ObjectOutputStream oos = new ObjectOutputStream(fos);
@@ -437,11 +448,13 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
             FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("NNAT Project Files", "*.nnatprj"); //set up filter for custom project files
             fileChooser.getExtensionFilters().addAll(filter); //add filter
             File projectFile = fileChooser.showOpenDialog(stage); //open dialog and assign file to user selected file
-            FileInputStream fis = new FileInputStream(testingPreferences.getClass().getSimpleName());
-            ObjectInputStream ois = new ObjectInputStream(fis);
-            testingPreferences = (TestingPreferences) ois.readObject(); //read object from file
             prototype.loadNeuralNetworkTesterFromFile(projectFile); //load project file
-            prototype.testingPreferences = testingPreferences; //set testing preferences inside prototype class
+            testingPreferences = prototype.testingPreferences;
+            FileOutputStream fos = new FileOutputStream(testingPreferences.getClass().getSimpleName()); //new output stream with the name of the testing preferences class
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(testingPreferences);
+            oos.flush();
+            oos.close();
             ANNInfoTextArea.clear(); //clear text area
             barChart.getData().clear(); //clear bar chart
             ANNInfoTextArea.setText("Loaded project: " + projectFile.getName() + "\n"); //update text area

@@ -21,6 +21,7 @@ import org.omg.CORBA.TIMEOUT;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.DataSetNormalisation.CustomMaxNormaliser;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Interface.MainInterface;
 import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Interface.NeuralNetworkTestScreen;
+import uk.ac.edgehill.keidel.alexander.InitialPrototype.NeuralNetworkArchitecturePerformanceTesting.Interface.TestingPreferences;
 
 import java.io.*;
 import java.net.URL;
@@ -45,8 +46,10 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
     public static float progressPercentage = 0.0f;
     private int totalThreadCount = 0;
     private int completedThreadCount = 0;
+    private TestingPreferences testingPreferences;
 
-    public NeuralNetworkArchitectureTester(){
+    public NeuralNetworkArchitectureTester(TestingPreferences testingPreferences){
+        this.testingPreferences = testingPreferences;
     }
 
     /**
@@ -71,7 +74,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             TrainingSet<SupervisedTrainingElement> overfittingSet;
 
             //@TODO make these flags testing parameters (Part of TestingPreferencesScreen)
-            boolean createNormalisedSets = true;
+            boolean createNormalisedSets = false;
             boolean useNormalisedSets = true;
             try {
                 if (createNormalisedSets) {
@@ -543,5 +546,9 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
 
     public ArrayList<NeuralNetworkSettings> getNeuralNetworkSettingsList() {
         return neuralNetworkSettingsList;
+    }
+
+    public TestingPreferences getTestingPreferences() {
+        return testingPreferences;
     }
 }

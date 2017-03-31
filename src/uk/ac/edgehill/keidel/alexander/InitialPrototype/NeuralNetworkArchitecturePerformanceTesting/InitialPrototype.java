@@ -23,16 +23,17 @@ import java.util.ArrayList;
  * given data set.
  */
 public class InitialPrototype implements GlobalVariablesInterface, Runnable {
-    public static NeuralNetworkArchitectureTester neuralNetworkArchitectureTester = new NeuralNetworkArchitectureTester();
+    public static NeuralNetworkArchitectureTester neuralNetworkArchitectureTester;// = new NeuralNetworkArchitectureTester();
     public static TestingPreferences testingPreferences = new TestingPreferences();
     private TextArea parentTextArea;
     private ProgressBar parentProgressBar;
     private Stage parentStage;
     private MainInterface mainInterface;
 
-    public InitialPrototype(TextArea parentTextArea, ProgressBar progressBar, MainInterface mainInterface){
+    public InitialPrototype(TextArea parentTextArea, ProgressBar progressBar, MainInterface mainInterface, TestingPreferences testingPreferences){
         this.parentTextArea = parentTextArea;
         this.parentProgressBar = progressBar;
+        neuralNetworkArchitectureTester = new NeuralNetworkArchitectureTester(testingPreferences);
     }
 
     private void startPrototype(){
