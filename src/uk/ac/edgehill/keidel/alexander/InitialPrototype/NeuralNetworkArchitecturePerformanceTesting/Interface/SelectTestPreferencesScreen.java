@@ -456,32 +456,52 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
 //        maximumHiddenLayers = newValue.intValue(); //assign value
 //    }
 
+    /**
+     * Validate the user input on the input layers. Values smaller or equal to 0 are not allowed.
+     * @param observable
+     * @param oldValue
+     * @param newValue
+     * @param parentFormatter
+     */
     private void validateInputLayers(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter parentFormatter){
         try{
-            if(newValue == null || newValue.longValue() < 0){
+            if(newValue == null || newValue.intValue() <= 0){
                 if(oldValue == null){
                     parentFormatter.setValue(1);
-                } else if(newValue.longValue() % 1 != 0){ //the number is not an integer
+                }  else {
                     parentFormatter.setValue(oldValue);
                 }
+            } else if(newValue.longValue() % 1 != 0){ //the number is not an integer
+                parentFormatter.setValue(oldValue);
             } else {
-                inputLayers = newValue.intValue();
+                inputLayers = (int) newValue.intValue();
+                parentFormatter.setValue(inputLayers);
             }
         } catch (Exception ex){
             ex.printStackTrace();
         }
     }
 
+    /**
+     * Validate the output neuron user input
+     * @param observable
+     * @param oldValue
+     * @param newValue
+     * @param parentFormatter
+     */
     private void validateOutputLayers(ObservableValue<? extends Number> observable, Number oldValue, Number newValue, TextFormatter<Number> parentFormatter) {
         try{
-            if(newValue == null || newValue.longValue() < 0){
+            if(newValue == null || newValue.intValue() <= 0){
                 if(oldValue == null){
                     parentFormatter.setValue(1);
-                } else if(newValue.longValue() % 1 != 0){ //the number is not an integer
+                }else {
                     parentFormatter.setValue(oldValue);
                 }
+            }  else if(newValue.longValue() % 1 != 0){ //the number is not an integer
+                parentFormatter.setValue(oldValue);
             } else {
-                outputLayers = newValue.intValue();
+                outputLayers = (int) newValue.intValue();
+                parentFormatter.setValue(outputLayers);
             }
         } catch (Exception ex){
             ex.printStackTrace();

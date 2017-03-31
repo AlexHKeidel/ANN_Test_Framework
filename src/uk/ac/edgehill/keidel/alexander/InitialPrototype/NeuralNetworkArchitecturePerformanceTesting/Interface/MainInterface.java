@@ -296,11 +296,12 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
         final MenuItem fileLoadProject = new MenuItem(FILE_MENU_LOAD_PROJECT);
         fileLoadProject.setOnAction(e -> openFileSelectorToLoadProjectFile(primaryStage));
         final MenuItem fileSaveProject = new MenuItem(FILE_MENU_SAVE_PROJECT);
-        final MenuItem fileSaveAs = new MenuItem(FILE_MENU_SAVE_AS);
-        fileSaveAs.setOnAction(e -> saveProjectAs());
+        //final MenuItem fileSaveAs = new MenuItem(FILE_MENU_SAVE_AS);
+        //fileSaveAs.setOnAction(e -> saveProjectAs());
+        fileSaveProject.setOnAction(e -> saveProjectAs());
         final MenuItem fileGenerateChart = new MenuItem(FILE_MENU_GENERATE_CHART);
         fileGenerateChart.setOnAction(e -> startNeuralNetworkTestScreens());
-        fileMenu.getItems().addAll(fileLoadProject, fileSaveProject, fileSaveAs, fileGenerateChart); //register sub menu items
+        fileMenu.getItems().addAll(fileLoadProject, fileSaveProject, /*fileSaveAs,*/ fileGenerateChart); //register sub menu items
 
 
         //Options menu and sub menus
