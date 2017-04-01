@@ -205,6 +205,7 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
             ObjectInputStream ois = new ObjectInputStream(fis);
             testingPreferences = (TestingPreferences) ois.readObject(); //read object from file
             progressBar.setProgress(0); //reset progress bar
+            barChart.getData().clear(); //reset the bar chart
             prototype = new InitialPrototype(ANNInfoTextArea, progressBar, this, testingPreferences);
             prototype.testingPreferences = testingPreferences; //set testing preferences inside prototype class
         } catch (FileNotFoundException e){
