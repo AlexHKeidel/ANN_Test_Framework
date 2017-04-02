@@ -79,18 +79,24 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
             try {
                 if (createNormalisedSets) {
                     //normalise training set
-                    CustomMaxNormaliser trainingSetNormaliser = new CustomMaxNormaliser(trainingSetFile, ",");
-                    trainingSetNormaliser.saveNormalisedValuesToFile(trainingSetFile.getAbsolutePath(), " normalised", ",", "\n");
-                    //trainingSet = TrainingSet.createFromFile(trainingSetFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
-                    //normalise test set
-                    CustomMaxNormaliser testSetNormaliser = new CustomMaxNormaliser(testSetFile, ",");
-                    testSetNormaliser.saveNormalisedValuesToFile(testSetFile.getAbsolutePath(), " normalised", ",", "\n");
-                    //testSet = TrainingSet.createFromFile(testSetFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
-                    //normalise overfitting set
-                    CustomMaxNormaliser overfittingSetNormaliser = new CustomMaxNormaliser(overfittingFile, ",");
-                    overfittingSetNormaliser.saveNormalisedValuesToFile(overfittingFile.getAbsolutePath(), " normalised", ",", "\n");
-                    //overfittingSet = TrainingSet.createFromFile(overfittingFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
-                } if (useNormalisedSets) {
+                    if(!new File(trainingSetFile.getAbsolutePath() + " normalised").exists()) { //if normalised set does not exist
+                        CustomMaxNormaliser trainingSetNormaliser = new CustomMaxNormaliser(trainingSetFile, ",");
+                        trainingSetNormaliser.saveNormalisedValuesToFile(trainingSetFile.getAbsolutePath(), " normalised", ",", "\n");
+                        //trainingSet = TrainingSet.createFromFile(trainingSetFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
+                    }
+                        //normalise test set
+                    if(!new File(testSetFile.getAbsolutePath() + " normalised").exists()) {
+                        CustomMaxNormaliser testSetNormaliser = new CustomMaxNormaliser(testSetFile, ",");
+                        testSetNormaliser.saveNormalisedValuesToFile(testSetFile.getAbsolutePath(), " normalised", ",", "\n");
+                        //testSet = TrainingSet.createFromFile(testSetFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
+                    }
+                        //normalise overfitting set
+                    if(!new File(overfittingFile.getAbsolutePath() + " normalised").exists()) { //if normalised set does not exist
+                        CustomMaxNormaliser overfittingSetNormaliser = new CustomMaxNormaliser(overfittingFile, ",");
+                        overfittingSetNormaliser.saveNormalisedValuesToFile(overfittingFile.getAbsolutePath(), " normalised", ",", "\n");
+                        //overfittingSet = TrainingSet.createFromFile(overfittingFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
+                    }
+                    } if (useNormalisedSets) {
                     trainingSet = TrainingSet.createFromFile(trainingSetFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
                     testSet = TrainingSet.createFromFile(testSetFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
                     overfittingSet = TrainingSet.createFromFile(overfittingFile.getAbsolutePath() + " normalised", inputNeuronCount, outputNeuronCount, ",");
