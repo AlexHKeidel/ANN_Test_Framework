@@ -18,6 +18,10 @@ public class Bi3Normaliser implements GlobalVariablesInterface {
     private final String DEMOGRAPHICS_FILE_PATH = System.getProperty("user.dir") + "/Data Sets/Bi3 Data Sets/Demographics Data Comma Delimited.csv";//OLD "D:/OneDrive/Edge Hill/Final Year Project/Interesting Datasets/Bi3 Data Sets/Demographics Data Comma Delimited.csv"; //make sure this is according to the file path on the machine
     private final String DIRECTORY = System.getProperty("user.dir") + "/Data Sets/Bi3 Data Sets/"; //OLD "D:/OneDrive/Edge Hill/Final Year Project/Interesting Datasets/Bi3 Data Sets/";
     private File footfallFile, demographicsFile;
+
+    /**
+     * Standard constructor, initialises and runs the normaliser.
+     */
     public Bi3Normaliser(){
         footfallFile = new File(FOOTFALL_FILE_PATH);
         demographicsFile = new File (DEMOGRAPHICS_FILE_PATH);
@@ -67,7 +71,7 @@ public class Bi3Normaliser implements GlobalVariablesInterface {
     }
 
     /**
-     * @
+     * Unused
      * @param line
      * @return
      */
@@ -139,6 +143,10 @@ public class Bi3Normaliser implements GlobalVariablesInterface {
         return newData; //return new data
     }
 
+    /**
+     * Standard main
+     * @param args
+     */
     public static void main(String[] args){
         Bi3Normaliser bi3n = new Bi3Normaliser();
     }

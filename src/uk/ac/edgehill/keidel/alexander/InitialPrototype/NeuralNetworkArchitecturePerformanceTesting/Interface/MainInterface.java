@@ -65,6 +65,10 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
         launch(args);
     }
 
+    /**
+     * Start the application using the primary stage. Initialises all GUI elements and creates an instance of the {@link InitialPrototype} class.
+     * @param primaryStage
+     */
     @Override
     public void start(Stage primaryStage) {
         this.primaryStage = primaryStage;
@@ -191,6 +195,9 @@ public class MainInterface extends Application implements GUIValues, GlobalVaria
         return orderedArchitectures;
     }
 
+    /**
+     * Start the select preferences screen.
+     */
     private void startSelectTestPreferencesScreen() {
         SelectTestPreferencesScreen s = new SelectTestPreferencesScreen(primaryStage);
     }

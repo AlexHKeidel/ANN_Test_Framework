@@ -186,7 +186,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
      * @param toNum integer value of the last value in the list (highest, inclusive)
      * @return
      */
-    public ArrayList<ArrayList<Integer>> getAllPossiblePermutations(int fromNum, int toNum){
+    @Deprecated public ArrayList<ArrayList<Integer>> getAllPossiblePermutations(int fromNum, int toNum){
         if(fromNum > toNum){ //error
             return new ArrayList<>();
         }
@@ -241,7 +241,7 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
      * @param performanceLimit Decimal value for the performance limit. Based on the desired standard deviation {@link GlobalVariablesInterface#DEFAULT_PERFORMANCE_REQUIERD_MINIMUM}
      * @return
      */
-    public NeuralNetworkSettings createAndTestNeuralNetworkStructures(File trainingSet, File testSet, String testSetName, String trainingSetName, int inputNeuronCount, int outputNeuronCount, int maximumHiddenLayerCount, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit){
+    @Deprecated public NeuralNetworkSettings createAndTestNeuralNetworkStructures(File trainingSet, File testSet, String testSetName, String trainingSetName, int inputNeuronCount, int outputNeuronCount, int maximumHiddenLayerCount, ArrayList<TransferFunctionType> desiredTransferFunctions, ArrayList<LearningRule> desiredLearningRules, float performanceLimit){
         /**
         //BEGIN "Setting initial Testing values"
         ArrayList<Integer> hiddenLayers = new ArrayList<>();
@@ -338,7 +338,12 @@ public class NeuralNetworkArchitectureTester implements GlobalVariablesInterface
         return bestNetworkSettings; //return the best found network settings.
     }
 
-    private String convertNeuralNetworkSettingsToReadableString(NeuralNetworkSettings settings){
+    /**
+     * Converts the neural network settings to a readable string. This is now handled by the object iself
+     * @param settings Desired {@link NeuralNetworkSettings}
+     * @return Readable string of the object
+     */
+    @Deprecated private String convertNeuralNetworkSettingsToReadableString(NeuralNetworkSettings settings){
         String s = "";
         s += "Neural Network Settings\n" + "Name: " + settings.getName() + "\nPerformance Score (Standard Deviation): " + settings.getPerformanceScore() + "\nInput Neurons: " + settings.getInputNeurons() + "\n";
         String tmp = "";

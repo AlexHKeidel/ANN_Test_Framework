@@ -21,6 +21,10 @@ public class NeuralNetworkTestScreen extends Stage implements GUIValues {
     Stage myStage;
     NeuralNetworkSettings mySettings;
 
+    /**
+     * Constuctor to initialise the screen. Creates the line chart and populates it with {@link NeuralNetworkSettings#testSetPerformances} and {@link NeuralNetworkSettings#overfittingTestSetPerformances}.
+     * @param mySettings
+     */
     public NeuralNetworkTestScreen(NeuralNetworkSettings mySettings){
         this.mySettings = mySettings;
         myStage = new Stage();

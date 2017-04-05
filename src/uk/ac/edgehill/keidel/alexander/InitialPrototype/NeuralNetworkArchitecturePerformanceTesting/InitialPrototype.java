@@ -21,6 +21,9 @@ import java.util.ArrayList;
  * Initial prototype of my masters project application.
  * The idea is to have a testing framework to decide on the best suited artificial neural network architecture for any
  * given data set.
+ * This class has seen significant changes throughout development. It started out as a test class containing all the
+ * functionality. Other classes have been created to handle functionality.
+ * It now still functions as an intermediate between the {@link MainInterface} and {@link NeuralNetworkArchitectureTester}.
  */
 public class InitialPrototype implements GlobalVariablesInterface, Runnable {
     public static NeuralNetworkArchitectureTester neuralNetworkArchitectureTester;// = new NeuralNetworkArchitectureTester();
@@ -120,6 +123,11 @@ public class InitialPrototype implements GlobalVariablesInterface, Runnable {
         }
     }
 
+    /**
+     * Load a {@link NeuralNetworkArchitectureTester} from a specified file location and set it as {@link #neuralNetworkArchitectureTester}.
+     * @param file Desired file location of {@link NeuralNetworkArchitectureTester}.
+     * @return true if successful, otherwise false
+     */
     public boolean loadNeuralNetworkTesterFromFile(File file){
         try{
             FileInputStream fis = new FileInputStream(file);

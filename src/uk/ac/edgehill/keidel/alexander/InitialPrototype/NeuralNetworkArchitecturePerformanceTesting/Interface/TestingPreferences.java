@@ -35,7 +35,7 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
 
     /**
      * Return the transfer function objects based on the transfer function names.
-     * @return
+     * @return {{@link #transferFunctionNames}}
      * @throws TransferFunctionNotFoundException
      */
     public ArrayList<TransferFunctionType> getTransferFunctions() throws TransferFunctionNotFoundException {
@@ -61,7 +61,7 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
     /**
      * Return the learning rules as learning rule objects based on their names.
      * @TODO look into different solution for breaking the loops, like http://stackoverflow.com/questions/886955/breaking-out-of-nested-loops-in-java
-     * @return
+     * @return {@link #learningRuleNames}
      * @throws LearningRuleNotFoundException
      */
     public ArrayList<LearningRule> getLearningRules() throws LearningRuleNotFoundException {
@@ -224,6 +224,10 @@ public class TestingPreferences implements Serializable, GlobalVariablesInterfac
         return hiddenLayerVariants;
     }
 
+    /**
+     * Generates a human readable string of all hidden layer variations, such as (1) and (1) (1) etc.
+     * @return Human readable string format of hidden layer variants.
+     */
     public String getHiddenLayerVariantsAsString(){
         String variants = "";
         for(ArrayList<Integer> structure : hiddenLayerVariants){

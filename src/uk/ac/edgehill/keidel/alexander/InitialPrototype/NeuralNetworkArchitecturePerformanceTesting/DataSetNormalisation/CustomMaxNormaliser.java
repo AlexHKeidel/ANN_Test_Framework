@@ -16,7 +16,7 @@ public class CustomMaxNormaliser {
     private boolean normalisationFinished = false;
 
     /**
-     * Cunstructor using a file and delimiter.
+     * Constructor using a file and delimiter.
      * Requires rows to be split with a carriage return or new line.
      * @param inputFile input file
      * @param valueDelimiter delimiter (usually ",")

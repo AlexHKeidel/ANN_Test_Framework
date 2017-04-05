@@ -65,6 +65,11 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
     private File testSetFile;
     private File overfittingSetFile;
 
+    /**
+     * Constructor to initialise the stage. Initialises all GUI elements and functionality.
+     * Reads the test preference file from disk and populates all fields with the desired setting values.
+     * @param parentStage {@link MainInterface}
+     */
     public SelectTestPreferencesScreen(Stage parentStage){
         myStage = new Stage(); //new stage
         //see http://stackoverflow.com/questions/19953306/block-parent-stage-until-child-stage-closes
@@ -645,7 +650,8 @@ public class SelectTestPreferencesScreen extends Stage implements GUIValues, Glo
     }
 
     /**
-     * Load preferences from file
+     * Load preferences from file and populate all GUI elements accordingly:
+     * fills in all text boxes, checks tick boxes, etc.
      */
     private boolean loadPreferences() {
         try{
