@@ -16,17 +16,17 @@ Clone the repo and run with your Java IDE of choice (developed in IntelliJ)
 
 Main Screen:
 
-![main_screen_example](https://github.com/AlexHKeidel/ANN_Test_Framework/screenshots/main_screen_example.png)
+![main_screen_example](https://raw.githubusercontent.com/AlexHKeidel/ANN_Test_Framework/master/screenshots/main_screen_example.png)
 
 
 Performance Example:
 
-![performance_example](https://github.com/AlexHKeidel/ANN_Test_Framework/screenshots/performance_example.png)
+![performance_example](https://raw.githubusercontent.com/AlexHKeidel/ANN_Test_Framework/master/screenshots/performance_example.png)
 
 Preference / Options Screens:
 
 
-![pref_1](https://github.com/AlexHKeidel/ANN_Test_Framework/screenshots/pref_1.png)
-![pref_2](https://github.com/AlexHKeidel/ANN_Test_Framework/screenshots/pref_2.png)
-![pref_3](https://github.com/AlexHKeidel/ANN_Test_Framework/screenshots/pref_3.png)
+![pref_1](https://raw.githubusercontent.com/AlexHKeidel/ANN_Test_Framework/master/screenshots/pref_1.png)
+![pref_2](https://raw.githubusercontent.com/AlexHKeidel/ANN_Test_Framework/master/screenshots/pref_2.png)
+![pref_3](https://raw.githubusercontent.com/AlexHKeidel/ANN_Test_Framework/master/screenshots/pref_3.png)
 
